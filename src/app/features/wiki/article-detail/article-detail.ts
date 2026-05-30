@@ -1,9 +1,28 @@
-import { Component } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { WikiService } from '../../../core/services/wiki';
+import { Publication, Section } from '../../../shared/models/wiki.models';
 
 @Component({
   selector: 'app-article-detail',
-  imports: [],
+  standalone: true,
+  imports: [RouterLink],
   templateUrl: './article-detail.html',
-  styleUrl: './article-detail.scss',
+  styleUrl: './article-detail.scss'
 })
-export class ArticleDetail {}
+export class ArticleDetailComponent implements OnInit {
+  private route = inject(ActivatedRoute);
+  private wikiService = inject(WikiService);
+
+  article = signal<Publication | null>(null);
+  section = signal<Section | null>(null);
+
+  ngOnInit(): void {
+    const id = Number(this.route.snapshot.paramMap.get('id'));
+    const pub = this.wikiService.getPublicationById(id);
+    this.article.set(pub ?? null);
+    if (pub) {
+      this.section.set(this.wikiService.getSectionById(pub.id_seccion) ?? null);
+    }
+  }
+}

@@ -1,1 +1,67 @@
-<p>login works!</p>
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+  <div class="col-md-6 col-lg-4">
+    <div class="form-section">
+      <h3 class="fw-bold text-center mb-1" style="color: #1b4332;">Iniciar Sesión</h3>
+      <p class="text-center text-muted small mb-4">Accedé a tu cuenta de NatureHub</p>
+
+      <form #loginForm="ngForm" (ngSubmit)="onLogin(loginForm)" novalidate>
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Correo electrónico</label>
+          <input
+            type="email"
+            class="form-control"
+            name="email"
+            [(ngModel)]="loginData.email"
+            #emailField="ngModel"
+            required
+            email
+            [class.is-invalid]="emailField.invalid && (emailField.touched || submitted)"
+            [class.is-valid]="emailField.valid && emailField.touched"
+            placeholder="tu@correo.com">
+          @if (emailField.errors?.['required'] && (emailField.touched || submitted)) {
+            <div class="invalid-feedback">El correo electrónico es obligatorio.</div>
+          }
+          @if (emailField.errors?.['email'] && (emailField.touched || submitted)) {
+            <div class="invalid-feedback">Ingresá un correo electrónico válido.</div>
+          }
+        </div>
+
+        <div class="mb-4">
+          <label class="form-label fw-semibold">Contraseña</label>
+          <input
+            type="password"
+            class="form-control"
+            name="password"
+            [(ngModel)]="loginData.password"
+            #passwordField="ngModel"
+            required
+            minlength="6"
+            [class.is-invalid]="passwordField.invalid && (passwordField.touched || submitted)"
+            [class.is-valid]="passwordField.valid && passwordField.touched"
+            placeholder="••••••••">
+          @if (passwordField.errors?.['required'] && (passwordField.touched || submitted)) {
+            <div class="invalid-feedback">La contraseña es obligatoria.</div>
+          }
+          @if (passwordField.errors?.['minlength'] && (passwordField.touched || submitted)) {
+            <div class="invalid-feedback">La contraseña debe tener al menos 6 caracteres.</div>
+          }
+        </div>
+
+        @if (errorMessage) {
+          <div class="alert alert-danger py-2 mb-3 small">{{ errorMessage }}</div>
+        }
+
+        <button type="submit" class="btn btn-primary w-100 btn-lg fw-bold mb-3">
+          ENTRAR
+        </button>
+
+        <p class="text-center text-muted small mb-0">
+          ¿No tenés una cuenta?
+          <a routerLink="/auth/register" class="fw-semibold text-decoration-none" style="color: #2d6a4f;">
+            Registrate
+          </a>
+        </p>
+      </form>
+    </div>
+  </div>
+</div>

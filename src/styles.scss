@@ -1,1 +1,141 @@
-/* You can add global styles to this file, and also import other style files */
+$primary: #2d6a4f;
+$secondary: #52b788;
+$success: #40916c;
+$dark: #1b4332;
+$light: #d8f3dc;
+$info: #4cc9f0;
+$font-family-base: 'Segoe UI', system-ui, -apple-system, sans-serif;
+$headings-font-weight: 600;
+$border-radius: 0.5rem;
+$border-radius-lg: 0.75rem;
+$navbar-dark-color: rgba(255, 255, 255, 0.85);
+$navbar-dark-hover-color: #ffffff;
+$navbar-dark-active-color: #ffffff;
+$input-focus-border-color: #52b788;
+$input-focus-box-shadow: 0 0 0 0.25rem rgba(45, 106, 79, 0.25);
+
+@import 'bootstrap/scss/bootstrap';
+
+html, body {
+  height: 100%;
+}
+
+body {
+  background-color: #f0f4f1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+app-root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+main {
+  flex: 1;
+}
+
+.card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(45, 106, 79, 0.2) !important;
+}
+
+.card-article {
+  cursor: pointer;
+  border: none;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+
+.card-section {
+  cursor: pointer;
+  border-left: 4px solid $primary !important;
+  border-radius: 0.5rem;
+  background: #fff;
+}
+
+.card-section:hover {
+  border-left-color: $success !important;
+  background: #f6fdf9;
+}
+
+.hero-section {
+  background: linear-gradient(135deg, #1b4332 0%, #2d6a4f 60%, #40916c 100%);
+  padding: 3.5rem 0 2.5rem;
+  color: #fff;
+}
+
+.hero-title {
+  font-size: 2.8rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.badge-section {
+  background-color: rgba(45, 106, 79, 0.12);
+  color: #2d6a4f;
+  font-weight: 500;
+  border-radius: 20px;
+  padding: 0.3rem 0.8rem;
+  font-size: 0.8rem;
+}
+
+.article-detail-image {
+  width: 100%;
+  border-radius: 0.75rem;
+  object-fit: cover;
+  max-height: 320px;
+}
+
+.article-info-card {
+  background: #fff;
+  border-radius: 0.75rem;
+  border: 1px solid #e0ede6;
+  padding: 1.25rem;
+}
+
+.article-info-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: #6c757d;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.article-info-value {
+  font-size: 0.95rem;
+  color: #1b4332;
+}
+
+.form-section {
+  background: #fff;
+  border-radius: 0.75rem;
+  padding: 2rem;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+
+.extra-field-row {
+  background: #f6fdf9;
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  border: 1px solid #d8f3dc;
+}
+
+.status-badge {
+  font-size: 0.75rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 20px;
+  font-weight: 500;
+}
+
+.status-publicada { background: #d8f3dc; color: #1b4332; }
+.status-pendiente_revision { background: #fff3cd; color: #664d03; }
+.status-borrador { background: #e9ecef; color: #495057; }
+.status-rechazada { background: #f8d7da; color: #842029; }

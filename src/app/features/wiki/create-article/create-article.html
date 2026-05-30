@@ -1,1 +1,177 @@
-<p>create-article works!</p>
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <h3 class="fw-bold mb-4" style="color: #1b4332;">Crear Nuevo Artículo</h3>
+
+      <div class="form-section">
+        <form #articleForm="ngForm" (ngSubmit)="onSubmit(articleForm)" novalidate>
+
+          <div class="row g-3 mb-3">
+            <div class="col-md-8">
+              <label class="form-label fw-semibold">Título <span class="text-danger">*</span></label>
+              <input
+                type="text"
+                class="form-control"
+                name="titulo"
+                [(ngModel)]="articleData.titulo"
+                #tituloField="ngModel"
+                required
+                minlength="3"
+                [class.is-invalid]="tituloField.invalid && (tituloField.touched || submitted)"
+                [class.is-valid]="tituloField.valid && tituloField.touched"
+                placeholder="Ej: Zorro Pampeano">
+              @if (tituloField.invalid && (tituloField.touched || submitted)) {
+                <div class="invalid-feedback">El título es obligatorio (mínimo 3 caracteres).</div>
+              }
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label fw-semibold">Sección <span class="text-danger">*</span></label>
+              <select
+                class="form-select"
+                name="id_seccion"
+                [(ngModel)]="articleData.id_seccion"
+                required>
+                @for (section of sections; track section.id_seccion) {
+                  <option [value]="section.id_seccion">{{ section.nombre }}</option>
+                }
+              </select>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold">URL de imagen</label>
+            <input
+              type="url"
+              class="form-control"
+              name="foto_url"
+              [(ngModel)]="articleData.foto_url"
+              placeholder="https://ejemplo.com/imagen.jpg">
+            <div class="form-text">Opcional. Podés pegar la URL de una imagen.</div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Nombre científico <span class="text-danger">*</span></label>
+            <input
+              type="text"
+              class="form-control"
+              name="nombre_cientifico"
+              [(ngModel)]="articleData.nombre_cientifico"
+              #cientificoField="ngModel"
+              required
+              [class.is-invalid]="cientificoField.invalid && (cientificoField.touched || submitted)"
+              [class.is-valid]="cientificoField.valid && cientificoField.touched"
+              placeholder="Ej: Lycalopex gymnocercus">
+            @if (cientificoField.invalid && (cientificoField.touched || submitted)) {
+              <div class="invalid-feedback">El nombre científico es obligatorio.</div>
+            }
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Áreas de hábitat <span class="text-danger">*</span></label>
+            <textarea
+              class="form-control"
+              name="areas_habitat"
+              [(ngModel)]="articleData.areas_habitat"
+              #habitatField="ngModel"
+              required
+              rows="2"
+              [class.is-invalid]="habitatField.invalid && (habitatField.touched || submitted)"
+              [class.is-valid]="habitatField.valid && habitatField.touched"
+              placeholder="Describí dónde vive esta especie..."></textarea>
+            @if (habitatField.invalid && (habitatField.touched || submitted)) {
+              <div class="invalid-feedback">Las áreas de hábitat son obligatorias.</div>
+            }
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Dieta <span class="text-danger">*</span></label>
+            <textarea
+              class="form-control"
+              name="dieta"
+              [(ngModel)]="articleData.dieta"
+              #dietaField="ngModel"
+              required
+              rows="2"
+              [class.is-invalid]="dietaField.invalid && (dietaField.touched || submitted)"
+              [class.is-valid]="dietaField.valid && dietaField.touched"
+              placeholder="Describí qué come esta especie..."></textarea>
+            @if (dietaField.invalid && (dietaField.touched || submitted)) {
+              <div class="invalid-feedback">La dieta es obligatoria.</div>
+            }
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label fw-semibold">Horas activas <span class="text-danger">*</span></label>
+            <input
+              type="text"
+              class="form-control"
+              name="horas_activas"
+              [(ngModel)]="articleData.horas_activas"
+              #horasField="ngModel"
+              required
+              [class.is-invalid]="horasField.invalid && (horasField.touched || submitted)"
+              [class.is-valid]="horasField.valid && horasField.touched"
+              placeholder="Ej: Nocturno, Diurno, Crepuscular...">
+            @if (horasField.invalid && (horasField.touched || submitted)) {
+              <div class="invalid-feedback">Las horas activas son obligatorias.</div>
+            }
+          </div>
+
+          @if (extraFields.length > 0) {
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Campos adicionales</label>
+              <div class="d-flex flex-column gap-2">
+                @for (field of extraFields; track $index; let i = $index) {
+                  <div class="extra-field-row d-flex gap-2 align-items-center">
+                    <input
+                      type="text"
+                      class="form-control form-control-sm"
+                      [name]="'etiqueta_' + i"
+                      [(ngModel)]="field.etiqueta"
+                      placeholder="Etiqueta">
+                    <input
+                      type="text"
+                      class="form-control form-control-sm"
+                      [name]="'valor_' + i"
+                      [(ngModel)]="field.valor"
+                      placeholder="Valor">
+                    <select
+                      class="form-select form-select-sm"
+                      style="max-width: 120px;"
+                      [name]="'tipo_' + i"
+                      [(ngModel)]="field.tipo">
+                      @for (ft of fieldTypes; track ft.value) {
+                        <option [value]="ft.value">{{ ft.label }}</option>
+                      }
+                    </select>
+                    <button
+                      type="button"
+                      class="btn btn-sm btn-outline-danger"
+                      (click)="removeExtraField(i)">✕</button>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+
+          <div class="mb-4">
+            <button type="button" class="btn btn-outline-secondary btn-sm" (click)="addExtraField()">
+              + Agregar Campo Extra
+            </button>
+          </div>
+
+          <div class="d-flex gap-3">
+            <button type="submit" class="btn btn-primary px-4 fw-semibold">
+              Finalizar
+            </button>
+            <button type="button" class="btn btn-outline-secondary px-4" (click)="onCancel()">
+              Cancelar
+            </button>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

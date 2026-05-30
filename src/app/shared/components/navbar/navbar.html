@@ -1,15 +1,30 @@
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-3 mb-4">
-      <div class="container-fluid">
-        <a class="navbar-brand fw-bold text-success" routerLink="/">NatureHub</a>
-        <div class="d-flex gap-2 ms-auto">
-          <a routerLink="/" class="btn btn-outline-light btn-sm">Inicio</a>
-          <a *ngIf="authService.isLoggedIn()" routerLink="/wiki/nuevo" class="btn btn-outline-success btn-sm">Crear Artículo</a>
-          
-          <a *ngIf="!authService.isLoggedIn()" routerLink="/auth/login" class="btn btn-primary btn-sm">Iniciar Sesión</a>
-          <span *ngIf="authService.isLoggedIn()" class="navbar-text text-white mx-2">
-            <strong>[{{ authService.currentUser()?.nombre }}]</strong>
-          </span>
-          <button *ngIf="authService.isLoggedIn()" (click)="authService.logout()" class="btn btn-danger btn-sm">Salir</button>
-        </div>
-      </div>
-    </nav>
+<nav class="navbar navbar-expand navbar-dark" style="background-color: #1b4332;">
+  <div class="container">
+    <a class="navbar-brand fw-bold fs-4" routerLink="/">🌿 NatureHub</a>
+    <div class="navbar-nav me-auto ms-3">
+      <a class="nav-link"
+         routerLink="/"
+         routerLinkActive="active"
+         [routerLinkActiveOptions]="{ exact: true }">
+        Inicio
+      </a>
+      <a class="nav-link"
+         routerLink="/categorias"
+         routerLinkActive="active">
+        Categorías
+      </a>
+    </div>
+    <div class="d-flex align-items-center gap-2">
+      @if (!authService.isLoggedIn()) {
+        <a routerLink="/auth/login" class="btn btn-outline-light btn-sm">Iniciar Sesión</a>
+        <a routerLink="/auth/register" class="btn btn-success btn-sm">Registrarse</a>
+      } @else {
+        <a routerLink="/wiki/nuevo" class="btn btn-outline-light btn-sm">+ Crear Artículo</a>
+        <span class="text-white small fw-semibold">
+          {{ authService.currentUser()?.nombre }} {{ authService.currentUser()?.apellido }}
+        </span>
+        <button (click)="authService.logout()" class="btn btn-outline-danger btn-sm">Salir</button>
+      }
+    </div>
+  </div>
+</nav>

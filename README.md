@@ -1,59 +1,83 @@
-# FrontendNatureHub
+# NatureHub — Frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.7.
+Trabajo de laboratorio RIA 2026 — Universidad Tecnológica del Uruguay (CURE)
 
-## Development server
+## Descripción
 
-To start a local development server, run:
+NatureHub es una wiki colaborativa sobre naturaleza. Los usuarios pueden registrarse, crear artículos sobre especies animales y enviarlos para revisión. Los moderadores aprueban o rechazan los artículos antes de que queden publicados.
 
-```bash
-ng serve
-```
+## Integrantes
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+| Nombre | Cédula |
+|--------|--------|
+| Luca Crespi | 5.473.748-1 |
+| Agustín Machado | 5.705.873-1 |
+| Martin Marrero | 5.550.895-0 |
+| Gastón Pérez | 5.014.089-4 |
 
-## Code scaffolding
+## Tecnologías usadas
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+- **Angular 21** — framework principal (standalone components)
+- **Bootstrap 5** — estilos y layout responsivo
+- **SCSS** — personalización del tema de Bootstrap
+- **TypeScript** — lenguaje base
+- **SweetAlert2** — alertas y confirmaciones
+- **HTML5 Canvas** — gráfico de artículos por sección
+- **LocalStorage** — persistencia de sesión
 
-```bash
-ng generate component component-name
-```
+## Cómo correr el proyecto
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+Necesitás tener instalado Node.js (v18 o superior).
 
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+Primero instalá las dependencias:
 
 ```bash
-ng test
+npm install
 ```
 
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
+Después levantás el servidor de desarrollo:
 
 ```bash
-ng e2e
+npm start
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+Abrís el navegador en `http://localhost:4200`
 
-## Additional Resources
+## Cómo compilar para producción
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+```bash
+npm run build
+```
+
+Los archivos quedan en la carpeta `dist/`.
+
+## Estructura del proyecto
+
+```
+src/
+  app/
+    core/
+      guards/       # auth guard (rutas protegidas)
+      services/     # AuthService, WikiService
+    features/
+      auth/         # login y registro
+      home/         # página principal
+      wiki/         # detalle y creación de artículos
+    shared/
+      components/   # navbar, footer
+      models/       # interfaces TypeScript
+```
+
+## Usuarios de prueba
+
+Mientras no esté conectado el backend, hay usuarios mock para probar:
+
+| Email | Rol | Contraseña |
+|-------|-----|------------|
+| admin@naturehub.com | administrador | cualquiera (6+ chars) |
+| moderador@naturehub.com | moderador | cualquiera (6+ chars) |
+| usuario@naturehub.com | usuario | cualquiera (6+ chars) |
+
+## Backend
+
+El frontend está pensado para conectarse a una API REST en PHP. Los servicios `AuthService` y `WikiService` actualmente usan datos mock, pero están estructurados para reemplazarlos por llamadas HTTP cuando el backend esté listo.
