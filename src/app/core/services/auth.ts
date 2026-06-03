@@ -1,8 +1,13 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, signal, inject } from '@angular/core';
 import { User } from '../../shared/models/wiki.models';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
+  private http = inject(HttpClient);
+  private apiUrl = 'http://localhost/backend-NatureHub/src/index.php';
+  
   currentUser = signal<User | null>(this.loadFromStorage());
 
   private loadFromStorage(): User | null {
@@ -30,18 +35,13 @@ export class AuthService {
     return false;
   }
 
-  register(nombre: string, apellido: string, email: string): User {
-    const newUser: User = {
-      id_usuario: Date.now(),
-      nombre,
-      apellido,
-      email,
-      rol: 'usuario',
-      activo: true
-    };
-    this.currentUser.set(newUser);
-    localStorage.setItem('nh_user', JSON.stringify(newUser));
-    return newUser;
+  register(nombre: string, apellido: string, email: string, password: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/usuarios/altaUsuario`, {
+        nombre,
+        apellido,
+        email,
+        password
+    });
   }
 
   logout(): void {

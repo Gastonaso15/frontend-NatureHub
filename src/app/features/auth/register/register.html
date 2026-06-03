@@ -8,14 +8,8 @@
         <div class="row g-3 mb-3">
           <div class="col-md-6">
             <label class="form-label fw-semibold">Nombre</label>
-            <input
-              type="text"
-              class="form-control"
-              name="nombre"
-              [(ngModel)]="registerData.nombre"
-              #nombreField="ngModel"
-              required
-              minlength="2"
+            <input type="text" class="form-control" name="nombre" [(ngModel)]="registerData.nombre"
+              #nombreField="ngModel" required minlength="2"
               [class.is-invalid]="nombreField.invalid && (nombreField.touched || submitted)"
               [class.is-valid]="nombreField.valid && nombreField.touched"
               placeholder="Tu nombre">
@@ -25,14 +19,8 @@
           </div>
           <div class="col-md-6">
             <label class="form-label fw-semibold">Apellido</label>
-            <input
-              type="text"
-              class="form-control"
-              name="apellido"
-              [(ngModel)]="registerData.apellido"
-              #apellidoField="ngModel"
-              required
-              minlength="2"
+            <input type="text" class="form-control" name="apellido" [(ngModel)]="registerData.apellido"
+              #apellidoField="ngModel" required minlength="2"
               [class.is-invalid]="apellidoField.invalid && (apellidoField.touched || submitted)"
               [class.is-valid]="apellidoField.valid && apellidoField.touched"
               placeholder="Tu apellido">
@@ -44,14 +32,8 @@
 
         <div class="mb-3">
           <label class="form-label fw-semibold">Correo electrónico</label>
-          <input
-            type="email"
-            class="form-control"
-            name="email"
-            [(ngModel)]="registerData.email"
-            #emailField="ngModel"
-            required
-            email
+          <input type="email" class="form-control" name="email" [(ngModel)]="registerData.email"
+            #emailField="ngModel" required email
             [class.is-invalid]="emailField.invalid && (emailField.touched || submitted)"
             [class.is-valid]="emailField.valid && emailField.touched"
             placeholder="tu@correo.com">
@@ -65,14 +47,9 @@
 
         <div class="mb-3">
           <label class="form-label fw-semibold">Contraseña</label>
-          <input
-            type="password"
-            class="form-control"
-            name="password"
-            [(ngModel)]="registerData.password"
-            #passwordField="ngModel"
-            required
-            minlength="6"
+          <input type="password" class="form-control" name="password" [(ngModel)]="registerData.password"
+            #passwordField="ngModel" required minlength="6"
+            (ngModelChange)="checkPasswordMatch()"
             [class.is-invalid]="passwordField.invalid && (passwordField.touched || submitted)"
             [class.is-valid]="passwordField.valid && passwordField.touched"
             placeholder="Mínimo 6 caracteres">
@@ -86,14 +63,11 @@
 
         <div class="mb-4">
           <label class="form-label fw-semibold">Confirmar Contraseña</label>
-          <input
-            type="password"
-            class="form-control"
-            name="confirmPassword"
+          <input type="password" class="form-control" name="confirmPassword"
             [(ngModel)]="registerData.confirmPassword"
-            #confirmField="ngModel"
-            required
-            [class.is-invalid]="(confirmField.invalid && (confirmField.touched || submitted)) || (passwordMismatch && submitted)"
+            #confirmField="ngModel" required
+            (ngModelChange)="checkPasswordMatch()"
+            [class.is-invalid]="(confirmField.invalid && (confirmField.touched || submitted)) || passwordMismatch"
             [class.is-valid]="confirmField.valid && confirmField.touched && !passwordMismatch"
             placeholder="Repetí tu contraseña">
           @if (confirmField.errors?.['required'] && (confirmField.touched || submitted)) {
@@ -103,6 +77,10 @@
             <div class="invalid-feedback d-block">Las contraseñas no coinciden.</div>
           }
         </div>
+
+        @if (errorMessage) {
+          <div class="alert alert-danger py-2 mb-3 small">{{ errorMessage }}</div>
+        }
 
         <button type="submit" class="btn btn-primary w-100 btn-lg fw-bold mb-3">
           REGISTRARSE
