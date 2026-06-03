@@ -19,33 +19,23 @@ export class AuthService {
     return this.currentUser() !== null;
   }
 
-  login(email: string, password: string): boolean {
-    const mockUsers: User[] = [
-      { id_usuario: 1, nombre: 'Gastón', apellido: 'Pérez', email: 'admin@naturehub.com', rol: 'administrador', activo: true },
-      { id_usuario: 2, nombre: 'Luca', apellido: 'Crespi', email: 'moderador@naturehub.com', rol: 'moderador', activo: true },
-      { id_usuario: 3, nombre: 'Martín', apellido: 'Marrero', email: 'usuario@naturehub.com', rol: 'usuario', activo: true },
-    ];
-
-    const found = mockUsers.find(u => u.email === email);
-    if (found && password.length >= 6) {
-      this.currentUser.set(found);
-      localStorage.setItem('nh_user', JSON.stringify(found));
-      return true;
-    }
-    return false;
-  }
-
-  register(nombre: string, apellido: string, email: string, password: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/usuarios/altaUsuario`, {
-        nombre,
-        apellido,
-        email,
-        password
-    });
+  login(email: string, password: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/usuarios/iniciarSesion`, {email, password});
   }
 
   logout(): void {
+    const token = localStorage.getItem('nh_token');
+    if (token) {
+        this.http.post(`${this.apiUrl}/usuarios/cerrarSesion`, { token }).subscribe();
+    }
     this.currentUser.set(null);
     localStorage.removeItem('nh_user');
+    localStorage.removeItem('nh_token');
   }
+
+
+  register(nombre: string, apellido: string, email: string, password: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/usuarios/altaUsuario`, {nombre, apellido, email, password});
+  }
+
 }

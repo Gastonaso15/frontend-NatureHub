@@ -22,11 +22,33 @@ export class LoginComponent {
     this.errorMessage = null;
     if (form.invalid) return;
 
-    const success = this.authService.login(this.loginData.email, this.loginData.password);
-    if (success) {
-      this.router.navigate(['/']);
-    } else {
-      this.errorMessage = 'Correo electrónico o contraseña incorrectos.';
-    }
+    this.authService.login(
+        this.loginData.email, 
+        this.loginData.password
+    ).subscribe({
+        next: (response) => {
+            localStorage.setItem('nh_token', response.token);
+            localStorage.setItem('nh_user', JSON.stringify({
+                id_usuario: response.id,
+                nombre:     response.nombre,
+                apellido:   response.apellido,
+                email:      response.email,
+                rol:        response.rol,
+                activo:     true
+            }));
+            this.authService.currentUser.set({
+                id_usuario: response.id,
+                nombre:     response.nombre,
+                apellido:   response.apellido,
+                email:      response.email,
+                rol:        response.rol,
+                activo:     true
+            });
+            this.router.navigate(['/']);
+        },
+        error: (err) => {
+            this.errorMessage = 'Correo electrónico o contraseña incorrectos.';
+        }
+    });
   }
 }
