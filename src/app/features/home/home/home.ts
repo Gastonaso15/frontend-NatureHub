@@ -17,12 +17,17 @@ export class HomeComponent implements AfterViewInit {
   private wikiService = inject(WikiService);
 
   sections: Section[] = this.wikiService.getSections();
-  featuredArticles: Publication[] = this.wikiService.getFeaturedArticles();
+  featuredArticles: Publication[] = [];
+  loading = true;
   searchQuery = '';
   searchResults: Publication[] | null = null;
 
   ngAfterViewInit(): void {
-    this.drawSectionStats();
+    this.wikiService.getPublications().subscribe(pubs => {
+      this.featuredArticles = pubs.slice(0, 4);
+      this.loading = false;
+      this.drawSectionStats();
+    });
   }
 
   onSearch(): void {

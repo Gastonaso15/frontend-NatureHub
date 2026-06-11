@@ -51,8 +51,8 @@
           <div class="alert alert-danger py-2 mb-3 small">{{ errorMessage }}</div>
         }
 
-        <button type="submit" class="btn btn-primary w-100 btn-lg fw-bold mb-3">
-          ENTRAR
+        <button type="submit" class="btn btn-primary w-100 btn-lg fw-bold mb-3" [disabled]="loading">
+          @if (loading) { <span class="spinner-border spinner-border-sm me-2"></span> } ENTRAR
         </button>
 
         <p class="text-center text-muted small mb-0">

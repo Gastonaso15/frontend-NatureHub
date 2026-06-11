@@ -20,6 +20,7 @@ export class CreateArticleComponent {
 
   sections = this.wikiService.getSections();
   submitted = false;
+  loading = false;
 
   articleData = {
     titulo: '',
@@ -66,20 +67,33 @@ export class CreateArticleComponent {
     if (!result.isConfirmed) return;
 
     const user = this.authService.currentUser();
-    this.wikiService.addPublication({
-      ...this.articleData,
-      id_autor: user?.id_usuario ?? 0,
-      campos_extras: this.extraFields
-    });
+    this.loading = true;
 
-    await Swal.fire({
-      title: '¡Artículo enviado!',
-      text: 'Tu artículo fue enviado y está pendiente de revisión.',
-      icon: 'success',
-      confirmButtonColor: '#2d6a4f'
-    });
-
-    this.router.navigate(['/']);
+    this.wikiService
+      .addPublication({
+        ...this.articleData,
+        id_autor: user?.id_usuario ?? 0,
+        campos_extras: this.extraFields
+      })
+      .subscribe(async success => {
+        this.loading = false;
+        if (success) {
+          await Swal.fire({
+            title: '¡Artículo enviado!',
+            text: 'Tu artículo fue enviado y está pendiente de revisión.',
+            icon: 'success',
+            confirmButtonColor: '#2d6a4f'
+          });
+          this.router.navigate(['/']);
+        } else {
+          await Swal.fire({
+            title: 'Error',
+            text: 'No se pudo enviar el artículo. Verificá que el título no esté repetido.',
+            icon: 'error',
+            confirmButtonColor: '#2d6a4f'
+          });
+        }
+      });
   }
 
   async onCancel(): Promise<void> {

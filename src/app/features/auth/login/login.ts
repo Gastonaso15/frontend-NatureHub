@@ -13,6 +13,7 @@ import { AuthService } from '../../../core/services/auth';
 export class LoginComponent {
   loginData = { email: '', password: '' };
   submitted = false;
+  loading = false;
   errorMessage: string | null = null;
 
   constructor(private authService: AuthService, private router: Router) {}
@@ -22,11 +23,14 @@ export class LoginComponent {
     this.errorMessage = null;
     if (form.invalid) return;
 
-    const success = this.authService.login(this.loginData.email, this.loginData.password);
-    if (success) {
-      this.router.navigate(['/']);
-    } else {
-      this.errorMessage = 'Correo electrónico o contraseña incorrectos.';
-    }
+    this.loading = true;
+    this.authService.login(this.loginData.email, this.loginData.password).subscribe(success => {
+      this.loading = false;
+      if (success) {
+        this.router.navigate(['/']);
+      } else {
+        this.errorMessage = 'Correo electrónico o contraseña incorrectos.';
+      }
+    });
   }
 }

@@ -1,51 +1,70 @@
 import { Injectable, signal } from '@angular/core';
-import { User } from '../../shared/models/wiki.models';
+import { HttpClient } from '@angular/common/http';
+import { Observable, catchError, map, of, tap } from 'rxjs';
+import { User, UserRole } from '../../shared/models/wiki.models';
+import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  currentUser = signal<User | null>(this.loadFromStorage());
+  private api = environment.apiUrl;
+  currentUser = signal<User | null>(this.loadUserFromStorage());
+  private tokenSignal = signal<string | null>(localStorage.getItem('nh_token'));
 
-  private loadFromStorage(): User | null {
+  constructor(private http: HttpClient) {}
+
+  private loadUserFromStorage(): User | null {
     const saved = localStorage.getItem('nh_user');
     return saved ? JSON.parse(saved) : null;
+  }
+
+  get token(): string | null {
+    return this.tokenSignal();
   }
 
   isLoggedIn(): boolean {
     return this.currentUser() !== null;
   }
 
-  login(email: string, password: string): boolean {
-    const mockUsers: User[] = [
-      { id_usuario: 1, nombre: 'Gastón', apellido: 'Pérez', email: 'admin@naturehub.com', rol: 'administrador', activo: true },
-      { id_usuario: 2, nombre: 'Luca', apellido: 'Crespi', email: 'moderador@naturehub.com', rol: 'moderador', activo: true },
-      { id_usuario: 3, nombre: 'Martín', apellido: 'Marrero', email: 'usuario@naturehub.com', rol: 'usuario', activo: true },
-    ];
-
-    const found = mockUsers.find(u => u.email === email);
-    if (found && password.length >= 6) {
-      this.currentUser.set(found);
-      localStorage.setItem('nh_user', JSON.stringify(found));
-      return true;
-    }
-    return false;
+  login(email: string, password: string): Observable<boolean> {
+    return this.http
+      .post<any>(`${this.api}/usuarios/iniciarSesion`, { email, password })
+      .pipe(
+        tap(res => {
+          const user: User = {
+            id_usuario: res.idusuario,
+            nombre: res.nombre,
+            apellido: res.apellido,
+            email: res.email,
+            rol: (res.rol as string).toLowerCase() as UserRole,
+            activo: true
+          };
+          this.currentUser.set(user);
+          this.tokenSignal.set(res.token);
+          localStorage.setItem('nh_user', JSON.stringify(user));
+          localStorage.setItem('nh_token', res.token);
+        }),
+        map(() => true),
+        catchError(() => of(false))
+      );
   }
 
-  register(nombre: string, apellido: string, email: string): User {
-    const newUser: User = {
-      id_usuario: Date.now(),
-      nombre,
-      apellido,
-      email,
-      rol: 'usuario',
-      activo: true
-    };
-    this.currentUser.set(newUser);
-    localStorage.setItem('nh_user', JSON.stringify(newUser));
-    return newUser;
+  register(nombre: string, apellido: string, email: string, password: string): Observable<boolean> {
+    return this.http
+      .post<any>(`${this.api}/usuarios/altaUsuario`, { nombre, apellido, email, password })
+      .pipe(
+        map(() => true),
+        catchError(() => of(false))
+      );
   }
 
   logout(): void {
+    const token = this.tokenSignal();
+    if (token) {
+      this.http.post(`${this.api}/usuarios/cerrarSesion`, { token }).subscribe();
+    }
     this.currentUser.set(null);
+    this.tokenSignal.set(null);
     localStorage.removeItem('nh_user');
+    localStorage.removeItem('nh_token');
   }
 }
