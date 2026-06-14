@@ -1,7 +1,7 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, catchError, map, of, tap } from 'rxjs';
-import { Publication, PublicationStatus, Section } from '../../shared/models/wiki.models';
+import { CustomField, CustomFieldType, Publication, PublicationStatus, Section } from '../../shared/models/wiki.models';
 import { environment } from '../../../environments/environment';
 
 const SECTIONS: Section[] = [
@@ -12,9 +12,10 @@ const SECTIONS: Section[] = [
 
 @Injectable({ providedIn: 'root' })
 export class WikiService {
-  private api = environment.apiUrl;
+  private api = environment.apiUrl.replace(/\/$/, '');
   private http = inject(HttpClient);
   private _publications = signal<Publication[]>([]);
+  lastError = signal<string | null>(null);
 
   getSections(): Section[] {
     return SECTIONS;
@@ -42,32 +43,15 @@ export class WikiService {
     );
   }
 
-  private mapPublication(raw: any): Publication {
-    let areas = raw.areasHabitat;
-    if (Array.isArray(areas)) areas = areas.join(', ');
-    else if (typeof areas !== 'string') areas = String(areas ?? '');
-
-    return {
-      id_publicacion: raw.id,
-      id_seccion: raw.seccion,
-      id_autor: raw.autor,
-      titulo: raw.titulo,
-      nombre_cientifico: raw.nombreCientifico,
-      foto_url: raw.foto,
-      areas_habitat: areas,
-      dieta: raw.dieta,
-      horas_activas: raw.horasActivas,
-      estado: ((raw.estado as string)?.toLowerCase() ?? 'pendiente_revision') as PublicationStatus,
-      fecha_creacion: raw.fechaCreacion ?? '',
-      campos_extras: []
-    };
-  }
-
   getPublications(): Observable<Publication[]> {
+    this.lastError.set(null);
     return this.http.get<any[]>(`${this.api}/publicaciones/listarPublicaciones`).pipe(
       map(res => res.map(p => this.mapPublication(p))),
       tap(pubs => this._publications.set(pubs)),
-      catchError(() => of([]))
+      catchError(error => {
+        this.lastError.set(this.extractError(error, 'No se pudieron cargar las publicaciones.'));
+        return of([]);
+      })
     );
   }
 
@@ -78,15 +62,83 @@ export class WikiService {
       titulo: pub.titulo,
       foto: pub.foto_url,
       nombreCientifico: pub.nombre_cientifico,
-      areasHabitat: pub.areas_habitat,
+      areasHabitat: this.toAreasArray(pub.areas_habitat),
       dieta: pub.dieta,
       horasActivas: pub.horas_activas,
       autor: pub.id_autor,
-      seccion: pub.id_seccion
+      seccion: Number(pub.id_seccion),
+      camposExtra: (pub.campos_extras ?? []).map(field => ({
+        etiqueta: field.etiqueta,
+        valor: field.valor,
+        tipo: field.tipo.toUpperCase()
+      }))
     };
+
+    this.lastError.set(null);
     return this.http.post<any>(`${this.api}/publicaciones/altaPublicacion`, body).pipe(
       map(() => true),
-      catchError(() => of(false))
+      catchError(error => {
+        this.lastError.set(this.extractError(error, 'No se pudo crear la publicación.'));
+        return of(false);
+      })
     );
+  }
+
+  private mapPublication(raw: any): Publication {
+    let areas = raw.areasHabitat;
+    if (Array.isArray(areas)) areas = areas.join(', ');
+    else if (typeof areas !== 'string') areas = String(areas ?? '');
+
+    return {
+      id_publicacion: Number(raw.id),
+      id_seccion: Number(raw.seccion),
+      id_autor: Number(raw.autor),
+      titulo: raw.titulo ?? '',
+      nombre_cientifico: raw.nombreCientifico ?? '',
+      foto_url: raw.foto ?? '',
+      areas_habitat: areas,
+      dieta: raw.dieta ?? '',
+      horas_activas: raw.horasActivas ?? '',
+      estado: this.normalizeStatus(raw.estado),
+      fecha_creacion: raw.fechaCreacion ?? '',
+      campos_extras: this.mapCustomFields(raw.camposExtra)
+    };
+  }
+
+  private toAreasArray(areas: string): string[] {
+    return areas
+      .split(',')
+      .map(area => area.trim())
+      .filter(Boolean);
+  }
+
+  private mapCustomFields(rawFields: any): CustomField[] {
+    if (!Array.isArray(rawFields)) return [];
+    return rawFields.map(field => ({
+      id_campo: field.id,
+      id_publicacion: field.idPublicacion,
+      etiqueta: field.etiqueta ?? '',
+      valor: field.valor ?? '',
+      tipo: this.normalizeFieldType(field.tipo)
+    }));
+  }
+
+  private normalizeStatus(status: unknown): PublicationStatus {
+    return String(status ?? 'PENDIENTE_REVISION').toLowerCase() as PublicationStatus;
+  }
+
+  private normalizeFieldType(type: unknown): CustomFieldType {
+    const value = String(type ?? 'TEXTO').toLowerCase();
+    if (value === 'booleano' || value === 'numerico' || value === 'fecha') {
+      return value;
+    }
+    return 'texto';
+  }
+
+  private extractError(error: unknown, fallback: string): string {
+    if (error instanceof HttpErrorResponse) {
+      return error.error?.error ?? error.message ?? fallback;
+    }
+    return fallback;
   }
 }

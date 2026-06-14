@@ -43,7 +43,7 @@ export class RegisterComponent {
         if (success) {
           this.router.navigate(['/auth/login']);
         } else {
-          this.errorMessage = 'No se pudo registrar el usuario. El correo podría estar en uso.';
+          this.errorMessage = this.authService.lastError() ?? 'No se pudo registrar el usuario. El correo podría estar en uso.';
         }
       });
   }

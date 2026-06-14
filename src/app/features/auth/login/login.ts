@@ -29,7 +29,7 @@ export class LoginComponent {
       if (success) {
         this.router.navigate(['/']);
       } else {
-        this.errorMessage = 'Correo electrónico o contraseña incorrectos.';
+        this.errorMessage = this.authService.lastError() ?? 'Correo electrónico o contraseña incorrectos.';
       }
     });
   }

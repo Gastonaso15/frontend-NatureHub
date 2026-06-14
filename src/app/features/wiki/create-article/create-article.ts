@@ -53,6 +53,18 @@ export class CreateArticleComponent {
     this.submitted = true;
     if (form.invalid) return;
 
+    const user = this.authService.currentUser();
+    if (!user) {
+      await Swal.fire({
+        title: 'Sesión requerida',
+        text: 'Iniciá sesión nuevamente para crear un artículo.',
+        icon: 'warning',
+        confirmButtonColor: '#2d6a4f'
+      });
+      this.router.navigate(['/auth/login']);
+      return;
+    }
+
     const result = await Swal.fire({
       title: '¿Enviar artículo?',
       text: 'El artículo quedará pendiente de revisión por un moderador.',
@@ -66,14 +78,14 @@ export class CreateArticleComponent {
 
     if (!result.isConfirmed) return;
 
-    const user = this.authService.currentUser();
     this.loading = true;
 
     this.wikiService
       .addPublication({
         ...this.articleData,
-        id_autor: user?.id_usuario ?? 0,
-        campos_extras: this.extraFields
+        id_seccion: Number(this.articleData.id_seccion),
+        id_autor: user.id_usuario,
+        campos_extras: this.extraFields.filter(field => field.etiqueta.trim())
       })
       .subscribe(async success => {
         this.loading = false;
@@ -88,7 +100,7 @@ export class CreateArticleComponent {
         } else {
           await Swal.fire({
             title: 'Error',
-            text: 'No se pudo enviar el artículo. Verificá que el título no esté repetido.',
+            text: this.wikiService.lastError() ?? 'No se pudo enviar el artículo.',
             icon: 'error',
             confirmButtonColor: '#2d6a4f'
           });

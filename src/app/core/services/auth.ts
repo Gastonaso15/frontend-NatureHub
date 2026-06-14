@@ -1,13 +1,14 @@
 import { Injectable, signal } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, catchError, map, of, tap } from 'rxjs';
 import { User, UserRole } from '../../shared/models/wiki.models';
 import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private api = environment.apiUrl;
+  private api = environment.apiUrl.replace(/\/$/, '');
   currentUser = signal<User | null>(this.loadUserFromStorage());
+  lastError = signal<string | null>(null);
   private tokenSignal = signal<string | null>(localStorage.getItem('nh_token'));
 
   constructor(private http: HttpClient) {}
@@ -26,17 +27,18 @@ export class AuthService {
   }
 
   login(email: string, password: string): Observable<boolean> {
+    this.lastError.set(null);
     return this.http
       .post<any>(`${this.api}/usuarios/iniciarSesion`, { email, password })
       .pipe(
         tap(res => {
           const user: User = {
-            id_usuario: res.idusuario,
+            id_usuario: Number(res.idusuario ?? res.id),
             nombre: res.nombre,
             apellido: res.apellido,
             email: res.email,
             rol: (res.rol as string).toLowerCase() as UserRole,
-            activo: true
+            activo: Boolean(res.activo ?? true)
           };
           this.currentUser.set(user);
           this.tokenSignal.set(res.token);
@@ -44,16 +46,23 @@ export class AuthService {
           localStorage.setItem('nh_token', res.token);
         }),
         map(() => true),
-        catchError(() => of(false))
+        catchError(error => {
+          this.lastError.set(this.extractError(error, 'No se pudo iniciar sesión.'));
+          return of(false);
+        })
       );
   }
 
   register(nombre: string, apellido: string, email: string, password: string): Observable<boolean> {
+    this.lastError.set(null);
     return this.http
       .post<any>(`${this.api}/usuarios/altaUsuario`, { nombre, apellido, email, password })
       .pipe(
         map(() => true),
-        catchError(() => of(false))
+        catchError(error => {
+          this.lastError.set(this.extractError(error, 'No se pudo registrar el usuario.'));
+          return of(false);
+        })
       );
   }
 
@@ -66,5 +75,12 @@ export class AuthService {
     this.tokenSignal.set(null);
     localStorage.removeItem('nh_user');
     localStorage.removeItem('nh_token');
+  }
+
+  private extractError(error: unknown, fallback: string): string {
+    if (error instanceof HttpErrorResponse) {
+      return error.error?.error ?? error.message ?? fallback;
+    }
+    return fallback;
   }
 }
