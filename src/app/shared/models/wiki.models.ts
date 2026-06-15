@@ -9,6 +9,12 @@ export interface Usuario {
   email: string;
   rol: RolUsuario;
   activo: boolean;
+  sexo: string | null;
+  fechaRegistro: string | null;
+  fechaNacimiento: string | null;
+  pais: string | null;
+  bio: string | null;
+  fotoUrl: string | null;
 }
 
 export interface CampoPersonalizado {

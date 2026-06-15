@@ -25,6 +25,11 @@ export const routes: Routes = [
     loadComponent: () => import('./features/wiki/crear-publicacion/crear-publicacion').then(m => m.CrearPublicacionComponent)
   },
   {
+    path: 'perfil',
+    canActivate: [autenticacionGuard],
+    loadComponent: () => import('./features/perfil/perfil').then(m => m.PerfilComponent)
+  },
+  {
     path: '**',
     redirectTo: ''
   }

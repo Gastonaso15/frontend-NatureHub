@@ -20,9 +20,21 @@
         <a routerLink="/auth/register" class="btn btn-success btn-sm">Registrarse</a>
       } @else {
         <a routerLink="/wiki/nuevo" class="btn btn-outline-light btn-sm">+ Crear Artículo</a>
-        <span class="text-white small fw-semibold">
-          {{ authService.currentUser()?.nombre }} {{ authService.currentUser()?.apellido }}
-        </span>
+        <a routerLink="/perfil" class="d-flex align-items-center gap-2 text-decoration-none navbar-user-link">
+          @if (authService.currentUser()?.fotoUrl) {
+            <img
+              [src]="authService.currentUser()?.fotoUrl"
+              class="navbar-avatar"
+              [alt]="authService.currentUser()?.nombre">
+          } @else {
+            <span class="navbar-avatar-initials">
+              {{ (authService.currentUser()?.nombre?.[0] ?? '') + (authService.currentUser()?.apellido?.[0] ?? '') | uppercase }}
+            </span>
+          }
+          <span class="text-white small fw-semibold">
+            {{ authService.currentUser()?.nombre }} {{ authService.currentUser()?.apellido }}
+          </span>
+        </a>
         <button (click)="authService.logout()" class="btn btn-outline-danger btn-sm">Salir</button>
       }
     </div>

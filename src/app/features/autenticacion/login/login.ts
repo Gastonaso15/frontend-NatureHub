@@ -29,7 +29,7 @@ export class LoginComponent {
         next: (response) => {
             localStorage.setItem('nh_token', response.token);
             localStorage.setItem('nh_user', JSON.stringify({
-                id_usuario: response.id,
+                id_usuario: response.idusuario,
                 nombre:     response.nombre,
                 apellido:   response.apellido,
                 email:      response.email,
@@ -42,7 +42,13 @@ export class LoginComponent {
                 apellido:   response.apellido,
                 email:      response.email,
                 rol:        response.rol,
-                activo:     true
+                activo:     true,
+                sexo:       response.sexo || null,
+                fechaRegistro: response.fechaRegistro || null,
+                fechaNacimiento: response.fechaNacimiento || null,
+                pais:       response.pais || null,
+                bio:        response.bio || null,
+                fotoUrl:    response.fotoUrl || null
             });
             this.router.navigate(['/']);
         },

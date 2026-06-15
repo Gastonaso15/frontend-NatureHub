@@ -1,0 +1,175 @@
+import { Component, inject, OnInit } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
+import { FormsModule, NgForm } from '@angular/forms';
+import { AutenticacionService } from '../../core/services/autenticacion';
+import { Usuario } from '../../shared/models/wiki.models';
+import { HttpClient } from '@angular/common/http';
+
+@Component({
+  selector: 'app-perfil',
+  standalone: true,
+  imports: [FormsModule, RouterLink],
+  templateUrl: './perfil.html',
+  styleUrl: './perfil.scss'
+})
+export class PerfilComponent implements OnInit {
+  private authService = inject(AutenticacionService);
+  private http = inject(HttpClient);
+  private router = inject(Router);
+  private apiUrl = 'http://localhost/backend-NatureHub/src/index.php';
+
+  usuario: Usuario | null = null;
+  modoEdicion = false;
+  enviado = false;
+  mensajeExito: string | null = null;
+  mensajeError: string | null = null;
+
+  datosEdicion: Partial<Usuario> = {};
+  
+  // 💡 Guardamos la edad fija aquí para que no rompa el ciclo del HTML
+  edadUsuario = 0;
+
+  ngOnInit(): void {
+    const u = this.authService.currentUser();
+    if (u) {
+      this.usuario = u;
+      this.calcularEdadActual(); // Calculamos al cargar el componente
+    } else {
+      this.router.navigate(['/auth/login']);
+    }
+  }
+
+  // ── Computed helpers ──────────────────────────────────────────────────────
+
+  obtenerImagenUrl(url: string | null | undefined): string | null {
+    if (!url) return null;
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      return url;
+    }
+    return `http://localhost/backend-NatureHub/${url}`;
+  }
+
+  iniciales(): string {
+    if (!this.usuario) return '';
+    return ((this.usuario.nombre?.[0] ?? '') + (this.usuario.apellido?.[0] ?? '')).toUpperCase();
+  }
+
+  labelRol(): string {
+    const map: Record<string, string> = {
+      usuario: 'Usuario',
+      moderador: 'Moderador',
+      administrador: 'Admin'
+    };
+    return map[this.usuario?.rol ?? 'usuario'] ?? 'Usuario';
+  }
+
+  labelSexo(): string {
+    const map: Record<string, string> = {
+      femenino: 'Femenino',
+      masculino: 'Masculino',
+      otro: 'Otro'
+    };
+    return map[(this.usuario as any)?.sexo ?? ''] ?? '';
+  }
+
+  fechaRegistroFormateada(): string {
+    const f = (this.usuario as any)?.fechaRegistro as string | undefined;
+    if (!f) return '';
+    return new Date(f).toLocaleDateString('es-UY', { month: 'long', year: 'numeric' });
+  }
+
+  // 💡 Modificamos el método para que asigne el valor internamente de forma controlada
+  calcularEdadActual(): void {
+    const fn = (this.usuario as any)?.fechaNacimiento as string | undefined;
+    if (!fn) {
+      this.edadUsuario = 0;
+      return;
+    }
+    const hoy = new Date();
+    const nac = new Date(fn);
+    let age = hoy.getFullYear() - nac.getFullYear();
+    const m = hoy.getMonth() - nac.getMonth();
+    if (m < 0 || (m === 0 && hoy.getDate() < nac.getDate())) age--;
+    this.edadUsuario = age;
+  }
+
+  // Getter para que tu html siga leyendo 'edad' sin romper nada
+  get edad(): number {
+    return this.edadUsuario;
+  }
+
+  // ── Edit mode ─────────────────────────────────────────────────────────────
+
+  toggleEdicion(): void {
+    if (!this.modoEdicion && this.usuario) {
+      this.datosEdicion = { ...this.usuario } as Partial<Usuario>;
+    }
+    this.modoEdicion = !this.modoEdicion;
+    this.mensajeExito = null;
+    this.mensajeError = null;
+    this.enviado = false;
+  }
+
+  guardarCambios(form: NgForm): void {
+    this.enviado = true;
+    this.mensajeExito = null;
+    this.mensajeError = null;
+
+    if (form.invalid) return;
+
+    const id = this.usuario?.id_usuario || 
+               (this.datosEdicion as any)?.id_usuario || 
+               JSON.parse(localStorage.getItem('nh_user') ?? '{}')?.id_usuario;
+
+    if (!id) {
+      this.mensajeError = 'No se pudo identificar al usuario. Por favor, reiniciá sesión.';
+      return;
+    }
+
+    const d = this.datosEdicion as any;
+    const formData = new FormData();
+    formData.append('id', String(id));
+    formData.append('nombre',   d.nombre   ?? '');
+    formData.append('apellido', d.apellido ?? '');
+    formData.append('email',    d.email    ?? '');
+    if (d.sexo)            formData.append('sexo',            d.sexo);
+    if (d.fechaNacimiento) formData.append('fechaNacimiento', d.fechaNacimiento);
+    if (d.pais)            formData.append('pais',            d.pais);
+    if (d.bio)             formData.append('bio',             d.bio);
+    if (d.fotoUrl)         formData.append('fotoUrl',         d.fotoUrl);
+
+    this.http.post(`${this.apiUrl}/usuarios/modificarUsuario`, formData).subscribe({
+      next: () => {
+        const updated: Usuario = { 
+          ...this.usuario!, 
+          ...this.datosEdicion,
+          id_usuario: id 
+        } as Usuario;
+        
+        this.usuario = updated;
+        localStorage.setItem('nh_user', JSON.stringify(updated));
+        this.authService.currentUser.set(updated);
+        
+        // 💡 Recalculamos la edad de manera segura DESPUÉS de que se asentaron los cambios
+        this.calcularEdadActual();
+
+        this.mensajeExito = 'Perfil actualizado correctamente.';
+        this.modoEdicion = false;
+        this.enviado = false;
+      },
+      error: (err: unknown) => {
+        console.error('Error del servidor:', err);
+        const e = err as { error?: { error?: string; message?: string }; message?: string };
+        const msg = e?.error?.error ?? e?.error?.message ?? e?.message;
+        this.mensajeError = typeof msg === 'string' && msg.length
+          ? msg
+          : 'No se pudieron guardar los cambios en el servidor.';
+      }
+    });
+  }
+
+  cerrarSesion(): void {
+    this.authService.logout();
+    this.router.navigate(['/']);
+  }
+}
