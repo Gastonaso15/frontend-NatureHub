@@ -1,0 +1,40 @@
+<aside class="app-sidebar">
+  <nav class="sidebar-nav">
+    <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}" class="sidebar-link">
+      Inicio
+    </a>
+
+    <a routerLink="/perfil" routerLinkActive="active" class="sidebar-link">
+      Mi perfil
+    </a>
+
+    <a routerLink="/wiki/nuevo" routerLinkActive="active" class="sidebar-link">
+      Crear artículo
+    </a>
+
+    @if (esModerador()) {
+      <a routerLink="/moderacion/publicaciones" routerLinkActive="active" class="sidebar-link">
+        Moderar publicaciones
+      </a>
+    }
+
+    @if (esAdministrador()) {
+    <a routerLink="/admin/promover-usuario" routerLinkActive="active" class="sidebar-link">
+        Ascender a Usuario
+    </a>
+
+    <a routerLink="/admin/degradar-moderador" routerLinkActive="active" class="sidebar-link">
+        Degradar a Moderador
+    </a>
+
+    <a routerLink="/admin/promover-moderador" routerLinkActive="active" class="sidebar-link">
+        Ascender a Moderador
+    </a>
+
+    <a routerLink="/admin/degradar-administrador" routerLinkActive="active" class="sidebar-link">
+        Degradar a Administrador
+    </a>
+    }
+
+  </nav>
+</aside>

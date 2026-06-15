@@ -2,7 +2,7 @@ import { Component, inject, ElementRef, ViewChild, AfterViewInit } from '@angula
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { WikiService } from '../../../core/services/wiki';
-import { Publication, Section } from '../../../shared/models/wiki.models';
+import { Publicacion, Seccion } from '../../../shared/models/wiki.models';
 
 @Component({
   selector: 'app-home',
@@ -16,31 +16,26 @@ export class HomeComponent implements AfterViewInit {
 
   private wikiService = inject(WikiService);
 
-  sections: Section[] = this.wikiService.getSections();
-  featuredArticles: Publication[] = [];
-  loading = true;
-  searchQuery = '';
-  searchResults: Publication[] | null = null;
+  secciones: Seccion[] = this.wikiService.getSecciones();
+  articulosDestacados: Publicacion[] = this.wikiService.getArticulosDestacados();
+  consultaBusqueda = '';
+  resultadosBusqueda: Publicacion[] | null = null;
 
   ngAfterViewInit(): void {
-    this.wikiService.getPublications().subscribe(pubs => {
-      this.featuredArticles = pubs.slice(0, 4);
-      this.loading = false;
-      this.drawSectionStats();
-    });
+    this.drawSectionStats();
   }
 
   onSearch(): void {
-    if (this.searchQuery.trim()) {
-      this.searchResults = this.wikiService.searchPublications(this.searchQuery.trim());
+    if (this.consultaBusqueda.trim()) {
+      this.resultadosBusqueda = this.wikiService.buscarPublicaciones(this.consultaBusqueda.trim());
     } else {
-      this.searchResults = null;
+      this.resultadosBusqueda = null;
     }
   }
 
   clearSearch(): void {
-    this.searchQuery = '';
-    this.searchResults = null;
+    this.consultaBusqueda = '';
+    this.resultadosBusqueda = null;
   }
 
   private drawSectionStats(): void {
@@ -49,9 +44,9 @@ export class HomeComponent implements AfterViewInit {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    const data = this.sections.map(s => ({
+    const data = this.secciones.map(s => ({
       name: s.nombre,
-      count: this.wikiService.getPublicationsBySection(s.id_seccion).length
+      count: this.wikiService.getPublicacionesPorSeccion(s.id_seccion).length
     }));
 
     const colors = ['#2d6a4f', '#40916c', '#52b788'];

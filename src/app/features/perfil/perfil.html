@@ -1,0 +1,211 @@
+<div class="perfil-page">
+
+  @if (usuario) {
+  <div class="perfil-header">
+    <div class="container">
+      <div class="perfil-header-inner">
+
+        <div class="avatar-wrap">
+          @if (usuario.fotoUrl) {
+            <img [src]="obtenerImagenUrl(usuario.fotoUrl)" class="avatar-img" [alt]="usuario.nombre" />
+          } @else {
+            <div class="avatar-initials">{{ iniciales() }}</div>
+          }
+        </div>
+
+        <div class="perfil-header-info">
+          <h1 class="perfil-name">{{ usuario.nombre }} {{ usuario.apellido }}</h1>
+          <p class="perfil-email">{{ usuario.email }}</p>
+        </div>
+
+        <div class="perfil-header-actions">
+          <button class="btn-edit" (click)="toggleEdicion()">
+            @if (modoEdicion) { Cancelar } @else { ✏️ Editar perfil }
+          </button>
+          <button class="btn-logout" (click)="cerrarSesion()">Cerrar sesión</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="container perfil-body">
+
+    @if (!modoEdicion) {
+
+      <div class="perfil-grid">
+
+        <section class="perfil-card">
+          <h2 class="section-title">Datos personales</h2>
+          <div class="dato-list">
+            <div class="dato-item">
+              <span class="dato-label">Nombre completo</span>
+              <span class="dato-value">{{ usuario.nombre }} {{ usuario.apellido }}</span>
+            </div>
+            <div class="dato-item">
+              <span class="dato-label">Correo electrónico</span>
+              <span class="dato-value">{{ usuario.email }}</span>
+            </div>
+            <div class="dato-item">
+              <span class="dato-label">País</span>
+              <span class="dato-value">{{ usuario.pais || '—' }}</span>
+            </div>
+            <div class="dato-item">
+              <span class="dato-label">Sexo</span>
+              <span class="dato-value">{{ labelSexo() || '—' }}</span>
+            </div>
+            <div class="dato-item">
+              <span class="dato-label">Fecha de nacimiento</span>
+              <span class="dato-value">
+                {{ usuario.fechaNacimiento ? usuario.fechaNacimiento.split(' ')[0] : '—' }}
+              </span>
+            </div>
+            <div class="dato-item">
+              <span class="dato-label">Rol en NatureHub</span>
+              <span class="dato-value role-pill badge-{{ usuario.rol }}">{{ labelRol() }}</span>
+            </div>
+            <div class="dato-item">
+              <span class="dato-label">Miembro desde</span>
+              <span class="dato-value">{{ usuario.fechaRegistro ? fechaRegistroFormateada() : '—' }}</span>
+            </div>
+            <div class="dato-item">
+              <span class="dato-label">Estado de cuenta</span>
+              <span class="dato-value">
+                <span class="estado-dot" [class.activo]="usuario.activo"></span>
+                {{ usuario.activo ? 'Activa' : 'Inactiva' }}
+              </span>
+            </div>
+          </div>
+        </section>
+
+        <div class="perfil-side-cards">
+          <section class="perfil-card">
+            <h2 class="section-title">Sobre mí</h2>
+            @if (usuario.bio) {
+              <p class="bio-text">{{ usuario.bio }}</p>
+            } @else {
+              <p class="bio-empty">Todavía no agregaste una biografía.</p>
+            }
+          </section>
+        </div>
+
+      </div>
+
+      <div class="perfil-footer-baja">
+        <p>¿Deseas dejar de formar parte de la plataforma? 
+          <button type="button" class="btn-baja-discreto" (click)="eliminarCuenta()">
+            Dar de baja cuenta
+          </button>
+        </p>
+      </div>
+
+    } @else {
+
+      <section class="perfil-card edit-card">
+        <h2 class="section-title">Editar perfil</h2>
+
+        <form #editForm="ngForm" (ngSubmit)="guardarCambios(editForm)" novalidate>
+
+          <div class="form-row-2">
+            <div class="form-group">
+              <label class="form-label">Nombre <span class="req">*</span></label>
+              <input type="text" class="form-input" name="nombre"
+                [(ngModel)]="datosEdicion.nombre"
+                #nombreF="ngModel" required minlength="2"
+                [class.input-error]="nombreF.invalid && (nombreF.touched || enviado)">
+              @if (nombreF.invalid && (nombreF.touched || enviado)) {
+                <span class="form-error">Mínimo 2 caracteres.</span>
+              }
+            </div>
+            <div class="form-group">
+              <label class="form-label">Apellido <span class="req">*</span></label>
+              <input type="text" class="form-input" name="apellido"
+                [(ngModel)]="datosEdicion.apellido"
+                #apellidoF="ngModel" required minlength="2"
+                [class.input-error]="apellidoF.invalid && (apellidoF.touched || enviado)">
+              @if (apellidoF.invalid && (apellidoF.touched || enviado)) {
+                <span class="form-error">Mínimo 2 caracteres.</span>
+              }
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Correo electrónico <span class="req">*</span></label>
+            <input type="email" class="form-input" name="email"
+              [(ngModel)]="datosEdicion.email"
+              #emailF="ngModel" required email
+              [class.input-error]="emailF.invalid && (emailF.touched || enviado)">
+            @if (emailF.invalid && (emailF.touched || enviado)) {
+              <span class="form-error">Ingresá un correo válido.</span>
+            }
+          </div>
+
+          <div class="form-row-2">
+            <div class="form-group">
+              <label class="form-label">País</label>
+              <input type="text" class="form-input" name="pais"
+                [(ngModel)]="datosEdicion.pais" placeholder="Tu país de residencia">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Sexo</label>
+              <select class="form-input form-select" name="sexo" [(ngModel)]="datosEdicion.sexo">
+                <option value="">Seleccioná</option>
+                <option value="femenino">Femenino</option>
+                <option value="masculino">Masculino</option>
+                <option value="otro">Otro</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Fecha de nacimiento</label>
+            <input type="date" class="form-input" name="fechaNacimiento"
+              [(ngModel)]="datosEdicion.fechaNacimiento">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Foto de perfil (URL)</label>
+            <input type="url" class="form-input" name="fotoUrl"
+              [(ngModel)]="datosEdicion.fotoUrl"
+              placeholder="https://ejemplo.com/mi-foto.jpg">
+            @if (datosEdicion.fotoUrl) {
+              <div class="foto-preview-wrap">
+                <img [src]="obtenerImagenUrl(datosEdicion.fotoUrl)" class="foto-preview" alt="Vista previa">
+              </div>
+            }
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Biografía</label>
+            <textarea class="form-input form-textarea" name="bio" rows="4"
+              [(ngModel)]="datosEdicion.bio"
+              placeholder="Contanos algo sobre vos..."></textarea>
+          </div>
+
+          @if (mensajeExito) {
+            <div class="alert-success">{{ mensajeExito }}</div>
+          }
+          @if (mensajeError) {
+            <div class="alert-error">{{ mensajeError }}</div>
+          }
+
+          <div class="form-actions">
+            <button type="submit" class="btn-save">Guardar cambios</button>
+            <button type="button" class="btn-cancel" (click)="toggleEdicion()">Cancelar</button>
+          </div>
+
+        </form>
+      </section>
+
+    }
+
+  </div>
+
+  } @else {
+    <div class="no-session">
+      <p>No hay sesión activa.</p>
+      <a routerLink="/auth/login" class="btn-edit">Iniciar sesión</a>
+    </div>
+  }
+
+</div>

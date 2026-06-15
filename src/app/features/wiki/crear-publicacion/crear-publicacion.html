@@ -4,7 +4,7 @@
       <h3 class="fw-bold mb-4" style="color: #1b4332;">Crear Nuevo Artículo</h3>
 
       <div class="form-section">
-        <form #articleForm="ngForm" (ngSubmit)="onSubmit(articleForm)" novalidate>
+        <form #formularioArticulo="ngForm" (ngSubmit)="onSubmit(formularioArticulo)" novalidate>
 
           <div class="row g-3 mb-3">
             <div class="col-md-8">
@@ -13,14 +13,14 @@
                 type="text"
                 class="form-control"
                 name="titulo"
-                [(ngModel)]="articleData.titulo"
+                [(ngModel)]="datosArticulo.titulo"
                 #tituloField="ngModel"
                 required
                 minlength="3"
-                [class.is-invalid]="tituloField.invalid && (tituloField.touched || submitted)"
+                [class.is-invalid]="tituloField.invalid && (tituloField.touched || enviado)"
                 [class.is-valid]="tituloField.valid && tituloField.touched"
                 placeholder="Ej: Zorro Pampeano">
-              @if (tituloField.invalid && (tituloField.touched || submitted)) {
+              @if (tituloField.invalid && (tituloField.touched || enviado)) {
                 <div class="invalid-feedback">El título es obligatorio (mínimo 3 caracteres).</div>
               }
             </div>
@@ -30,10 +30,10 @@
               <select
                 class="form-select"
                 name="id_seccion"
-                [(ngModel)]="articleData.id_seccion"
+                [(ngModel)]="datosArticulo.id_seccion"
                 required>
-                @for (section of sections; track section.id_seccion) {
-                  <option [value]="section.id_seccion">{{ section.nombre }}</option>
+                @for (seccion of secciones; track seccion.id_seccion) {
+                  <option [value]="seccion.id_seccion">{{ seccion.nombre }}</option>
                 }
               </select>
             </div>
@@ -45,7 +45,7 @@
               type="url"
               class="form-control"
               name="foto_url"
-              [(ngModel)]="articleData.foto_url"
+              [(ngModel)]="datosArticulo.foto_url"
               placeholder="https://ejemplo.com/imagen.jpg">
             <div class="form-text">Opcional. Podés pegar la URL de una imagen.</div>
           </div>
@@ -56,13 +56,13 @@
               type="text"
               class="form-control"
               name="nombre_cientifico"
-              [(ngModel)]="articleData.nombre_cientifico"
+              [(ngModel)]="datosArticulo.nombre_cientifico"
               #cientificoField="ngModel"
               required
-              [class.is-invalid]="cientificoField.invalid && (cientificoField.touched || submitted)"
+              [class.is-invalid]="cientificoField.invalid && (cientificoField.touched || enviado)"
               [class.is-valid]="cientificoField.valid && cientificoField.touched"
               placeholder="Ej: Lycalopex gymnocercus">
-            @if (cientificoField.invalid && (cientificoField.touched || submitted)) {
+            @if (cientificoField.invalid && (cientificoField.touched || enviado)) {
               <div class="invalid-feedback">El nombre científico es obligatorio.</div>
             }
           </div>
@@ -72,14 +72,14 @@
             <textarea
               class="form-control"
               name="areas_habitat"
-              [(ngModel)]="articleData.areas_habitat"
+              [(ngModel)]="datosArticulo.areas_habitat"
               #habitatField="ngModel"
               required
               rows="2"
-              [class.is-invalid]="habitatField.invalid && (habitatField.touched || submitted)"
+              [class.is-invalid]="habitatField.invalid && (habitatField.touched || enviado)"
               [class.is-valid]="habitatField.valid && habitatField.touched"
               placeholder="Describí dónde vive esta especie..."></textarea>
-            @if (habitatField.invalid && (habitatField.touched || submitted)) {
+            @if (habitatField.invalid && (habitatField.touched || enviado)) {
               <div class="invalid-feedback">Las áreas de hábitat son obligatorias.</div>
             }
           </div>
@@ -89,14 +89,14 @@
             <textarea
               class="form-control"
               name="dieta"
-              [(ngModel)]="articleData.dieta"
+              [(ngModel)]="datosArticulo.dieta"
               #dietaField="ngModel"
               required
               rows="2"
-              [class.is-invalid]="dietaField.invalid && (dietaField.touched || submitted)"
+              [class.is-invalid]="dietaField.invalid && (dietaField.touched || enviado)"
               [class.is-valid]="dietaField.valid && dietaField.touched"
               placeholder="Describí qué come esta especie..."></textarea>
-            @if (dietaField.invalid && (dietaField.touched || submitted)) {
+            @if (dietaField.invalid && (dietaField.touched || enviado)) {
               <div class="invalid-feedback">La dieta es obligatoria.</div>
             }
           </div>
@@ -107,22 +107,22 @@
               type="text"
               class="form-control"
               name="horas_activas"
-              [(ngModel)]="articleData.horas_activas"
+              [(ngModel)]="datosArticulo.horas_activas"
               #horasField="ngModel"
               required
-              [class.is-invalid]="horasField.invalid && (horasField.touched || submitted)"
+              [class.is-invalid]="horasField.invalid && (horasField.touched || enviado)"
               [class.is-valid]="horasField.valid && horasField.touched"
               placeholder="Ej: Nocturno, Diurno, Crepuscular...">
-            @if (horasField.invalid && (horasField.touched || submitted)) {
+            @if (horasField.invalid && (horasField.touched || enviado)) {
               <div class="invalid-feedback">Las horas activas son obligatorias.</div>
             }
           </div>
 
-          @if (extraFields.length > 0) {
+          @if (camposExtras.length > 0) {
             <div class="mb-3">
               <label class="form-label fw-semibold">Campos adicionales</label>
               <div class="d-flex flex-column gap-2">
-                @for (field of extraFields; track $index; let i = $index) {
+                @for (field of camposExtras; track $index; let i = $index) {
                   <div class="extra-field-row d-flex gap-2 align-items-center">
                     <input
                       type="text"
@@ -141,14 +141,14 @@
                       style="max-width: 120px;"
                       [name]="'tipo_' + i"
                       [(ngModel)]="field.tipo">
-                      @for (ft of fieldTypes; track ft.value) {
+                      @for (ft of tiposCampo; track ft.value) {
                         <option [value]="ft.value">{{ ft.label }}</option>
                       }
                     </select>
                     <button
                       type="button"
                       class="btn btn-sm btn-outline-danger"
-                      (click)="removeExtraField(i)">✕</button>
+                      (click)="eliminarCampoExtra(i)">✕</button>
                   </div>
                 }
               </div>
@@ -156,7 +156,7 @@
           }
 
           <div class="mb-4">
-            <button type="button" class="btn btn-outline-secondary btn-sm" (click)="addExtraField()">
+            <button type="button" class="btn btn-outline-secondary btn-sm" (click)="agregarCampoExtra()">
               + Agregar Campo Extra
             </button>
           </div>

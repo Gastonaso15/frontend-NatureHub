@@ -1,144 +1,163 @@
-import { Injectable, inject, signal } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Observable, catchError, map, of, tap } from 'rxjs';
-import { CustomField, CustomFieldType, Publication, PublicationStatus, Section } from '../../shared/models/wiki.models';
-import { environment } from '../../../environments/environment';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { firstValueFrom } from 'rxjs';
+import { tap, catchError } from 'rxjs/operators';
+import { Publicacion, Seccion } from '../../shared/models/wiki.models';
 
-const SECTIONS: Section[] = [
+const SECCIONES: Seccion[] = [
   { id_seccion: 1, nombre: 'Mamíferos', descripcion: 'Vertebrados de sangre caliente con pelo o pelaje y lactancia de sus crías' },
   { id_seccion: 2, nombre: 'Aves', descripcion: 'Vertebrados con plumas, bípedos, generalmente alados y de sangre caliente' },
   { id_seccion: 3, nombre: 'Reptiles', descripcion: 'Vertebrados ectotérmicos con escamas o placas óseas en la piel' },
 ];
 
+const PUBLICACIONES: Publicacion[] = [
+  {
+    id_publicacion: 1,
+    id_seccion: 1,
+    id_autor: 1,
+    titulo: 'Zorro Pampeano',
+    nombre_cientifico: 'Lycalopex gymnocercus',
+    foto_url: 'https://picsum.photos/seed/fox-pampa/600/400',
+    areas_habitat: 'Pampas, pastizales y zonas agrícolas del sur de Sudamérica, especialmente en Uruguay y Argentina.',
+    dieta: 'Omnívoro. Se alimenta de roedores, conejos, insectos, frutas silvestres y ocasionalmente carroña.',
+    horas_activas: 'Crepuscular y nocturno. En zonas alejadas del ser humano puede ser activo de día.',
+    estado: 'publicada',
+    fecha_creacion: '2026-01-15',
+    campos_extras: []
+  },
+  {
+    id_publicacion: 2,
+    id_seccion: 2,
+    id_autor: 1,
+    titulo: 'Águila Coronada',
+    nombre_cientifico: 'Buteogallus coronatus',
+    foto_url: 'https://picsum.photos/seed/eagle-crown/600/400',
+    areas_habitat: 'Pastizales abiertos, sabanas y áreas agrícolas de Brasil, Bolivia, Argentina y Uruguay.',
+    dieta: 'Carnívoro. Caza armadillos, vizcachas, zorros y reptiles de gran porte.',
+    horas_activas: 'Diurno. Más activo durante las horas de la mañana y al atardecer.',
+    estado: 'publicada',
+    fecha_creacion: '2026-01-20',
+    campos_extras: [
+      { etiqueta: 'Estado de conservación', valor: 'En peligro', tipo: 'texto' }
+    ]
+  },
+  {
+    id_publicacion: 3,
+    id_seccion: 3,
+    id_autor: 2,
+    titulo: 'Lagarto Overo',
+    nombre_cientifico: 'Salvator merianae',
+    foto_url: 'https://picsum.photos/seed/lizard-tegu/600/400',
+    areas_habitat: 'Bosques, pastizales, márgenes de ríos y zonas urbanas de gran parte de Sudamérica.',
+    dieta: 'Omnívoro. Consume frutos, huevos, pequeños vertebrados, invertebrados y carroña.',
+    horas_activas: 'Diurno. Termorregula tomando sol en las mañanas antes de iniciar su actividad.',
+    estado: 'publicada',
+    fecha_creacion: '2026-02-01',
+    campos_extras: [
+      { etiqueta: 'Longitud máxima', valor: '1.5 metros', tipo: 'texto' },
+      { etiqueta: 'Especie invasora en Florida', valor: 'Sí', tipo: 'texto' }
+    ]
+  },
+  {
+    id_publicacion: 4,
+    id_seccion: 1,
+    id_autor: 1,
+    titulo: 'Carpincho',
+    nombre_cientifico: 'Hydrochoerus hydrochaeris',
+    foto_url: 'https://picsum.photos/seed/capybara-river/600/400',
+    areas_habitat: 'Orillas de ríos, lagunas y bañados de Sudamérica tropical y subtropical.',
+    dieta: 'Herbívoro. Se alimenta principalmente de gramíneas acuáticas, hierbas y cortezas.',
+    horas_activas: 'Crepuscular y nocturno, aunque puede verse activo durante el día en zonas tranquilas.',
+    estado: 'publicada',
+    fecha_creacion: '2026-02-10',
+    campos_extras: [
+      { etiqueta: 'Peso promedio adulto', valor: '50 kg', tipo: 'texto' },
+      { etiqueta: 'Roedor más grande del mundo', valor: 'Sí', tipo: 'texto' }
+    ]
+  },
+  {
+    id_publicacion: 5,
+    id_seccion: 2,
+    id_autor: 2,
+    titulo: 'Ñandú',
+    nombre_cientifico: 'Rhea americana',
+    foto_url: 'https://picsum.photos/seed/nandu-rhea/600/400',
+    areas_habitat: 'Pastizales abiertos y llanuras de Brasil, Bolivia, Argentina, Paraguay y Uruguay.',
+    dieta: 'Omnívoro. Come plantas, semillas, frutas, insectos y pequeños animales.',
+    horas_activas: 'Diurno. Activo desde el amanecer hasta el atardecer.',
+    estado: 'publicada',
+    fecha_creacion: '2026-02-18',
+    campos_extras: [
+      { etiqueta: 'Ave más grande de América del Sur', valor: 'Sí', tipo: 'texto' }
+    ]
+  },
+];
+
 @Injectable({ providedIn: 'root' })
 export class WikiService {
-  private api = environment.apiUrl.replace(/\/$/, '');
+  private publicaciones: Publicacion[] = [...PUBLICACIONES];
   private http = inject(HttpClient);
-  private _publications = signal<Publication[]>([]);
-  lastError = signal<string | null>(null);
+  private apiUrl = 'http://localhost/backend-NatureHub/src/index.php/publicaciones';
 
-  getSections(): Section[] {
-    return SECTIONS;
+  getSecciones(): Seccion[] {
+    return SECCIONES;
   }
 
-  getSectionById(id: number): Section | undefined {
-    return SECTIONS.find(s => s.id_seccion === id);
+  getArticulosDestacados(): Publicacion[] {
+    return this.publicaciones.filter(p => p.estado === 'publicada').slice(0, 4);
   }
 
-  getPublicationById(id: number): Publication | undefined {
-    return this._publications().find(p => p.id_publicacion === id);
+  getPublicados(): Publicacion[] {
+    return this.publicaciones.filter(p => p.estado === 'publicada');
   }
 
-  getPublicationsBySection(sectionId: number): Publication[] {
-    return this._publications().filter(p => p.id_seccion === sectionId);
+  getPublicacionPorId(id: number): Publicacion | undefined {
+    return this.publicaciones.find(p => p.id_publicacion === id);
   }
 
-  searchPublications(query: string): Publication[] {
-    const q = query.toLowerCase();
-    return this._publications().filter(
-      p =>
+  getPublicacionesPorSeccion(idSeccion: number): Publicacion[] {
+    return this.publicaciones.filter(p => p.id_seccion === idSeccion && p.estado === 'publicada');
+  }
+
+  buscarPublicaciones(consulta: string): Publicacion[] {
+    const q = consulta.toLowerCase();
+    return this.publicaciones.filter(p =>
+      p.estado === 'publicada' && (
         p.titulo.toLowerCase().includes(q) ||
         p.nombre_cientifico.toLowerCase().includes(q) ||
         p.areas_habitat.toLowerCase().includes(q)
+      )
     );
   }
 
-  getPublications(): Observable<Publication[]> {
-    this.lastError.set(null);
-    return this.http.get<any[]>(`${this.api}/publicaciones/listarPublicaciones`).pipe(
-      map(res => res.map(p => this.mapPublication(p))),
-      tap(pubs => this._publications.set(pubs)),
-      catchError(error => {
-        this.lastError.set(this.extractError(error, 'No se pudieron cargar las publicaciones.'));
-        return of([]);
-      })
-    );
-  }
-
-  addPublication(
-    pub: Omit<Publication, 'id_publicacion' | 'fecha_creacion' | 'estado'>
-  ): Observable<boolean> {
-    const body = {
+  agregarPublicacion(pub: Omit<Publicacion, 'id_publicacion' | 'fecha_creacion' | 'estado'>): Promise<any> {
+    const payload = {
       titulo: pub.titulo,
       foto: pub.foto_url,
       nombreCientifico: pub.nombre_cientifico,
-      areasHabitat: this.toAreasArray(pub.areas_habitat),
+      areasHabitat: [pub.areas_habitat], 
       dieta: pub.dieta,
       horasActivas: pub.horas_activas,
       autor: pub.id_autor,
-      seccion: Number(pub.id_seccion),
-      camposExtra: (pub.campos_extras ?? []).map(field => ({
-        etiqueta: field.etiqueta,
-        valor: field.valor,
-        tipo: field.tipo.toUpperCase()
-      }))
+      camposExtra: pub.campos_extras ?? [],
+      seccion: pub.id_seccion,
+      moderaciones: [],
+      reportes: []
     };
 
-    this.lastError.set(null);
-    return this.http.post<any>(`${this.api}/publicaciones/altaPublicacion`, body).pipe(
-      map(() => true),
-      catchError(error => {
-        this.lastError.set(this.extractError(error, 'No se pudo crear la publicación.'));
-        return of(false);
+    console.log('Enviando payload:', payload);
+    return firstValueFrom(this.http.post(`${this.apiUrl}/altaPublicacion`, payload).pipe(
+      tap((response: any) => {
+        console.log('Respuesta exitosa:', response);
+      }),
+      catchError((error) => {
+        console.error('Error en la solicitud:', error);
+        throw error;
       })
-    );
+    ));
   }
 
-  private mapPublication(raw: any): Publication {
-    let areas = raw.areasHabitat;
-    if (Array.isArray(areas)) areas = areas.join(', ');
-    else if (typeof areas !== 'string') areas = String(areas ?? '');
-
-    return {
-      id_publicacion: Number(raw.id),
-      id_seccion: Number(raw.seccion),
-      id_autor: Number(raw.autor),
-      titulo: raw.titulo ?? '',
-      nombre_cientifico: raw.nombreCientifico ?? '',
-      foto_url: raw.foto ?? '',
-      areas_habitat: areas,
-      dieta: raw.dieta ?? '',
-      horas_activas: raw.horasActivas ?? '',
-      estado: this.normalizeStatus(raw.estado),
-      fecha_creacion: raw.fechaCreacion ?? '',
-      campos_extras: this.mapCustomFields(raw.camposExtra)
-    };
-  }
-
-  private toAreasArray(areas: string): string[] {
-    return areas
-      .split(',')
-      .map(area => area.trim())
-      .filter(Boolean);
-  }
-
-  private mapCustomFields(rawFields: any): CustomField[] {
-    if (!Array.isArray(rawFields)) return [];
-    return rawFields.map(field => ({
-      id_campo: field.id,
-      id_publicacion: field.idPublicacion,
-      etiqueta: field.etiqueta ?? '',
-      valor: field.valor ?? '',
-      tipo: this.normalizeFieldType(field.tipo)
-    }));
-  }
-
-  private normalizeStatus(status: unknown): PublicationStatus {
-    return String(status ?? 'PENDIENTE_REVISION').toLowerCase() as PublicationStatus;
-  }
-
-  private normalizeFieldType(type: unknown): CustomFieldType {
-    const value = String(type ?? 'TEXTO').toLowerCase();
-    if (value === 'booleano' || value === 'numerico' || value === 'fecha') {
-      return value;
-    }
-    return 'texto';
-  }
-
-  private extractError(error: unknown, fallback: string): string {
-    if (error instanceof HttpErrorResponse) {
-      return error.error?.error ?? error.message ?? fallback;
-    }
-    return fallback;
+  getSeccionPorId(id: number): Seccion | undefined {
+    return SECCIONES.find(s => s.id_seccion === id);
   }
 }

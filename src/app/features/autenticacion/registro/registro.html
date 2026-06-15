@@ -1,0 +1,159 @@
+<br>
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+  <div class="col-md-6 col-lg-5">
+    <div class="form-section">
+      <h3 class="fw-bold text-center mb-1" style="color: #1b4332;">Crear Cuenta</h3>
+      <p class="text-center text-muted small mb-4">Sumate a la comunidad NatureHub</p>
+
+      <form #registerForm="ngForm" (ngSubmit)="onRegister(registerForm)" novalidate>
+        <div class="row g-3 mb-3">
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Nombre</label>
+            <input type="text" class="form-control" name="nombre" [(ngModel)]="registerData.nombre"
+              #nombreField="ngModel" required minlength="2"
+              [class.is-invalid]="nombreField.invalid && (nombreField.touched || submitted)"
+              [class.is-valid]="nombreField.valid && nombreField.touched"
+              placeholder="Tu nombre">
+            @if (nombreField.invalid && (nombreField.touched || submitted)) {
+              <div class="invalid-feedback">Ingresá tu nombre (mínimo 2 caracteres).</div>
+            }
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Apellido</label>
+            <input type="text" class="form-control" name="apellido" [(ngModel)]="registerData.apellido"
+              #apellidoField="ngModel" required minlength="2"
+              [class.is-invalid]="apellidoField.invalid && (apellidoField.touched || submitted)"
+              [class.is-valid]="apellidoField.valid && apellidoField.touched"
+              placeholder="Tu apellido">
+            @if (apellidoField.invalid && (apellidoField.touched || submitted)) {
+              <div class="invalid-feedback">Ingresá tu apellido (mínimo 2 caracteres).</div>
+            }
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Correo electrónico</label>
+          <input type="email" class="form-control" name="email" [(ngModel)]="registerData.email"
+            #emailField="ngModel" required email
+            [class.is-invalid]="emailField.invalid && (emailField.touched || submitted)"
+            [class.is-valid]="emailField.valid && emailField.touched"
+            placeholder="tu@correo.com">
+          @if (emailField.errors?.['required'] && (emailField.touched || submitted)) {
+            <div class="invalid-feedback">El correo electrónico es obligatorio.</div>
+          }
+          @if (emailField.errors?.['email'] && (emailField.touched || submitted)) {
+            <div class="invalid-feedback">Ingresá un correo electrónico válido.</div>
+          }
+        </div>
+
+        <div class="mb-4 p-3 rounded-3" style="background: #f8f9fa; border: 1px solid #dee2e6;">
+          <h6 class="fw-semibold mb-3">Datos opcionales</h6>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Sexo</label>
+              <select class="form-select" name="sexo" [(ngModel)]="registerData.sexo">
+                <option value="">Seleccioná una opción</option>
+                <option value="femenino">Femenino</option>
+                <option value="masculino">Masculino</option>
+                <option value="otro">Otro</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Fecha de nacimiento</label>
+              <input type="date" class="form-control" name="fechaNacimiento" [(ngModel)]="registerData.fechaNacimiento">
+            </div>
+          </div>
+
+          <div class="mb-3 mt-3">
+            <label class="form-label fw-semibold">País</label>
+            <input type="text" class="form-control" name="pais" [(ngModel)]="registerData.pais"
+              placeholder="Tu país de residencia">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Biografía</label>
+            <textarea class="form-control" rows="3" name="bio" [(ngModel)]="registerData.bio"
+              placeholder="Contanos algo sobre vos (opcional)"></textarea>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Foto de perfil</label>
+            <div class="upload-dropzone" [class.upload-active]="dragActive"
+              (dragover)="onDragOver($event)"
+              (dragleave)="onDragLeave()"
+              (drop)="onFileDrop($event)">
+              <p class="mb-2">Arrastrá una imagen o</p>
+              <button type="button" class="btn btn-link p-0" (click)="fileInput.click()">examinar archivos</button>
+              <input type="file" #fileInput accept="image/*" (change)="onFileSelected($event)" hidden>
+            </div>
+            @if (photoPreview) {
+              <div class="mt-3 preview-container">
+                <img [src]="photoPreview" class="img-fluid rounded" alt="Vista previa de la imagen">
+                <button type="button" class="btn btn-sm btn-outline-danger mt-2" (click)="removePhoto()">
+                  Quitar imagen
+                </button>
+              </div>
+            }
+            <div class="form-text">También podés pegar una URL de imagen si no querés subir archivo.</div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold">URL de foto</label>
+            <input type="url" class="form-control" name="fotoUrl" [(ngModel)]="registerData.fotoUrl"
+              (ngModelChange)="onFotoUrlChange()"
+              placeholder="https://example.com/mi-foto.jpg">
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Contraseña</label>
+          <input type="password" class="form-control" name="password" [(ngModel)]="registerData.password"
+            #passwordField="ngModel" required minlength="6"
+            (ngModelChange)="checkPasswordMatch()"
+            [class.is-invalid]="passwordField.invalid && (passwordField.touched || submitted)"
+            [class.is-valid]="passwordField.valid && passwordField.touched"
+            placeholder="Mínimo 6 caracteres">
+          @if (passwordField.errors?.['required'] && (passwordField.touched || submitted)) {
+            <div class="invalid-feedback">La contraseña es obligatoria.</div>
+          }
+          @if (passwordField.errors?.['minlength'] && (passwordField.touched || submitted)) {
+            <div class="invalid-feedback">La contraseña debe tener al menos 6 caracteres.</div>
+          }
+        </div>
+
+        <div class="mb-4">
+          <label class="form-label fw-semibold">Confirmar Contraseña</label>
+          <input type="password" class="form-control" name="confirmPassword"
+            [(ngModel)]="registerData.confirmPassword"
+            #confirmField="ngModel" required
+            (ngModelChange)="checkPasswordMatch()"
+            [class.is-invalid]="(confirmField.invalid && (confirmField.touched || submitted)) || passwordMismatch"
+            [class.is-valid]="confirmField.valid && confirmField.touched && !passwordMismatch"
+            placeholder="Repetí tu contraseña">
+          @if (confirmField.errors?.['required'] && (confirmField.touched || submitted)) {
+            <div class="invalid-feedback">Confirmá tu contraseña.</div>
+          }
+          @if (passwordMismatch) {
+            <div class="invalid-feedback d-block">Las contraseñas no coinciden.</div>
+          }
+        </div>
+
+        @if (errorMessage) {
+          <div class="alert alert-danger py-2 mb-3 small">{{ errorMessage }}</div>
+        }
+
+        <button type="submit" class="btn btn-primary w-100 btn-lg fw-bold mb-3">
+          REGISTRARSE
+        </button>
+
+        <p class="text-center text-muted small mb-0">
+          ¿Ya tenés una cuenta?
+          <a routerLink="/auth/login" class="fw-semibold text-decoration-none" style="color: #2d6a4f;">
+            Iniciá sesión
+          </a>
+        </p>
+      </form>
+    </div>
+  </div>
+</div>
+<br>

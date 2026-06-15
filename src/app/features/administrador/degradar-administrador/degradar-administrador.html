@@ -1,0 +1,36 @@
+<div class="container py-4">
+  <h3 class="fw-bold mb-4" style="color: #1b4332;">Degradar Administrador a Moderador</h3>
+
+  @if (cargando()) {
+    <p class="text-muted">Cargando administradores...</p>
+  } @else if (usuarios().length === 0) {
+    <div class="alert alert-info">No hay administradores disponibles para degradar.</div>
+  } @else {
+    <div class="table-responsive">
+      <table class="table table-hover align-middle">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Email</th>
+            <th>País</th>
+            <th class="text-end">Acción</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (usuario of usuarios(); track usuario.id_usuario) {
+            <tr>
+              <td>{{ usuario.nombre }} {{ usuario.apellido }}</td>
+              <td>{{ usuario.email }}</td>
+              <td>{{ usuario.pais || '—' }}</td>
+              <td class="text-end">
+                <button class="btn btn-sm btn-success" (click)="degradar(usuario)">
+                  Degradar a moderador
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

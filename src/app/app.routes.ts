@@ -1,6 +1,8 @@
 import { Routes } from '@angular/router';
 import { HomeComponent } from './features/home/home/home';
-import { authGuard } from './core/guards/auth-guard';
+import { autenticacionGuard } from './core/guards/autenticacion-guard';
+import { administradorGuard } from './core/guards/administrador-guard';
+import { moderadorGuard } from './core/guards/moderador-guard';
 
 export const routes: Routes = [
   {
@@ -9,21 +11,45 @@ export const routes: Routes = [
   },
   {
     path: 'auth/login',
-    loadComponent: () => import('./features/auth/login/login').then(m => m.LoginComponent)
+    loadComponent: () => import('./features/autenticacion/login/login').then(m => m.LoginComponent)
   },
   {
     path: 'auth/register',
-    loadComponent: () => import('./features/auth/register/register').then(m => m.RegisterComponent)
+    loadComponent: () => import('./features/autenticacion/registro/registro').then(m => m.RegistroComponent)
   },
   {
     path: 'wiki/article/:id',
-    loadComponent: () => import('./features/wiki/article-detail/article-detail').then(m => m.ArticleDetailComponent)
+    loadComponent: () => import('./features/wiki/detalle-publicacion/detalle-publicacion').then(m => m.DetallePublicacionComponent)
   },
   {
     path: 'wiki/nuevo',
-    canActivate: [authGuard],
-    loadComponent: () => import('./features/wiki/create-article/create-article').then(m => m.CreateArticleComponent)
+    canActivate: [autenticacionGuard],
+    loadComponent: () => import('./features/wiki/crear-publicacion/crear-publicacion').then(m => m.CrearPublicacionComponent)
   },
+  {
+    path: 'perfil',
+    canActivate: [autenticacionGuard],
+    loadComponent: () => import('./features/perfil/perfil').then(m => m.PerfilComponent)
+  },
+  {
+    path: 'admin/promover-usuario',
+    canActivate: [autenticacionGuard, administradorGuard],
+    loadComponent: () => import('./features/administrador/promover-usuario/promover-usuario').then(m => m.PromoverUsuarioComponent)
+  },
+  {
+    path: 'admin/degradar-moderador',
+    canActivate: [autenticacionGuard, administradorGuard],
+    loadComponent: () => import('./features/administrador/degradar-moderador/degradar-moderador').then(m => m.DegradarModeradorComponent)
+  },
+  {
+    path: 'admin/promover-moderador',
+    canActivate: [autenticacionGuard, administradorGuard],
+    loadComponent: () => import('./features/administrador/promover-moderador/promover-moderador').then(m => m.PromoverModeradorComponent)
+  },
+  {
+    path: 'admin/degradar-administrador',
+    canActivate: [autenticacionGuard, administradorGuard],
+    loadComponent: () => import('./features/administrador/degradar-administrador/degradar-administrador').then(m => m.DegradarAdministradorComponent)  },
   {
     path: '**',
     redirectTo: ''

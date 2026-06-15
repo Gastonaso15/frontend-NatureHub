@@ -1,25 +1,31 @@
-export type UserRole = 'usuario' | 'moderador' | 'administrador';
-export type PublicationStatus = 'borrador' | 'pendiente_revision' | 'aprobada' | 'rechazada' | 'publicada';
-export type CustomFieldType = 'texto' | 'booleano' | 'numerico' | 'fecha';
+export type RolUsuario = 'USUARIO' | 'MODERADOR' | 'ADMINISTRADOR';
+export type EstadoPublicacion = 'borrador' | 'pendiente_revision' | 'aprobada' | 'rechazada' | 'publicada';
+export type TipoCampoPersonalizado = 'texto' | 'booleano' | 'numerico' | 'fecha';
 
-export interface User {
+export interface Usuario {
   id_usuario: number;
   nombre: string;
   apellido: string;
   email: string;
-  rol: UserRole;
+  rol: RolUsuario;
   activo: boolean;
+  sexo: string | null;
+  fechaRegistro: string | null;
+  fechaNacimiento: string | null;
+  pais: string | null;
+  bio: string | null;
+  fotoUrl: string | null;
 }
 
-export interface CustomField {
+export interface CampoPersonalizado {
   id_campo?: number;
   id_publicacion?: number;
   etiqueta: string;
   valor: string;
-  tipo: CustomFieldType;
+  tipo: TipoCampoPersonalizado;
 }
 
-export interface Publication {
+export interface Publicacion {
   id_publicacion: number;
   id_seccion: number;
   id_autor: number;
@@ -29,12 +35,12 @@ export interface Publication {
   areas_habitat: string;
   dieta: string;
   horas_activas: string;
-  estado: PublicationStatus;
+  estado: EstadoPublicacion;
   fecha_creacion: string;
-  campos_extras?: CustomField[];
+  campos_extras?: CampoPersonalizado[];
 }
 
-export interface Section {
+export interface Seccion {
   id_seccion: number;
   nombre: string;
   descripcion: string;
