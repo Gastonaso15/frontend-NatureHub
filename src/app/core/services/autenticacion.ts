@@ -34,18 +34,7 @@ export class AutenticacionService {
   }
 
 
-  register(
-    nombre: string,
-    apellido: string,
-    email: string,
-    password: string,
-    sexo?: string,
-    fechaNacimiento?: string,
-    pais?: string,
-    bio?: string,
-    fotoUrl?: string,
-    fotoFile?: File
-  ): Observable<any> {
+  register(nombre: string, apellido: string, email: string, password: string, sexo?: string, fechaNacimiento?: string, pais?: string, bio?: string, fotoUrl?: string, fotoFile?: File): Observable<any> {
     const formData = new FormData();
     formData.append('nombre', nombre);
     formData.append('apellido', apellido);
@@ -60,5 +49,26 @@ export class AutenticacionService {
 
     return this.http.post(`${this.apiUrl}/usuarios/altaUsuario`, formData);
   }
+
+  promoverUsuario(id: number): Observable<any> {
+    return this.http.post(`${this.apiUrl}/usuarios/promoverUsuario`, { id });
+  }
+
+  degradarModerador(id: number): Observable<any> {
+    return this.http.post(`${this.apiUrl}/usuarios/degradarModerador`, { id });
+  }
+
+  promoverModerador(id: number): Observable<any> {
+    return this.http.post(`${this.apiUrl}/usuarios/promoverModerador`, { id });
+  }
+
+  degradarAdministrador(id: number): Observable<any> {
+    return this.http.post(`${this.apiUrl}/usuarios/degradarAdministrador`, { id });
+  }
+
+  listarUsuarios(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/usuarios/listarUsuarios`);
+  }
+
 
 }

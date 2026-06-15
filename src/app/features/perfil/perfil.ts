@@ -53,11 +53,11 @@ export class PerfilComponent implements OnInit {
 
   labelRol(): string {
     const map: Record<string, string> = {
-      usuario: 'Usuario',
-      moderador: 'Moderador',
-      administrador: 'Admin'
+      USUARIO: 'USUARIO',
+      MODERADOR: 'MODERADOR',
+      ADMINISTRADOR: 'ADMINISTRADOR'
     };
-    return map[this.usuario?.rol ?? 'usuario'] ?? 'Usuario';
+    return map[this.usuario?.rol ?? 'USUARIO'] ?? 'USUARIO';
   }
 
   labelSexo(): string {

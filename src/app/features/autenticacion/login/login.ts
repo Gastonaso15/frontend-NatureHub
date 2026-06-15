@@ -60,9 +60,7 @@ export class LoginComponent {
             const e = err as { error?: { error?: string; message?: string }; message?: string };
             const msg = e?.error?.error ?? e?.error?.message ?? e?.message;
             
-            this.errorMessage = typeof msg === 'string' && msg.length
-              ? msg
-              : 'Correo electrónico o contraseña incorrectos.';
+            this.errorMessage = typeof msg === 'string' && msg.length ? msg : 'Correo electrónico o contraseña incorrectos.';
 
             this.cdr.detectChanges();
         }

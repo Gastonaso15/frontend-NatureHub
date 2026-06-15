@@ -1,6 +1,8 @@
 import { Routes } from '@angular/router';
 import { HomeComponent } from './features/home/home/home';
 import { autenticacionGuard } from './core/guards/autenticacion-guard';
+import { administradorGuard } from './core/guards/administrador-guard';
+import { moderadorGuard } from './core/guards/moderador-guard';
 
 export const routes: Routes = [
   {
@@ -29,6 +31,25 @@ export const routes: Routes = [
     canActivate: [autenticacionGuard],
     loadComponent: () => import('./features/perfil/perfil').then(m => m.PerfilComponent)
   },
+  {
+    path: 'admin/promover-usuario',
+    canActivate: [autenticacionGuard, administradorGuard],
+    loadComponent: () => import('./features/administrador/promover-usuario/promover-usuario').then(m => m.PromoverUsuarioComponent)
+  },
+  {
+    path: 'admin/degradar-moderador',
+    canActivate: [autenticacionGuard, administradorGuard],
+    loadComponent: () => import('./features/administrador/degradar-moderador/degradar-moderador').then(m => m.DegradarModeradorComponent)
+  },
+  {
+    path: 'admin/promover-moderador',
+    canActivate: [autenticacionGuard, administradorGuard],
+    loadComponent: () => import('./features/administrador/promover-moderador/promover-moderador').then(m => m.PromoverModeradorComponent)
+  },
+  {
+    path: 'admin/degradar-administrador',
+    canActivate: [autenticacionGuard, administradorGuard],
+    loadComponent: () => import('./features/administrador/degradar-administrador/degradar-administrador').then(m => m.DegradarAdministradorComponent)  },
   {
     path: '**',
     redirectTo: ''
