@@ -34,8 +34,31 @@ export class AuthService {
   }
 
 
-  register(nombre: string, apellido: string, email: string, password: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/usuarios/altaUsuario`, {nombre, apellido, email, password});
+  register(
+    nombre: string,
+    apellido: string,
+    email: string,
+    password: string,
+    sexo?: string,
+    fechaNacimiento?: string,
+    pais?: string,
+    bio?: string,
+    fotoUrl?: string,
+    fotoFile?: File
+  ): Observable<any> {
+    const formData = new FormData();
+    formData.append('nombre', nombre);
+    formData.append('apellido', apellido);
+    formData.append('email', email);
+    formData.append('password', password);
+    if (sexo) formData.append('sexo', sexo);
+    if (fechaNacimiento) formData.append('fechaNacimiento', fechaNacimiento);
+    if (pais) formData.append('pais', pais);
+    if (bio) formData.append('bio', bio);
+    if (fotoUrl) formData.append('fotoUrl', fotoUrl);
+    if (fotoFile) formData.append('foto', fotoFile, fotoFile.name);
+
+    return this.http.post(`${this.apiUrl}/usuarios/altaUsuario`, formData);
   }
 
 }

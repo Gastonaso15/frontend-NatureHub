@@ -45,6 +45,65 @@
           }
         </div>
 
+        <div class="mb-4 p-3 rounded-3" style="background: #f8f9fa; border: 1px solid #dee2e6;">
+          <h6 class="fw-semibold mb-3">Datos opcionales</h6>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Sexo</label>
+              <select class="form-select" name="sexo" [(ngModel)]="registerData.sexo">
+                <option value="">Seleccioná una opción</option>
+                <option value="femenino">Femenino</option>
+                <option value="masculino">Masculino</option>
+                <option value="otro">Otro</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Fecha de nacimiento</label>
+              <input type="date" class="form-control" name="fechaNacimiento" [(ngModel)]="registerData.fechaNacimiento">
+            </div>
+          </div>
+
+          <div class="mb-3 mt-3">
+            <label class="form-label fw-semibold">País</label>
+            <input type="text" class="form-control" name="pais" [(ngModel)]="registerData.pais"
+              placeholder="Tu país de residencia">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Biografía</label>
+            <textarea class="form-control" rows="3" name="bio" [(ngModel)]="registerData.bio"
+              placeholder="Contanos algo sobre vos (opcional)"></textarea>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Foto de perfil</label>
+            <div class="upload-dropzone" [class.upload-active]="dragActive"
+              (dragover)="onDragOver($event)"
+              (dragleave)="onDragLeave()"
+              (drop)="onFileDrop($event)">
+              <p class="mb-2">Arrastrá una imagen o</p>
+              <button type="button" class="btn btn-link p-0" (click)="fileInput.click()">examinar archivos</button>
+              <input type="file" #fileInput accept="image/*" (change)="onFileSelected($event)" hidden>
+            </div>
+            @if (photoPreview) {
+              <div class="mt-3 preview-container">
+                <img [src]="photoPreview" class="img-fluid rounded" alt="Vista previa de la imagen">
+                <button type="button" class="btn btn-sm btn-outline-danger mt-2" (click)="removePhoto()">
+                  Quitar imagen
+                </button>
+              </div>
+            }
+            <div class="form-text">También podés pegar una URL de imagen si no querés subir archivo.</div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold">URL de foto</label>
+            <input type="url" class="form-control" name="fotoUrl" [(ngModel)]="registerData.fotoUrl"
+              (ngModelChange)="onFotoUrlChange()"
+              placeholder="https://example.com/mi-foto.jpg">
+          </div>
+        </div>
+
         <div class="mb-3">
           <label class="form-label fw-semibold">Contraseña</label>
           <input type="password" class="form-control" name="password" [(ngModel)]="registerData.password"
