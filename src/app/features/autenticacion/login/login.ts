@@ -41,7 +41,7 @@ export class LoginComponent {
                 activo:     true
             }));
             this.authService.currentUser.set({
-                id_usuario: response.id,
+                id_usuario: response.idusuario,
                 nombre:     response.nombre,
                 apellido:   response.apellido,
                 email:      response.email,

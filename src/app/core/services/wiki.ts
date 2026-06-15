@@ -135,11 +135,14 @@ export class WikiService {
       titulo: pub.titulo,
       foto: pub.foto_url,
       nombreCientifico: pub.nombre_cientifico,
-      areasHabitat: pub.areas_habitat,
+      areasHabitat: [pub.areas_habitat], 
       dieta: pub.dieta,
       horasActivas: pub.horas_activas,
       autor: pub.id_autor,
-      seccion: pub.id_seccion
+      camposExtra: pub.campos_extras ?? [],
+      seccion: pub.id_seccion,
+      moderaciones: [],
+      reportes: []
     };
 
     console.log('Enviando payload:', payload);

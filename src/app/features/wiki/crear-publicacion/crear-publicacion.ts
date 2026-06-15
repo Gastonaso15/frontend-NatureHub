@@ -74,10 +74,10 @@ export class CrearPublicacionComponent implements OnInit {
     const user = this.authService.currentUser();
     
     try {
-      // No incluimos campos_extras de momento
       const datosEnvio: Omit<Publicacion, 'id_publicacion' | 'fecha_creacion' | 'estado'> = {
         ...this.datosArticulo,
-        id_autor: user!.id_usuario
+        id_autor: user!.id_usuario,
+        campos_extras: this.camposExtras 
       };
       
       console.log('Datos a enviar:', datosEnvio);
