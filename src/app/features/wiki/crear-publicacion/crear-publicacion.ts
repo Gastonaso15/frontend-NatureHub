@@ -22,7 +22,6 @@ export class CrearPublicacionComponent implements OnInit {
   enviado = false;
 
   ngOnInit(): void {
-    // Redirigir al login si el usuario no está autenticado
     if (!this.authService.isLoggedIn()) {
       this.router.navigate(['/login']);
     }
@@ -73,8 +72,6 @@ export class CrearPublicacionComponent implements OnInit {
     if (!result.isConfirmed) return;
 
     const user = this.authService.currentUser();
-    
-    console.log('User actual:', user);
     
     try {
       // No incluimos campos_extras de momento
