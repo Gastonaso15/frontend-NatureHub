@@ -1,5 +1,4 @@
-// ─── Token system ───────────────────────────────────────────────────────────
-// Green forest palette taken from the existing styles.scss
+
 $dark:     #1b4332;
 $primary:  #2d6a4f;
 $mid:      #40916c;
@@ -13,7 +12,6 @@ $muted:    #6c757d;
 $error:    #dc3545;
 $success:  #40916c;
 
-// ─── Page shell ─────────────────────────────────────────────────────────────
 .perfil-page {
   min-height: 100vh;
   background: $bg;
@@ -26,7 +24,6 @@ $success:  #40916c;
   padding: 0 1.25rem;
 }
 
-// ─── Header strip ────────────────────────────────────────────────────────────
 .perfil-header {
   background: linear-gradient(135deg, $dark 0%, $primary 60%, $mid 100%);
   padding: 2.5rem 0 2rem;
@@ -40,7 +37,6 @@ $success:  #40916c;
   flex-wrap: wrap;
 }
 
-// ─── Avatar ──────────────────────────────────────────────────────────────────
 .avatar-wrap {
   position: relative;
   flex-shrink: 0;
@@ -83,7 +79,6 @@ $success:  #40916c;
   border: 2px solid $dark;
 }
 
-// ─── Role colour map ─────────────────────────────────────────────────────────
 .badge-usuario       { background: $pale-g;   color: $dark;    }
 .badge-moderador     { background: #fff3cd;   color: #664d03;  }
 .badge-administrador { background: #cfe2ff;   color: #084298;  }
@@ -98,7 +93,6 @@ $success:  #40916c;
   letter-spacing: 0.5px;
 }
 
-// ─── Header info ─────────────────────────────────────────────────────────────
 .perfil-header-info {
   flex: 1;
   min-width: 220px;
@@ -143,7 +137,6 @@ $success:  #40916c;
   gap: 0.3rem;
 }
 
-// ─── Header actions ──────────────────────────────────────────────────────────
 .perfil-header-actions {
   display: flex;
   flex-direction: column;
@@ -187,7 +180,6 @@ $success:  #40916c;
   }
 }
 
-// ─── Body grid ───────────────────────────────────────────────────────────────
 .perfil-body {
   padding-top: 2rem;
 }
@@ -202,7 +194,6 @@ $success:  #40916c;
   }
 }
 
-// ─── Cards ───────────────────────────────────────────────────────────────────
 .perfil-card {
   background: $surface;
   border: 1px solid $border;
@@ -226,7 +217,6 @@ $success:  #40916c;
   border-bottom: 1px solid $border;
 }
 
-// ─── Dato list ───────────────────────────────────────────────────────────────
 .dato-list {
   display: flex;
   flex-direction: column;
@@ -259,7 +249,6 @@ $success:  #40916c;
   word-break: break-word;
 }
 
-// estado dot
 .estado-dot {
   display: inline-block;
   width: 8px;
@@ -272,7 +261,6 @@ $success:  #40916c;
   &.activo { background: $success; }
 }
 
-// ─── Bio ─────────────────────────────────────────────────────────────────────
 .bio-text {
   font-size: 0.9rem;
   color: $text;
@@ -287,7 +275,6 @@ $success:  #40916c;
   margin: 0;
 }
 
-// ─── Edit form ───────────────────────────────────────────────────────────────
 .form-row-2 {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -411,7 +398,6 @@ $success:  #40916c;
   border-left: 4px solid $error;
 }
 
-// ─── No session ──────────────────────────────────────────────────────────────
 .no-session {
   display: flex;
   flex-direction: column;

@@ -16,7 +16,6 @@
         <div class="perfil-header-info">
           <h1 class="perfil-name">{{ usuario.nombre }} {{ usuario.apellido }}</h1>
           <p class="perfil-email">{{ usuario.email }}</p>
-          <!-- El contenedor perfil-meta-row quedó vacío al sacar la fecha, por lo que limpiamos el espacio -->
         </div>
 
         <div class="perfil-header-actions">
@@ -59,16 +58,12 @@
               <span class="dato-label">Fecha de nacimiento</span>
               <span class="dato-value">
                 {{ usuario.fechaNacimiento ? usuario.fechaNacimiento.split(' ')[0] : '—' }}
-                @if (usuario.fechaNacimiento) {
-                  <small class="text-muted">({{ edad() }} años)</small>
-                }
               </span>
             </div>
             <div class="dato-item">
               <span class="dato-label">Rol en NatureHub</span>
               <span class="dato-value role-pill badge-{{ usuario.rol }}">{{ labelRol() }}</span>
             </div>
-            <!-- Nueva ubicación para la Fecha de Registro -->
             <div class="dato-item">
               <span class="dato-label">Miembro desde</span>
               <span class="dato-value">{{ usuario.fechaRegistro ? fechaRegistroFormateada() : '—' }}</span>

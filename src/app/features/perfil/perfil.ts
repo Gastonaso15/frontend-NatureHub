@@ -26,20 +26,16 @@ export class PerfilComponent implements OnInit {
 
   datosEdicion: Partial<Usuario> = {};
   
-  // 💡 Guardamos la edad fija aquí para que no rompa el ciclo del HTML
-  edadUsuario = 0;
 
   ngOnInit(): void {
     const u = this.authService.currentUser();
     if (u) {
       this.usuario = u;
-      this.calcularEdadActual(); // Calculamos al cargar el componente
     } else {
       this.router.navigate(['/auth/login']);
     }
   }
 
-  // ── Computed helpers ──────────────────────────────────────────────────────
 
   obtenerImagenUrl(url: string | null | undefined): string | null {
     if (!url) return null;
@@ -78,27 +74,6 @@ export class PerfilComponent implements OnInit {
     return new Date(f).toLocaleDateString('es-UY', { month: 'long', year: 'numeric' });
   }
 
-  // 💡 Modificamos el método para que asigne el valor internamente de forma controlada
-  calcularEdadActual(): void {
-    const fn = (this.usuario as any)?.fechaNacimiento as string | undefined;
-    if (!fn) {
-      this.edadUsuario = 0;
-      return;
-    }
-    const hoy = new Date();
-    const nac = new Date(fn);
-    let age = hoy.getFullYear() - nac.getFullYear();
-    const m = hoy.getMonth() - nac.getMonth();
-    if (m < 0 || (m === 0 && hoy.getDate() < nac.getDate())) age--;
-    this.edadUsuario = age;
-  }
-
-  // Getter para que tu html siga leyendo 'edad' sin romper nada
-  get edad(): number {
-    return this.edadUsuario;
-  }
-
-  // ── Edit mode ─────────────────────────────────────────────────────────────
 
   toggleEdicion(): void {
     if (!this.modoEdicion && this.usuario) {
@@ -149,9 +124,6 @@ export class PerfilComponent implements OnInit {
         this.usuario = updated;
         localStorage.setItem('nh_user', JSON.stringify(updated));
         this.authService.currentUser.set(updated);
-        
-        // 💡 Recalculamos la edad de manera segura DESPUÉS de que se asentaron los cambios
-        this.calcularEdadActual();
 
         this.mensajeExito = 'Perfil actualizado correctamente.';
         this.modoEdicion = false;
