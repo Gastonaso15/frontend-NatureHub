@@ -1,4 +1,7 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { firstValueFrom } from 'rxjs';
+import { tap, catchError } from 'rxjs/operators';
 import { Publicacion, Seccion } from '../../shared/models/wiki.models';
 
 const SECCIONES: Seccion[] = [
@@ -93,6 +96,8 @@ const PUBLICACIONES: Publicacion[] = [
 @Injectable({ providedIn: 'root' })
 export class WikiService {
   private publicaciones: Publicacion[] = [...PUBLICACIONES];
+  private http = inject(HttpClient);
+  private apiUrl = 'http://localhost/backend-NatureHub/src/index.php/publicaciones';
 
   getSecciones(): Seccion[] {
     return SECCIONES;
@@ -125,15 +130,28 @@ export class WikiService {
     );
   }
 
-  agregarPublicacion(pub: Omit<Publicacion, 'id_publicacion' | 'fecha_creacion' | 'estado'>): Publicacion {
-    const nuevaPublicacion: Publicacion = {
-      ...pub,
-      id_publicacion: Date.now(),
-      fecha_creacion: new Date().toISOString().split('T')[0],
-      estado: 'pendiente_revision'
+  agregarPublicacion(pub: Omit<Publicacion, 'id_publicacion' | 'fecha_creacion' | 'estado'>): Promise<any> {
+    const payload = {
+      titulo: pub.titulo,
+      foto: pub.foto_url,
+      nombreCientifico: pub.nombre_cientifico,
+      areasHabitat: pub.areas_habitat,
+      dieta: pub.dieta,
+      horasActivas: pub.horas_activas,
+      autor: pub.id_autor,
+      seccion: pub.id_seccion
     };
-    this.publicaciones.push(nuevaPublicacion);
-    return nuevaPublicacion;
+
+    console.log('Enviando payload:', payload);
+    return firstValueFrom(this.http.post(`${this.apiUrl}/altaPublicacion`, payload).pipe(
+      tap((response: any) => {
+        console.log('Respuesta exitosa:', response);
+      }),
+      catchError((error) => {
+        console.error('Error en la solicitud:', error);
+        throw error;
+      })
+    ));
   }
 
   getSeccionPorId(id: number): Seccion | undefined {
