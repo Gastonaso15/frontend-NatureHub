@@ -3,25 +3,25 @@ import { Router } from '@angular/router';
 import { FormsModule, NgForm } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { WikiService } from '../../../core/services/wiki';
-import { AuthService } from '../../../core/services/auth';
-import { CustomFieldType } from '../../../shared/models/wiki.models';
+import { AutenticacionService } from '../../../core/services/autenticacion';
+import { TipoCampoPersonalizado } from '../../../shared/models/wiki.models';
 
 @Component({
   selector: 'app-create-article',
   standalone: true,
   imports: [FormsModule],
-  templateUrl: './create-article.html',
-  styleUrl: './create-article.scss'
+  templateUrl: './crear-publicacion.html',
+  styleUrl: './crear-publicacion.scss'
 })
-export class CreateArticleComponent {
+export class CrearPublicacionComponent {
   private wikiService = inject(WikiService);
-  private authService = inject(AuthService);
+  private authService = inject(AutenticacionService);
   private router = inject(Router);
 
-  sections = this.wikiService.getSections();
-  submitted = false;
+  secciones = this.wikiService.getSecciones();
+  enviado = false;
 
-  articleData = {
+  datosArticulo = {
     titulo: '',
     foto_url: '',
     nombre_cientifico: '',
@@ -31,25 +31,25 @@ export class CreateArticleComponent {
     id_seccion: 1
   };
 
-  extraFields: { etiqueta: string; valor: string; tipo: CustomFieldType }[] = [];
+  camposExtras: { etiqueta: string; valor: string; tipo: TipoCampoPersonalizado }[] = [];
 
-  fieldTypes: { value: CustomFieldType; label: string }[] = [
+  tiposCampo: { value: TipoCampoPersonalizado; label: string }[] = [
     { value: 'texto', label: 'Texto' },
     { value: 'numerico', label: 'Numérico' },
     { value: 'booleano', label: 'Sí/No' },
     { value: 'fecha', label: 'Fecha' }
   ];
 
-  addExtraField(): void {
-    this.extraFields.push({ etiqueta: '', valor: '', tipo: 'texto' });
+  agregarCampoExtra(): void {
+    this.camposExtras.push({ etiqueta: '', valor: '', tipo: 'texto' });
   }
 
-  removeExtraField(index: number): void {
-    this.extraFields.splice(index, 1);
+  eliminarCampoExtra(index: number): void {
+    this.camposExtras.splice(index, 1);
   }
 
   async onSubmit(form: NgForm): Promise<void> {
-    this.submitted = true;
+    this.enviado = true;
     if (form.invalid) return;
 
     const result = await Swal.fire({
@@ -66,10 +66,10 @@ export class CreateArticleComponent {
     if (!result.isConfirmed) return;
 
     const user = this.authService.currentUser();
-    this.wikiService.addPublication({
-      ...this.articleData,
+    this.wikiService.agregarPublicacion({
+      ...this.datosArticulo,
       id_autor: user?.id_usuario ?? 0,
-      campos_extras: this.extraFields
+      campos_extras: this.camposExtras
     });
 
     await Swal.fire({

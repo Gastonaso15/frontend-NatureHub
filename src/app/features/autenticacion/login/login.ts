@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule, NgForm } from '@angular/forms';
-import { AuthService } from '../../../core/services/auth';
+import { AutenticacionService } from '../../../core/services/autenticacion';
 
 @Component({
   selector: 'app-login',
@@ -15,7 +15,7 @@ export class LoginComponent {
   submitted = false;
   errorMessage: string | null = null;
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(private authService: AutenticacionService, private router: Router) {}
 
   onLogin(form: NgForm): void {
     this.submitted = true;

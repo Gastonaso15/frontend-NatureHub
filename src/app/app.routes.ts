@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 import { HomeComponent } from './features/home/home/home';
-import { authGuard } from './core/guards/auth-guard';
+import { autenticacionGuard } from './core/guards/autenticacion-guard';
 
 export const routes: Routes = [
   {
@@ -9,20 +9,20 @@ export const routes: Routes = [
   },
   {
     path: 'auth/login',
-    loadComponent: () => import('./features/auth/login/login').then(m => m.LoginComponent)
+    loadComponent: () => import('./features/autenticacion/login/login').then(m => m.LoginComponent)
   },
   {
     path: 'auth/register',
-    loadComponent: () => import('./features/auth/register/register').then(m => m.RegisterComponent)
+    loadComponent: () => import('./features/autenticacion/registro/registro').then(m => m.RegistroComponent)
   },
   {
     path: 'wiki/article/:id',
-    loadComponent: () => import('./features/wiki/article-detail/article-detail').then(m => m.ArticleDetailComponent)
+    loadComponent: () => import('./features/wiki/detalle-publicacion/detalle-publicacion').then(m => m.DetallePublicacionComponent)
   },
   {
     path: 'wiki/nuevo',
-    canActivate: [authGuard],
-    loadComponent: () => import('./features/wiki/create-article/create-article').then(m => m.CreateArticleComponent)
+    canActivate: [autenticacionGuard],
+    loadComponent: () => import('./features/wiki/crear-publicacion/crear-publicacion').then(m => m.CrearPublicacionComponent)
   },
   {
     path: '**',

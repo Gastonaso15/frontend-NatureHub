@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
-export class AuthService {
+export class AutenticacionService {
   private http = inject(HttpClient);
   private apiUrl = 'http://localhost/backend-NatureHub/src/index.php';
   

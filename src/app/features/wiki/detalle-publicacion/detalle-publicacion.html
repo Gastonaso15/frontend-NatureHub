@@ -1,4 +1,4 @@
-@if (article()) {
+@if (articulo()) {
   <div class="container py-4">
     <a routerLink="/" class="btn btn-sm btn-outline-secondary mb-4">
       ← Volver al inicio
@@ -8,59 +8,59 @@
       <div class="col-md-4 col-lg-3">
         <div class="article-info-card">
           <img
-            [src]="article()!.foto_url"
+            [src]="articulo()!.foto_url"
             class="article-detail-image mb-3"
-            [alt]="article()!.titulo">
+            [alt]="articulo()!.titulo">
 
-          @if (section()) {
+          @if (seccion()) {
             <span class="badge-section d-inline-block mb-3">
-              {{ section()!.nombre }}
+              {{ seccion()!.nombre }}
             </span>
           }
 
           <div class="mb-3">
             <div class="article-info-label">Nombre científico</div>
-            <div class="article-info-value fst-italic">{{ article()!.nombre_cientifico }}</div>
+            <div class="article-info-value fst-italic">{{ articulo()!.nombre_cientifico }}</div>
           </div>
 
           <div class="mb-3">
             <div class="article-info-label">Estado</div>
-            <span class="status-badge status-{{ article()!.estado }}">
-              {{ article()!.estado.replace('_', ' ') }}
+            <span class="status-badge status-{{ articulo()!.estado }}">
+              {{ articulo()!.estado.replace('_', ' ') }}
             </span>
           </div>
 
           <div>
             <div class="article-info-label">Publicado</div>
-            <div class="article-info-value">{{ article()!.fecha_creacion }}</div>
+            <div class="article-info-value">{{ articulo()!.fecha_creacion }}</div>
           </div>
         </div>
       </div>
 
       <div class="col-md-8 col-lg-9">
-        <h1 class="fw-bold mb-1" style="color: #1b4332;">{{ article()!.titulo }}</h1>
-        <p class="text-muted fst-italic fs-5 mb-4">{{ article()!.nombre_cientifico }}</p>
+        <h1 class="fw-bold mb-1" style="color: #1b4332;">{{ articulo()!.titulo }}</h1>
+        <p class="text-muted fst-italic fs-5 mb-4">{{ articulo()!.nombre_cientifico }}</p>
 
         <div class="mb-4 pb-3 border-bottom">
           <h5 class="fw-bold mb-2" style="color: #2d6a4f;">🌍 Áreas de hábitat</h5>
-          <p class="mb-0">{{ article()!.areas_habitat }}</p>
+          <p class="mb-0">{{ articulo()!.areas_habitat }}</p>
         </div>
 
         <div class="mb-4 pb-3 border-bottom">
           <h5 class="fw-bold mb-2" style="color: #2d6a4f;">🍃 Dieta</h5>
-          <p class="mb-0">{{ article()!.dieta }}</p>
+          <p class="mb-0">{{ articulo()!.dieta }}</p>
         </div>
 
         <div class="mb-4 pb-3 border-bottom">
           <h5 class="fw-bold mb-2" style="color: #2d6a4f;">🕐 Horas activas</h5>
-          <p class="mb-0">{{ article()!.horas_activas }}</p>
+          <p class="mb-0">{{ articulo()!.horas_activas }}</p>
         </div>
 
-        @if (article()!.campos_extras && article()!.campos_extras!.length > 0) {
+        @if (articulo()!.campos_extras && articulo()!.campos_extras!.length > 0) {
           <div class="mb-4">
             <h5 class="fw-bold mb-3" style="color: #2d6a4f;">📋 Información adicional</h5>
             <div class="row g-2">
-              @for (field of article()!.campos_extras!; track field.etiqueta) {
+              @for (field of articulo()!.campos_extras!; track field.etiqueta) {
                 <div class="col-sm-6">
                   <div class="extra-field-row">
                     <div class="article-info-label">{{ field.etiqueta }}</div>
