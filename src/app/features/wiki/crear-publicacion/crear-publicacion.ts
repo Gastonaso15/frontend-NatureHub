@@ -3,19 +3,19 @@ import { Router } from '@angular/router';
 import { FormsModule, NgForm } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { WikiService } from '../../../core/services/wiki';
-import { AuthService } from '../../../core/services/auth';
+import { AutenticacionService } from '../../../core/services/autenticacion';
 import { TipoCampoPersonalizado } from '../../../shared/models/wiki.models';
 
 @Component({
   selector: 'app-create-article',
   standalone: true,
   imports: [FormsModule],
-  templateUrl: './create-article.html',
-  styleUrl: './create-article.scss'
+  templateUrl: './crear-publicacion.html',
+  styleUrl: './crear-publicacion.scss'
 })
-export class CreateArticleComponent {
+export class CrearPublicacionComponent {
   private wikiService = inject(WikiService);
-  private authService = inject(AuthService);
+  private authService = inject(AutenticacionService);
   private router = inject(Router);
 
   secciones = this.wikiService.getSecciones();

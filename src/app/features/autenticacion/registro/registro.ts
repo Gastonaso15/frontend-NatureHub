@@ -1,16 +1,16 @@
 import { Component } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule, NgForm } from '@angular/forms';
-import { AuthService } from '../../../core/services/auth';
+import { AutenticacionService } from '../../../core/services/autenticacion';
 
 @Component({
   selector: 'app-register',
   standalone: true,
   imports: [FormsModule, RouterLink],
-  templateUrl: './register.html',
-  styleUrl: './register.scss'
+  templateUrl: './registro.html',
+  styleUrl: './registro.scss'
 })
-export class RegisterComponent {
+export class RegistroComponent {
   registerData = {
     nombre: '',
     apellido: '',
@@ -30,7 +30,7 @@ export class RegisterComponent {
   passwordMismatch = false;
   errorMessage: string | null = null;
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(private authService: AutenticacionService, private router: Router) {}
 
   checkPasswordMatch(): void {
     if (this.registerData.confirmPassword.length > 0) {

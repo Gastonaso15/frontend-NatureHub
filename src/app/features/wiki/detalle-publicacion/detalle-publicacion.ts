@@ -7,10 +7,10 @@ import { Publicacion, Seccion } from '../../../shared/models/wiki.models';
   selector: 'app-article-detail',
   standalone: true,
   imports: [RouterLink],
-  templateUrl: './article-detail.html',
-  styleUrl: './article-detail.scss'
+  templateUrl: './detalle-publicacion.html',
+  styleUrl: './detalle-publicacion.scss'
 })
-export class ArticleDetailComponent implements OnInit {
+export class DetallePublicacionComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private wikiService = inject(WikiService);
 

@@ -10,10 +10,10 @@ import { TipoCampoPersonalizado } from '../../../shared/models/wiki.models';
   selector: 'app-create-article',
   standalone: true,
   imports: [FormsModule],
-  templateUrl: './create-article.html',
-  styleUrl: './create-article.scss'
+  templateUrl: './crear-articulo.html',
+  styleUrl: './crear-articulo.scss'
 })
-export class CreateArticleComponent {
+export class CrearArticuloComponent {
   private wikiService = inject(WikiService);
   private authService = inject(AuthService);
   private router = inject(Router);

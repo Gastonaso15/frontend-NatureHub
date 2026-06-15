@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
-import { Publication, Section } from '../../shared/models/wiki.models';
+import { Publicacion, Seccion } from '../../shared/models/wiki.models';
 
-const SECTIONS: Section[] = [
+const SECCIONES: Seccion[] = [
   { id_seccion: 1, nombre: 'Mamíferos', descripcion: 'Vertebrados de sangre caliente con pelo o pelaje y lactancia de sus crías' },
   { id_seccion: 2, nombre: 'Aves', descripcion: 'Vertebrados con plumas, bípedos, generalmente alados y de sangre caliente' },
   { id_seccion: 3, nombre: 'Reptiles', descripcion: 'Vertebrados ectotérmicos con escamas o placas óseas en la piel' },
 ];
 
-const PUBLICATIONS: Publication[] = [
+const PUBLICACIONES: Publicacion[] = [
   {
     id_publicacion: 1,
     id_seccion: 1,
@@ -92,31 +92,31 @@ const PUBLICATIONS: Publication[] = [
 
 @Injectable({ providedIn: 'root' })
 export class WikiService {
-  private publications: Publication[] = [...PUBLICATIONS];
+  private publicaciones: Publicacion[] = [...PUBLICACIONES];
 
-  getSections(): Section[] {
-    return SECTIONS;
+  getSecciones(): Seccion[] {
+    return SECCIONES;
   }
 
-  getFeaturedArticles(): Publication[] {
-    return this.publications.filter(p => p.estado === 'publicada').slice(0, 4);
+  getArticulosDestacados(): Publicacion[] {
+    return this.publicaciones.filter(p => p.estado === 'publicada').slice(0, 4);
   }
 
-  getAllPublished(): Publication[] {
-    return this.publications.filter(p => p.estado === 'publicada');
+  getPublicados(): Publicacion[] {
+    return this.publicaciones.filter(p => p.estado === 'publicada');
   }
 
-  getPublicationById(id: number): Publication | undefined {
-    return this.publications.find(p => p.id_publicacion === id);
+  getPublicacionPorId(id: number): Publicacion | undefined {
+    return this.publicaciones.find(p => p.id_publicacion === id);
   }
 
-  getPublicationsBySection(sectionId: number): Publication[] {
-    return this.publications.filter(p => p.id_seccion === sectionId && p.estado === 'publicada');
+  getPublicacionesPorSeccion(idSeccion: number): Publicacion[] {
+    return this.publicaciones.filter(p => p.id_seccion === idSeccion && p.estado === 'publicada');
   }
 
-  searchPublications(query: string): Publication[] {
-    const q = query.toLowerCase();
-    return this.publications.filter(p =>
+  buscarPublicaciones(consulta: string): Publicacion[] {
+    const q = consulta.toLowerCase();
+    return this.publicaciones.filter(p =>
       p.estado === 'publicada' && (
         p.titulo.toLowerCase().includes(q) ||
         p.nombre_cientifico.toLowerCase().includes(q) ||
@@ -125,18 +125,18 @@ export class WikiService {
     );
   }
 
-  addPublication(pub: Omit<Publication, 'id_publicacion' | 'fecha_creacion' | 'estado'>): Publication {
-    const newPub: Publication = {
+  agregarPublicacion(pub: Omit<Publicacion, 'id_publicacion' | 'fecha_creacion' | 'estado'>): Publicacion {
+    const nuevaPublicacion: Publicacion = {
       ...pub,
       id_publicacion: Date.now(),
       fecha_creacion: new Date().toISOString().split('T')[0],
       estado: 'pendiente_revision'
     };
-    this.publications.push(newPub);
-    return newPub;
+    this.publicaciones.push(nuevaPublicacion);
+    return nuevaPublicacion;
   }
 
-  getSectionById(id: number): Section | undefined {
-    return SECTIONS.find(s => s.id_seccion === id);
+  getSeccionPorId(id: number): Seccion | undefined {
+    return SECCIONES.find(s => s.id_seccion === id);
   }
 }
