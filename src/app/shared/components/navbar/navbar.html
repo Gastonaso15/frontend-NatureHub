@@ -35,7 +35,7 @@
             {{ authService.currentUser()?.nombre }} {{ authService.currentUser()?.apellido }}
           </span>
         </a>
-        <button (click)="authService.logout()" class="btn btn-outline-danger btn-sm">Salir</button>
+        <button (click)="cerrarSesion()" class="btn btn-outline-danger btn-sm">Salir</button>
       }
     </div>
   </div>

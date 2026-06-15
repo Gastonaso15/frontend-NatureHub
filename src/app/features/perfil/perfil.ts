@@ -4,6 +4,7 @@ import { FormsModule, NgForm } from '@angular/forms';
 import { AutenticacionService } from '../../core/services/autenticacion';
 import { Usuario } from '../../shared/models/wiki.models';
 import { HttpClient } from '@angular/common/http';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-perfil',
@@ -143,5 +144,52 @@ export class PerfilComponent implements OnInit {
   cerrarSesion(): void {
     this.authService.logout();
     this.router.navigate(['/']);
+  }
+
+  eliminarCuenta(): void {
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: 'Esta acción dará de baja tu cuenta y no podrás revertirla.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Sí, dar de baja',
+      cancelButtonText: 'Cancelar',
+      background: '#fff'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        
+        const id = this.usuario?.id_usuario || 
+                   JSON.parse(localStorage.getItem('nh_user') ?? '{}')?.id_usuario;
+
+        if (!id) {
+          Swal.fire('Error', 'No se pudo identificar al usuario para procesar la baja.', 'error');
+          return;
+        }
+
+        const body = { id: id };
+
+        this.http.delete(`${this.apiUrl}/usuarios/bajaUsuario`, { body }).subscribe({
+          next: () => {
+            Swal.fire({
+              title: 'Cuenta dada de baja',
+              text: 'Tu cuenta ha sido desactivada correctamente.',
+              icon: 'success',
+              confirmButtonText: 'Aceptar'
+            }).then(() => {
+              this.cerrarSesion();
+            });
+          },
+          error: (err: unknown) => {
+            console.error('Error al dar de baja:', err);
+            const e = err as { error?: { error?: string; message?: string }; message?: string };
+            const msg = e?.error?.error ?? e?.error?.message ?? 'No se pudo procesar la baja de la cuenta.';
+            
+            Swal.fire('Hubo un problema', msg, 'error');
+          }
+        });
+      }
+    });
   }
 }

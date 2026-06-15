@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule, NgForm } from '@angular/forms';
 import { AutenticacionService } from '../../../core/services/autenticacion';
@@ -15,7 +15,11 @@ export class LoginComponent {
   submitted = false;
   errorMessage: string | null = null;
 
-  constructor(private authService: AutenticacionService, private router: Router) {}
+  constructor(
+    private authService: AutenticacionService, 
+    private router: Router,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   onLogin(form: NgForm): void {
     this.submitted = true;
@@ -52,8 +56,15 @@ export class LoginComponent {
             });
             this.router.navigate(['/']);
         },
-        error: (err) => {
-            this.errorMessage = 'Correo electrónico o contraseña incorrectos.';
+        error: (err: unknown) => {
+            const e = err as { error?: { error?: string; message?: string }; message?: string };
+            const msg = e?.error?.error ?? e?.error?.message ?? e?.message;
+            
+            this.errorMessage = typeof msg === 'string' && msg.length
+              ? msg
+              : 'Correo electrónico o contraseña incorrectos.';
+
+            this.cdr.detectChanges();
         }
     });
   }

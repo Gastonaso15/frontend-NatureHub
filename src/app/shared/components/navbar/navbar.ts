@@ -12,4 +12,9 @@ import { AutenticacionService } from '../../../core/services/autenticacion';
 })
 export class NavbarComponent {
   constructor(public authService: AutenticacionService) {}
+
+  cerrarSesion(): void {
+    this.authService.logout();
+    window.location.href = '/';
+  }
 }

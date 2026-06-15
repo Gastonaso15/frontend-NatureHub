@@ -78,15 +78,25 @@
           </div>
         </section>
 
-        <section class="perfil-card">
-          <h2 class="section-title">Sobre mí</h2>
-          @if (usuario.bio) {
-            <p class="bio-text">{{ usuario.bio }}</p>
-          } @else {
-            <p class="bio-empty">Todavía no agregaste una biografía.</p>
-          }
-        </section>
+        <div class="perfil-side-cards">
+          <section class="perfil-card">
+            <h2 class="section-title">Sobre mí</h2>
+            @if (usuario.bio) {
+              <p class="bio-text">{{ usuario.bio }}</p>
+            } @else {
+              <p class="bio-empty">Todavía no agregaste una biografía.</p>
+            }
+          </section>
+        </div>
 
+      </div>
+
+      <div class="perfil-footer-baja">
+        <p>¿Deseas dejar de formar parte de la plataforma? 
+          <button type="button" class="btn-baja-discreto" (click)="eliminarCuenta()">
+            Dar de baja cuenta
+          </button>
+        </p>
       </div>
 
     } @else {
