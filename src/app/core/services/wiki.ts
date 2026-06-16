@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { firstValueFrom } from 'rxjs';
-import { tap, catchError } from 'rxjs/operators';
+import { firstValueFrom, Observable } from 'rxjs';
+import { tap, catchError, map } from 'rxjs/operators';
 import { Publicacion, Seccion } from '../../shared/models/wiki.models';
 
 const SECCIONES: Seccion[] = [
@@ -160,5 +160,32 @@ export class WikiService {
 
   getSeccionPorId(id: number): Seccion | undefined {
     return SECCIONES.find(s => s.id_seccion === id);
+  }
+
+  listarPublicacionesApi(): Observable<Publicacion[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/listarPublicaciones`).pipe(
+      tap(data => console.log('Publicaciones del API:', data)),
+      map(data => data
+        .filter(p => p.estado === 'publicada')
+        .map(p => ({
+          id_publicacion: p.id,
+          id_seccion:     p.seccion,
+          id_autor:       p.autor,
+          titulo:         p.titulo,
+          nombre_cientifico: p.nombreCientifico,
+          foto_url:       p.foto,
+          areas_habitat:  Array.isArray(p.areasHabitat) ? p.areasHabitat.join(', ') : p.areasHabitat,
+          dieta:          p.dieta,
+          horas_activas:  p.horasActivas,
+          estado:         p.estado,
+          fecha_creacion: p.fechaCreacion,
+          campos_extras:  p.camposExtra ?? []
+        } as Publicacion))
+      ),
+      catchError(error => {
+        console.error('Error al listar publicaciones:', error);
+        throw error;
+      })
+    );
   }
 }

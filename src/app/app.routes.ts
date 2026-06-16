@@ -18,6 +18,10 @@ export const routes: Routes = [
     loadComponent: () => import('./features/autenticacion/registro/registro').then(m => m.RegistroComponent)
   },
   {
+    path: 'categorias',
+    loadComponent: () => import('./features/wiki/lista-publicaciones/lista-publicaciones').then(m => m.ListaPublicacionesComponent)
+  },
+  {
     path: 'wiki/article/:id',
     loadComponent: () => import('./features/wiki/detalle-publicacion/detalle-publicacion').then(m => m.DetallePublicacionComponent)
   },
