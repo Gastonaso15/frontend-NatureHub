@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { WikiService } from '../../../core/services/wiki';
@@ -13,6 +13,7 @@ import { Publicacion, Seccion } from '../../../shared/models/wiki.models';
 })
 export class ListaPublicacionesComponent implements OnInit {
   private wikiService = inject(WikiService);
+  private cdr = inject(ChangeDetectorRef);
 
   secciones: Seccion[] = this.wikiService.getSecciones();
   publicaciones: Publicacion[] = [];
@@ -28,10 +29,12 @@ export class ListaPublicacionesComponent implements OnInit {
         this.publicaciones = data;
         this.publicacionesFiltradas = data;
         this.cargando = false;
+        this.cdr.detectChanges();
       },
       error: () => {
         this.error = 'No se pudieron cargar las publicaciones. Verificá que el servidor esté activo.';
         this.cargando = false;
+        this.cdr.detectChanges();
       }
     });
   }
