@@ -40,12 +40,13 @@
           </div>
 
           <div class="mb-3">
-            <label class="form-label fw-semibold">Imagen</label>
+            <label class="form-label fw-semibold">Imagen <span class="text-danger">*</span></label>
             <div class="upload-dropzone" [class.upload-active]="dragActive"
+              [class.border-danger]="imagenInvalida()"
               (dragover)="onDragOver($event)"
               (dragleave)="onDragLeave()"
               (drop)="onFileDrop($event)">
-              <p class="mb-2">Arrastrá una imagen o</p>
+              <p class="mb-2">Arrastrar una imagen o</p>
               <button type="button" class="btn btn-link p-0" (click)="fotoInput.click()">examinar archivos</button>
               <input type="file" #fotoInput accept="image/*" (change)="onFileSelected($event)" hidden>
             </div>
@@ -64,7 +65,13 @@
               name="foto_url"
               [(ngModel)]="datosArticulo.foto_url"
               (ngModelChange)="onFotoUrlChange()"
+              #urlField="ngModel"
+              [class.is-invalid]="imagenInvalida()"
+              [class.is-valid]="(fotoFile || datosArticulo.foto_url) && enviado"
               placeholder="https://ejemplo.com/imagen.jpg">
+            @if (imagenInvalida()) {
+              <div class="text-danger small mt-1">Debes subir un archivo de imagen o ingresar una URL válida.</div>
+            }
           </div>
 
           <div class="mb-3">

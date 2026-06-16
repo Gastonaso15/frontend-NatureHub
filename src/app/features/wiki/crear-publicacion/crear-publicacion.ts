@@ -50,6 +50,10 @@ export class CrearPublicacionComponent implements OnInit {
     { value: 'fecha', label: 'Fecha' }
   ];
 
+  imagenInvalida(): boolean {
+    return this.enviado && !this.fotoFile && !this.datosArticulo.foto_url.trim();
+  }
+
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     this.handleFile(input.files?.[0]);
@@ -105,7 +109,7 @@ export class CrearPublicacionComponent implements OnInit {
 
   async onSubmit(form: NgForm): Promise<void> {
     this.enviado = true;
-    if (form.invalid) return;
+    if (form.invalid || this.imagenInvalida()) return;
 
     const result = await Swal.fire({
       title: '¿Enviar artículo?',
@@ -141,10 +145,18 @@ export class CrearPublicacionComponent implements OnInit {
       });
 
       this.router.navigate(['/']);
-    } catch (error) {
+    } catch (error: any) {
+      let mensajeError = 'Hubo un problema al enviar el artículo. Intenta nuevamente.';
+      
+      if (error && error.error && error.error.error) {
+        mensajeError = error.error.error;
+      } else if (error && error.message) {
+        mensajeError = error.message;
+      }
+
       await Swal.fire({
         title: 'Error',
-        text: 'Hubo un problema al enviar el artículo. Intenta nuevamente.',
+        text: mensajeError,
         icon: 'error',
         confirmButtonColor: '#2d6a4f'
       });
