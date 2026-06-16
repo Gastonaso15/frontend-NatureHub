@@ -48,7 +48,7 @@
             <img [src]="autor()!.fotoUrl" class="autor-avatar" [alt]="autor()!.nombre">
             } @else {
             <span class="autor-avatar-initials">
-              {{ (autor()!.nombre[0] ?? '') + (autor()!.apellido[0] ?? '') }}
+              {{ autor()!.nombre[0] + autor()!.apellido[0] }}
             </span>
             }
             <span class="autor-nombre">{{ autor()!.nombre }} {{ autor()!.apellido }}</span>
