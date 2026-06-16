@@ -37,6 +37,10 @@ export class CrearPublicacionComponent implements OnInit {
     id_seccion: 1
   };
 
+  fotoFile?: File;
+  fotoPreview: string | null = null;
+  dragActive = false;
+
   camposExtras: { etiqueta: string; valor: string; tipo: TipoCampoPersonalizado }[] = [];
 
   tiposCampo: { value: TipoCampoPersonalizado; label: string }[] = [
@@ -45,6 +49,51 @@ export class CrearPublicacionComponent implements OnInit {
     { value: 'booleano', label: 'Sí/No' },
     { value: 'fecha', label: 'Fecha' }
   ];
+
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.handleFile(input.files?.[0]);
+  }
+
+  onDragOver(event: DragEvent): void {
+    event.preventDefault();
+    this.dragActive = true;
+  }
+
+  onDragLeave(): void {
+    this.dragActive = false;
+  }
+
+  onFileDrop(event: DragEvent): void {
+    event.preventDefault();
+    this.dragActive = false;
+    this.handleFile(event.dataTransfer?.files?.[0]);
+  }
+
+  handleFile(file?: File): void {
+    if (!file) return;
+    if (!file.type.startsWith('image/')) return;
+    if (this.fotoPreview) URL.revokeObjectURL(this.fotoPreview);
+    this.fotoFile = file;
+    this.fotoPreview = URL.createObjectURL(file);
+    this.datosArticulo.foto_url = '';
+  }
+
+  removeFoto(): void {
+    if (this.fotoPreview) URL.revokeObjectURL(this.fotoPreview);
+    this.fotoPreview = null;
+    this.fotoFile = undefined;
+  }
+
+  onFotoUrlChange(): void {
+    if (this.datosArticulo.foto_url) {
+      this.fotoFile = undefined;
+      if (this.fotoPreview) {
+        URL.revokeObjectURL(this.fotoPreview);
+        this.fotoPreview = null;
+      }
+    }
+  }
 
   agregarCampoExtra(): void {
     this.camposExtras.push({ etiqueta: '', valor: '', tipo: 'texto' });
@@ -82,7 +131,7 @@ export class CrearPublicacionComponent implements OnInit {
       
       console.log('Datos a enviar:', datosEnvio);
       
-      await this.wikiService.agregarPublicacion(datosEnvio);
+      await this.wikiService.agregarPublicacion(datosEnvio, this.fotoFile);
 
       await Swal.fire({
         title: '¡Artículo enviado!',

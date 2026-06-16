@@ -130,23 +130,24 @@ export class WikiService {
     );
   }
 
-  agregarPublicacion(pub: Omit<Publicacion, 'id_publicacion' | 'fecha_creacion' | 'estado'>): Promise<any> {
-    const payload = {
-      titulo: pub.titulo,
-      foto: pub.foto_url,
-      nombreCientifico: pub.nombre_cientifico,
-      areasHabitat: [pub.areas_habitat], 
-      dieta: pub.dieta,
-      horasActivas: pub.horas_activas,
-      autor: pub.id_autor,
-      camposExtra: pub.campos_extras ?? [],
-      seccion: pub.id_seccion,
-      moderaciones: [],
-      reportes: []
-    };
+  agregarPublicacion(pub: Omit<Publicacion, 'id_publicacion' | 'fecha_creacion' | 'estado'>, fotoFile?: File): Promise<any> {
+    const formData = new FormData();
+    formData.append('titulo', pub.titulo);
+    formData.append('nombreCientifico', pub.nombre_cientifico);
+    formData.append('areasHabitat', JSON.stringify([pub.areas_habitat]));
+    formData.append('dieta', pub.dieta);
+    formData.append('horasActivas', pub.horas_activas);
+    formData.append('autor', String(pub.id_autor));
+    formData.append('camposExtra', JSON.stringify(pub.campos_extras ?? []));
+    formData.append('seccion', String(pub.id_seccion));
 
-    console.log('Enviando payload:', payload);
-    return firstValueFrom(this.http.post(`${this.apiUrl}/altaPublicacion`, payload).pipe(
+    if (fotoFile) {
+      formData.append('foto', fotoFile, fotoFile.name);
+    } else if (pub.foto_url) {
+      formData.append('fotoUrl', pub.foto_url);
+    }
+
+    return firstValueFrom(this.http.post(`${this.apiUrl}/altaPublicacion`, formData).pipe(
       tap((response: any) => {
         console.log('Respuesta exitosa:', response);
       }),
