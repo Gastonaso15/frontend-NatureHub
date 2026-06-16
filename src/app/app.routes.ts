@@ -29,7 +29,17 @@ export const routes: Routes = [
   {
     path: 'perfil',
     canActivate: [autenticacionGuard],
-    loadComponent: () => import('./features/perfil/perfil').then(m => m.PerfilComponent)
+    loadComponent: () => import('./features/perfil/perfil/perfil').then(m => m.PerfilComponent)
+  },
+  {
+    path: 'perfil/:id',
+    canActivate: [autenticacionGuard],
+    loadComponent: () => import('./features/perfil/perfil-usuario/perfil-usuario').then(m => m.PerfilUsuarioComponent)
+  },
+  {
+    path: 'moderacion/publicaciones',
+    canActivate: [autenticacionGuard, moderadorGuard],
+    loadComponent: () => import('./features/moderacion/moderar-publicaciones/moderar-publicaciones').then(m => m.ModerarPublicacionesComponent)
   },
   {
     path: 'admin/promover-usuario',
@@ -49,7 +59,8 @@ export const routes: Routes = [
   {
     path: 'admin/degradar-administrador',
     canActivate: [autenticacionGuard, administradorGuard],
-    loadComponent: () => import('./features/administrador/degradar-administrador/degradar-administrador').then(m => m.DegradarAdministradorComponent)  },
+    loadComponent: () => import('./features/administrador/degradar-administrador/degradar-administrador').then(m => m.DegradarAdministradorComponent)
+  },
   {
     path: '**',
     redirectTo: ''

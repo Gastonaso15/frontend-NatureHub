@@ -1,0 +1,59 @@
+.pub-card {
+  transition: box-shadow 0.2s ease;
+
+  &:hover {
+    box-shadow: 0 4px 16px rgba(45, 106, 79, 0.15) !important;
+    transform: none; // override global card hover
+  }
+}
+
+.pub-thumbnail {
+  width: 140px;
+  height: 140px;
+  object-fit: cover;
+  display: block;
+
+  @media (max-width: 576px) {
+    width: 100%;
+    height: 160px;
+  }
+}
+
+.pub-thumbnail-placeholder {
+  width: 140px;
+  height: 140px;
+  background: #f0f4f1;
+  border-right: 1px solid #dee2e6;
+
+  @media (max-width: 576px) {
+    width: 100%;
+    height: 100px;
+  }
+}
+
+.badge-seccion {
+  background: rgba(45, 106, 79, 0.1);
+  color: #2d6a4f;
+  font-weight: 600;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-radius: 20px;
+  padding: 0.25rem 0.65rem;
+  white-space: nowrap;
+}
+
+.campo-pill {
+  background: #f0f4f1;
+  border: 1px solid #d8f3dc;
+  border-radius: 12px;
+  padding: 0.2rem 0.6rem;
+  font-size: 0.78rem;
+  color: #1b4332;
+}
+
+.empty-state {
+  .empty-icon {
+    font-size: 3rem;
+  }
+}

@@ -1,0 +1,105 @@
+<div class="container py-4">
+  <div class="mb-4">
+    <h3 class="fw-bold mb-1" style="color: #1b4332;">Moderación de publicaciones</h3>
+    <p class="text-muted small mb-0">Revisá y aprobá o rechazá los artículos enviados por los usuarios.</p>
+  </div>
+
+  @if (cargando()) {
+  <div class="text-center py-5">
+    <div class="spinner-border text-success" role="status">
+      <span class="visually-hidden">Cargando...</span>
+    </div>
+    <p class="text-muted mt-3 small">Cargando publicaciones pendientes...</p>
+  </div>
+  } @else if (publicaciones().length === 0) {
+  <div class="empty-state text-center py-5">
+    <div class="empty-icon mb-3">✅</div>
+    <h5 class="fw-semibold text-muted">Todo al día</h5>
+    <p class="text-muted small">No hay publicaciones pendientes de revisión.</p>
+  </div>
+  } @else {
+  <div class="row g-3">
+    @for (pub of publicaciones(); track pub.id) {
+    <div class="col-12">
+      <div class="pub-card rounded-3 border bg-white overflow-hidden">
+        <div class="row g-0">
+
+          <div class="col-auto">
+            @if (pub.foto) {
+            <img [src]="pub.foto" class="pub-thumbnail" [alt]="pub.titulo">
+            } @else {
+            <div class="pub-thumbnail-placeholder d-flex align-items-center justify-content-center">
+              <span class="fs-2">🌿</span>
+            </div>
+            }
+          </div>
+
+          <div class="col">
+            <div class="p-3 h-100 d-flex flex-column justify-content-between">
+              <div>
+                <div class="d-flex align-items-start justify-content-between gap-2 mb-1">
+                  <div>
+                    <h5 class="fw-bold mb-0" style="color: #1b4332;">{{ pub.titulo }}</h5>
+                    <small class="text-muted fst-italic">{{ pub.nombreCientifico }}</small>
+                  </div>
+                  <span class="badge-seccion flex-shrink-0">{{ pub.seccionNombre }}</span>
+                </div>
+
+                <div class="row g-2 mt-2 text-muted small">
+                  <div class="col-md-4">
+                    <span class="fw-semibold text-dark">Hábitat:</span> {{ pub.areasHabitat }}
+                  </div>
+                  <div class="col-md-4">
+                    <span class="fw-semibold text-dark">Dieta:</span> {{ pub.dieta }}
+                  </div>
+                  <div class="col-md-4">
+                    <span class="fw-semibold text-dark">Actividad:</span> {{ pub.horasActivas }}
+                  </div>
+                </div>
+
+                @if (pub.camposExtra && pub.camposExtra.length > 0) {
+                <div class="mt-2 d-flex flex-wrap gap-2">
+                  @for (campo of pub.camposExtra; track campo.etiqueta) {
+                  <span class="campo-pill">
+                    <span class="fw-semibold">{{ campo.etiqueta }}:</span> {{ campo.valor }}
+                  </span>
+                  }
+                </div>
+                }
+              </div>
+
+              <div class="d-flex align-items-center justify-content-between mt-3 pt-2 border-top gap-2 flex-wrap">
+                <small class="text-muted">
+                  Enviado el {{ pub.fechaCreacion | slice:0:10 }}
+                  &nbsp;·&nbsp; por
+                  <a [routerLink]="['/perfil', pub.autorId]" class="fw-semibold text-decoration-none"
+                    style="color: #2d6a4f;">
+                    {{ pub.autorNombre }}
+                  </a>
+                </small>
+                <div class="d-flex gap-2">
+                  <button class="btn btn-sm btn-success fw-semibold px-3" (click)="aprobar(pub)"
+                    [disabled]="procesando() === pub.id">
+                    @if (procesando() === pub.id && accionActual() === 'APROBADA') {
+                    <span class="spinner-border spinner-border-sm me-1"></span>
+                    }
+                    ✓ Aprobar
+                  </button>
+                  <button class="btn btn-sm btn-outline-danger fw-semibold px-3" (click)="rechazar(pub)"
+                    [disabled]="procesando() === pub.id">
+                    @if (procesando() === pub.id && accionActual() === 'RECHAZADA') {
+                    <span class="spinner-border spinner-border-sm me-1"></span>
+                    }
+                    ✕ Rechazar
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    }
+  </div>
+  }
+</div>

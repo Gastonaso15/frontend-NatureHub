@@ -14,7 +14,7 @@ $navbar-dark-active-color: #ffffff;
 $input-focus-border-color: #52b788;
 $input-focus-box-shadow: 0 0 0 0.25rem rgba(45, 106, 79, 0.25);
 
-@import 'bootstrap/scss/bootstrap';
+@use 'bootstrap/scss/bootstrap';
 
 html, body {
   height: 100%;

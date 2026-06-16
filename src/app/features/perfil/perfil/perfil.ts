@@ -1,8 +1,8 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule, NgForm } from '@angular/forms';
-import { AutenticacionService } from '../../core/services/autenticacion';
-import { Usuario } from '../../shared/models/wiki.models';
+import { AutenticacionService } from '../../../core/services/autenticacion';
+import { Usuario } from '../../../shared/models/wiki.models';
 import { HttpClient } from '@angular/common/http';
 import Swal from 'sweetalert2';
 
@@ -26,7 +26,7 @@ export class PerfilComponent implements OnInit {
   mensajeError: string | null = null;
 
   datosEdicion: Partial<Usuario> = {};
-  
+
 
   ngOnInit(): void {
     const u = this.authService.currentUser();
@@ -93,9 +93,9 @@ export class PerfilComponent implements OnInit {
 
     if (form.invalid) return;
 
-    const id = this.usuario?.id_usuario || 
-               (this.datosEdicion as any)?.id_usuario || 
-               JSON.parse(localStorage.getItem('nh_user') ?? '{}')?.id_usuario;
+    const id = this.usuario?.id_usuario ||
+      (this.datosEdicion as any)?.id_usuario ||
+      JSON.parse(localStorage.getItem('nh_user') ?? '{}')?.id_usuario;
 
     if (!id) {
       this.mensajeError = 'No se pudo identificar al usuario. Por favor, reiniciá sesión.';
@@ -105,23 +105,23 @@ export class PerfilComponent implements OnInit {
     const d = this.datosEdicion as any;
     const formData = new FormData();
     formData.append('id', String(id));
-    formData.append('nombre',   d.nombre   ?? '');
+    formData.append('nombre', d.nombre ?? '');
     formData.append('apellido', d.apellido ?? '');
-    formData.append('email',    d.email    ?? '');
-    if (d.sexo)            formData.append('sexo',            d.sexo);
+    formData.append('email', d.email ?? '');
+    if (d.sexo) formData.append('sexo', d.sexo);
     if (d.fechaNacimiento) formData.append('fechaNacimiento', d.fechaNacimiento);
-    if (d.pais)            formData.append('pais',            d.pais);
-    if (d.bio)             formData.append('bio',             d.bio);
-    if (d.fotoUrl)         formData.append('fotoUrl',         d.fotoUrl);
+    if (d.pais) formData.append('pais', d.pais);
+    if (d.bio) formData.append('bio', d.bio);
+    if (d.fotoUrl) formData.append('fotoUrl', d.fotoUrl);
 
     this.http.post(`${this.apiUrl}/usuarios/modificarUsuario`, formData).subscribe({
       next: () => {
-        const updated: Usuario = { 
-          ...this.usuario!, 
+        const updated: Usuario = {
+          ...this.usuario!,
           ...this.datosEdicion,
-          id_usuario: id 
+          id_usuario: id
         } as Usuario;
-        
+
         this.usuario = updated;
         localStorage.setItem('nh_user', JSON.stringify(updated));
         this.authService.currentUser.set(updated);
@@ -159,9 +159,9 @@ export class PerfilComponent implements OnInit {
       background: '#fff'
     }).then((result) => {
       if (result.isConfirmed) {
-        
-        const id = this.usuario?.id_usuario || 
-                   JSON.parse(localStorage.getItem('nh_user') ?? '{}')?.id_usuario;
+
+        const id = this.usuario?.id_usuario ||
+          JSON.parse(localStorage.getItem('nh_user') ?? '{}')?.id_usuario;
 
         if (!id) {
           Swal.fire('Error', 'No se pudo identificar al usuario para procesar la baja.', 'error');
@@ -185,7 +185,7 @@ export class PerfilComponent implements OnInit {
             console.error('Error al dar de baja:', err);
             const e = err as { error?: { error?: string; message?: string }; message?: string };
             const msg = e?.error?.error ?? e?.error?.message ?? 'No se pudo procesar la baja de la cuenta.';
-            
+
             Swal.fire('Hubo un problema', msg, 'error');
           }
         });
