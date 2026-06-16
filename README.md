@@ -25,9 +25,16 @@ NatureHub es una wiki colaborativa sobre naturaleza. Los usuarios pueden registr
 - **HTML5 Canvas** — gráfico de artículos por sección
 - **LocalStorage** — persistencia de sesión
 
-## Cómo correr el proyecto
+---
 
-Necesitás tener instalado Node.js (v18 o superior).
+## Requisitos previos
+
+- Node.js v18 o superior
+- El backend corriendo (ver README del backend)
+
+---
+
+## Cómo correr el proyecto
 
 Primero instalá las dependencias:
 
@@ -43,6 +50,8 @@ npm start
 
 Abrís el navegador en `http://localhost:4200`
 
+> **Importante:** el frontend se conecta a la API en `http://localhost/backend-NatureHub/src/index.php`. Asegurate de tener Apache y MySQL de XAMPP corriendo antes de usar la aplicación.
+
 ## Cómo compilar para producción
 
 ```bash
@@ -51,33 +60,27 @@ npm run build
 
 Los archivos quedan en la carpeta `dist/`.
 
+---
+
 ## Estructura del proyecto
 
 ```
 src/
   app/
     core/
-      guards/       # auth guard (rutas protegidas)
-      services/     # AuthService, WikiService
+      guards/         # guardias de rutas (autenticación, roles)
+      services/       # AutenticacionService, WikiService
     features/
-      auth/         # login y registro
-      home/         # página principal
-      wiki/         # detalle y creación de artículos
+      autenticacion/  # login y registro
+      home/           # página principal
+      perfil/         # perfil de usuario y edición
+      wiki/           # creación y detalle de artículos
+      administrador/  # gestión de roles (admin)
     shared/
-      components/   # navbar, footer
-      models/       # interfaces TypeScript
+      components/     # navbar, footer, sidebar
+      models/         # interfaces TypeScript
 ```
-
-## Usuarios de prueba
-
-Mientras no esté conectado el backend, hay usuarios mock para probar:
-
-| Email | Rol | Contraseña |
-|-------|-----|------------|
-| admin@naturehub.com | administrador | cualquiera (6+ chars) |
-| moderador@naturehub.com | moderador | cualquiera (6+ chars) |
-| usuario@naturehub.com | usuario | cualquiera (6+ chars) |
 
 ## Backend
 
-El frontend está pensado para conectarse a una API REST en PHP. Los servicios `AuthService` y `WikiService` actualmente usan datos mock, pero están estructurados para reemplazarlos por llamadas HTTP cuando el backend esté listo.
+El frontend se conecta a la API REST en PHP ubicada en `http://localhost/backend-NatureHub/src/index.php`. Consultá el README del backend para el procedimiento completo de instalación con XAMPP.
