@@ -1,0 +1,83 @@
+<div class="container py-5">
+
+    <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
+        <div>
+            <h3 class="fw-bold mb-1" style="color: #1b4332;">Mis publicaciones</h3>
+            <p class="text-muted small mb-0">Artículos que has enviado a NatureHub</p>
+        </div>
+        <a routerLink="/wiki/nuevo" class="btn btn-success btn-sm fw-semibold">
+            + Crear artículo
+        </a>
+    </div>
+
+    @if (cargando()) {
+    <div class="text-center py-5">
+        <div class="spinner-border text-success" role="status"></div>
+        <p class="text-muted mt-3 small">Cargando tus publicaciones...</p>
+    </div>
+    } @else if (error()) {
+    <div class="alert alert-danger">{{ error() }}</div>
+    } @else if (publicaciones().length === 0) {
+    <div class="text-center py-5">
+        <div style="font-size: 3rem;" class="mb-3">📝</div>
+        <h5 class="fw-semibold text-muted">Todavía no creaste ningún artículo</h5>
+        <p class="text-muted small mb-4">Compartí tu conocimiento sobre la naturaleza con la comunidad.</p>
+        <a routerLink="/wiki/nuevo" class="btn btn-success fw-semibold">Crear mi primer artículo</a>
+    </div>
+    } @else {
+    <div class="d-flex flex-column gap-3">
+        @for (pub of publicaciones(); track pub.id_publicacion) {
+        <div class="pub-card bg-white rounded-3 border overflow-hidden"
+            [routerLink]="['/wiki/article', pub.id_publicacion]" style="cursor: pointer;">
+            <div class="row g-0">
+
+                <div class="col-auto">
+                    @if (pub.foto_url) {
+                    <img [src]="pub.foto_url" class="pub-thumb" [alt]="pub.titulo">
+                    } @else {
+                    <div class="pub-thumb-placeholder d-flex align-items-center justify-content-center">
+                        <span style="font-size: 2rem;">🌿</span>
+                    </div>
+                    }
+                </div>
+
+                <div class="col">
+                    <div class="p-3 d-flex flex-column justify-content-between h-100">
+                        <div>
+                            <div class="d-flex align-items-start justify-content-between gap-2 mb-1">
+                                <div>
+                                    <h6 class="fw-bold mb-0" style="color: #1b4332;">{{ pub.titulo }}</h6>
+                                    <small class="text-muted fst-italic">{{ pub.nombre_cientifico }}</small>
+                                </div>
+                                <span class="estado-badge estado-{{ pub.estado.toLowerCase() }} flex-shrink-0">
+                                    {{ etiquetaEstado(pub.estado) }}
+                                </span>
+                            </div>
+                        </div>
+                        <div
+                            class="d-flex align-items-center justify-content-between mt-3 pt-2 border-top flex-wrap gap-2">
+                            <small class="text-muted">
+                                Enviado el {{ pub.fecha_creacion | slice:0:10 }}
+                                &nbsp;·&nbsp; {{ nombreSeccion(pub.id_seccion) }}
+                            </small>
+                            @if (pub.estado === 'aprobada') {
+                            <a [routerLink]="['/wiki/article', pub.id_publicacion]"
+                                class="btn btn-sm btn-outline-success fw-semibold">
+                                Ver artículo
+                            </a>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        }
+    </div>
+
+    <p class="text-muted small mt-4 text-end">
+        {{ publicaciones().length }} publicación{{ publicaciones().length !== 1 ? 'es' : '' }} en total
+    </p>
+    }
+
+</div>

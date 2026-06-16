@@ -1,5 +1,5 @@
 export type RolUsuario = 'USUARIO' | 'MODERADOR' | 'ADMINISTRADOR';
-export type EstadoPublicacion = 'borrador' | 'pendiente_revision' | 'aprobada' | 'rechazada' | 'publicada';
+export type EstadoPublicacion = 'borrador' | 'pendiente_revision' | 'aprobada' | 'rechazada';
 export type TipoCampoPersonalizado = 'texto' | 'booleano' | 'numerico' | 'fecha';
 
 export interface Usuario {

@@ -1,113 +1,114 @@
 <div class="perfil-page min-vh-100 pb-5">
 
   @if (cargando()) {
-    <div class="text-center py-5">
-      <div class="spinner-border text-success" role="status"></div>
-      <p class="text-muted mt-3 small">Cargando perfil...</p>
-    </div>
+  <div class="text-center py-5">
+    <div class="spinner-border text-success" role="status"></div>
+    <p class="text-muted mt-3 small">Cargando perfil...</p>
+  </div>
   } @else if (usuario) {
 
-    <div class="perfil-header">
-      <div class="container">
-        <div class="d-flex align-items-start gap-3 flex-wrap">
+  <div class="perfil-header">
+    <div class="container">
+      <div class="d-flex align-items-start gap-3 flex-wrap">
 
-          <div class="position-relative flex-shrink-0">
-            @if (usuario.fotoUrl) {
-              <img [src]="usuario.fotoUrl" class="avatar-img" [alt]="usuario.nombre" />
-            } @else {
-              <div class="avatar-initials">{{ iniciales() }}</div>
-            }
-          </div>
-
-          <div class="flex-grow-1">
-            <h4 class="fw-bold text-white mb-1">{{ usuario.nombre }} {{ usuario.apellido }}</h4>
-            <p class="small text-white-50 mb-0">{{ usuario.email }}</p>
-          </div>
-
-          <div class="ms-auto">
-            <button class="btn btn-outline-light btn-sm" (click)="volver()">
-              ← Volver
-            </button>
-          </div>
-
+        <div class="position-relative flex-shrink-0">
+          @if (usuario.fotoUrl) {
+          <img [src]="usuario.fotoUrl" class="avatar-img" [alt]="usuario.nombre" />
+          } @else {
+          <div class="avatar-initials">{{ iniciales() }}</div>
+          }
         </div>
+
+        <div class="flex-grow-1">
+          <h4 class="fw-bold text-white mb-1">{{ usuario.nombre }} {{ usuario.apellido }}</h4>
+          <p class="small text-white-50 mb-0">{{ usuario.email }}</p>
+        </div>
+
+        <div class="ms-auto">
+          <button class="btn btn-outline-light btn-sm" (click)="volver()">
+            ← Volver
+          </button>
+        </div>
+
       </div>
     </div>
+  </div>
 
-    <div class="container pt-4">
-      <div class="row g-3">
+  <div class="container pt-4">
+    <div class="row g-3">
 
-        <div class="col-md-6">
-          <section class="card p-4 rounded-3 shadow-sm h-100">
-            <h2 class="section-title">Datos personales</h2>
-            <div>
-              <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
-                <span class="small text-muted">Nombre completo</span>
-                <span class="small fw-medium text-end">{{ usuario.nombre }} {{ usuario.apellido }}</span>
-              </div>
-              
-              <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
-                <span class="small text-muted">Correo electrónico</span>
-                <span class="small fw-medium text-end">{{ usuario.email }}</span>
-              </div>
-
-              <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
-                <span class="small text-muted">País</span>
-                <span class="small fw-medium text-end">{{ usuario.pais || '—' }}</span>
-              </div>
-
-              <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
-                <span class="small text-muted">Sexo</span>
-                <span class="small fw-medium text-end">{{ usuario.sexo || '—' }}</span>
-              </div>
-
-              <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
-                <span class="small text-muted">Fecha de nacimiento</span>
-                <span class="small fw-medium text-end">
-                  {{ usuario.fechaNacimiento ? usuario.fechaNacimiento.split(' ')[0] : '—' }}
-                </span>
-              </div>
-
-              <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
-                <span class="small text-muted">Rol en NatureHub</span>
-                <span class="badge rounded-pill role-pill badge-{{ usuario.rol }}">{{ usuario.rol }}</span>
-              </div>
-
-              <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
-                <span class="small text-muted">Miembro desde</span>
-                <span class="small fw-medium text-end">{{ usuario.fechaRegistro ? fechaRegistroFormateada() : '—' }}</span>
-              </div>
-
-              <div class="d-flex justify-content-between align-items-center py-2">
-                <span class="small text-muted">Estado de cuenta</span>
-                <span class="small fw-medium text-end">
-                  <span class="estado-dot" [class.activo]="usuario.activo"></span>
-                  {{ usuario.activo ? 'Activa' : 'Inactiva' }}
-                </span>
-              </div>
+      <div class="col-md-6">
+        <section class="card p-4 rounded-3 shadow-sm h-100">
+          <h2 class="section-title">Datos personales</h2>
+          <div>
+            <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+              <span class="small text-muted">Nombre completo</span>
+              <span class="small fw-medium text-end">{{ usuario.nombre }} {{ usuario.apellido }}</span>
             </div>
-          </section>
-        </div>
 
-        <div class="col-md-6">
-          <section class="card p-4 rounded-3 shadow-sm">
-            <h2 class="section-title">Sobre mí</h2>
-            @if (usuario.bio) {
-              <p class="small mb-0">{{ usuario.bio }}</p>
-            } @else {
-              <p class="small text-muted fst-italic mb-0">Este usuario no tiene biografía.</p>
-            }
-          </section>
-        </div>
+            <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+              <span class="small text-muted">Correo electrónico</span>
+              <span class="small fw-medium text-end">{{ usuario.email }}</span>
+            </div>
 
+            <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+              <span class="small text-muted">País</span>
+              <span class="small fw-medium text-end">{{ usuario.pais || '—' }}</span>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+              <span class="small text-muted">Sexo</span>
+              <span class="small fw-medium text-end">{{ usuario.sexo || '—' }}</span>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+              <span class="small text-muted">Fecha de nacimiento</span>
+              <span class="small fw-medium text-end">
+                {{ usuario.fechaNacimiento ? usuario.fechaNacimiento.split(' ')[0] : '—' }}
+              </span>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+              <span class="small text-muted">Rol en NatureHub</span>
+              <span class="badge rounded-pill role-pill badge-{{ usuario.rol }}">{{ usuario.rol }}</span>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+              <span class="small text-muted">Miembro desde</span>
+              <span class="small fw-medium text-end">{{ usuario.fechaRegistro ? fechaRegistroFormateada() : '—'
+                }}</span>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center py-2">
+              <span class="small text-muted">Estado de cuenta</span>
+              <span class="small fw-medium text-end">
+                <span class="estado-dot" [class.activo]="usuario.activo"></span>
+                {{ usuario.activo ? 'Activa' : 'Inactiva' }}
+              </span>
+            </div>
+          </div>
+        </section>
       </div>
+
+      <div class="col-md-6">
+        <section class="card p-4 rounded-3 shadow-sm">
+          <h2 class="section-title">Sobre mí</h2>
+          @if (usuario.bio) {
+          <p class="small mb-0">{{ usuario.bio }}</p>
+          } @else {
+          <p class="small text-muted fst-italic mb-0">Este usuario no tiene biografía.</p>
+          }
+        </section>
+      </div>
+
     </div>
+  </div>
 
   } @else {
-    <div class="container py-5 text-center">
-      <h5 class="text-muted">Usuario no encontrado</h5>
-      <button class="btn btn-outline-secondary mt-3" (click)="volver()">← Volver</button>
-    </div>
+  <div class="container py-5 text-center">
+    <h5 class="text-muted">Usuario no encontrado</h5>
+    <button class="btn btn-outline-secondary mt-3" (click)="volver()">← Volver</button>
+  </div>
   }
 
 </div>

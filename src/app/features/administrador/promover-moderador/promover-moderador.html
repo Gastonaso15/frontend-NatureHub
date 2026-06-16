@@ -2,35 +2,35 @@
   <h3 class="fw-bold mb-4" style="color: #1b4332;">Ascender Moderador a Administrador</h3>
 
   @if (cargando()) {
-    <p class="text-muted">Cargando moderadores...</p>
+  <p class="text-muted">Cargando moderadores...</p>
   } @else if (usuarios().length === 0) {
-    <div class="alert alert-info">No hay moderadores disponibles para ascender.</div>
+  <div class="alert alert-info">No hay moderadores disponibles para ascender.</div>
   } @else {
-    <div class="table-responsive">
-      <table class="table table-hover align-middle">
-        <thead>
-          <tr>
-            <th>Nombre</th>
-            <th>Email</th>
-            <th>País</th>
-            <th class="text-end">Acción</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (usuario of usuarios(); track usuario.id_usuario) {
-            <tr>
-              <td>{{ usuario.nombre }} {{ usuario.apellido }}</td>
-              <td>{{ usuario.email }}</td>
-              <td>{{ usuario.pais || '—' }}</td>
-              <td class="text-end">
-                <button class="btn btn-sm btn-success" (click)="promover(usuario)">
-                  Ascender a administrador
-                </button>
-              </td>
-            </tr>
-          }
-        </tbody>
-      </table>
-    </div>
+  <div class="table-responsive">
+    <table class="table table-hover align-middle">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Email</th>
+          <th>País</th>
+          <th class="text-end">Acción</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (usuario of usuarios(); track usuario.id_usuario) {
+        <tr>
+          <td>{{ usuario.nombre }} {{ usuario.apellido }}</td>
+          <td>{{ usuario.email }}</td>
+          <td>{{ usuario.pais || '—' }}</td>
+          <td class="text-end">
+            <button class="btn btn-sm btn-success" (click)="promover(usuario)">
+              Ascender a administrador
+            </button>
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
   }
 </div>

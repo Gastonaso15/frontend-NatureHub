@@ -30,7 +30,7 @@ export class RegistroComponent {
   passwordMismatch = false;
   errorMessage: string | null = null;
 
-  constructor(private authService: AutenticacionService, private router: Router) {}
+  constructor(private authService: AutenticacionService, private router: Router) { }
 
   checkPasswordMatch(): void {
     if (this.registerData.confirmPassword.length > 0) {

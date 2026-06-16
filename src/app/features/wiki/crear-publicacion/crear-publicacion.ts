@@ -125,16 +125,16 @@ export class CrearPublicacionComponent implements OnInit {
     if (!result.isConfirmed) return;
 
     const user = this.authService.currentUser();
-    
+
     try {
       const datosEnvio: Omit<Publicacion, 'id_publicacion' | 'fecha_creacion' | 'estado'> = {
         ...this.datosArticulo,
         id_autor: user!.id_usuario,
-        campos_extras: this.camposExtras 
+        campos_extras: this.camposExtras
       };
-      
+
       console.log('Datos a enviar:', datosEnvio);
-      
+
       await this.wikiService.agregarPublicacion(datosEnvio, this.fotoFile);
 
       await Swal.fire({
@@ -147,7 +147,7 @@ export class CrearPublicacionComponent implements OnInit {
       this.router.navigate(['/']);
     } catch (error: any) {
       let mensajeError = 'Hubo un problema al enviar el artículo. Intenta nuevamente.';
-      
+
       if (error && error.error && error.error.error) {
         mensajeError = error.error.error;
       } else if (error && error.message) {

@@ -21,7 +21,7 @@ const PUBLICACIONES: Publicacion[] = [
     areas_habitat: 'Pampas, pastizales y zonas agrícolas del sur de Sudamérica, especialmente en Uruguay y Argentina.',
     dieta: 'Omnívoro. Se alimenta de roedores, conejos, insectos, frutas silvestres y ocasionalmente carroña.',
     horas_activas: 'Crepuscular y nocturno. En zonas alejadas del ser humano puede ser activo de día.',
-    estado: 'publicada',
+    estado: 'aprobada',
     fecha_creacion: '2026-01-15',
     campos_extras: []
   },
@@ -35,7 +35,7 @@ const PUBLICACIONES: Publicacion[] = [
     areas_habitat: 'Pastizales abiertos, sabanas y áreas agrícolas de Brasil, Bolivia, Argentina y Uruguay.',
     dieta: 'Carnívoro. Caza armadillos, vizcachas, zorros y reptiles de gran porte.',
     horas_activas: 'Diurno. Más activo durante las horas de la mañana y al atardecer.',
-    estado: 'publicada',
+    estado: 'aprobada',
     fecha_creacion: '2026-01-20',
     campos_extras: [
       { etiqueta: 'Estado de conservación', valor: 'En peligro', tipo: 'texto' }
@@ -51,7 +51,7 @@ const PUBLICACIONES: Publicacion[] = [
     areas_habitat: 'Bosques, pastizales, márgenes de ríos y zonas urbanas de gran parte de Sudamérica.',
     dieta: 'Omnívoro. Consume frutos, huevos, pequeños vertebrados, invertebrados y carroña.',
     horas_activas: 'Diurno. Termorregula tomando sol en las mañanas antes de iniciar su actividad.',
-    estado: 'publicada',
+    estado: 'aprobada',
     fecha_creacion: '2026-02-01',
     campos_extras: [
       { etiqueta: 'Longitud máxima', valor: '1.5 metros', tipo: 'texto' },
@@ -68,7 +68,7 @@ const PUBLICACIONES: Publicacion[] = [
     areas_habitat: 'Orillas de ríos, lagunas y bañados de Sudamérica tropical y subtropical.',
     dieta: 'Herbívoro. Se alimenta principalmente de gramíneas acuáticas, hierbas y cortezas.',
     horas_activas: 'Crepuscular y nocturno, aunque puede verse activo durante el día en zonas tranquilas.',
-    estado: 'publicada',
+    estado: 'aprobada',
     fecha_creacion: '2026-02-10',
     campos_extras: [
       { etiqueta: 'Peso promedio adulto', valor: '50 kg', tipo: 'texto' },
@@ -85,7 +85,7 @@ const PUBLICACIONES: Publicacion[] = [
     areas_habitat: 'Pastizales abiertos y llanuras de Brasil, Bolivia, Argentina, Paraguay y Uruguay.',
     dieta: 'Omnívoro. Come plantas, semillas, frutas, insectos y pequeños animales.',
     horas_activas: 'Diurno. Activo desde el amanecer hasta el atardecer.',
-    estado: 'publicada',
+    estado: 'aprobada',
     fecha_creacion: '2026-02-18',
     campos_extras: [
       { etiqueta: 'Ave más grande de América del Sur', valor: 'Sí', tipo: 'texto' }
@@ -104,11 +104,11 @@ export class WikiService {
   }
 
   getArticulosDestacados(): Publicacion[] {
-    return this.publicaciones.filter(p => p.estado === 'publicada').slice(0, 4);
+    return this.publicaciones.filter(p => p.estado === 'aprobada').slice(0, 4);
   }
 
   getPublicados(): Publicacion[] {
-    return this.publicaciones.filter(p => p.estado === 'publicada');
+    return this.publicaciones.filter(p => p.estado === 'aprobada');
   }
 
   getPublicacionPorId(id: number): Publicacion | undefined {
@@ -116,13 +116,13 @@ export class WikiService {
   }
 
   getPublicacionesPorSeccion(idSeccion: number): Publicacion[] {
-    return this.publicaciones.filter(p => p.id_seccion === idSeccion && p.estado === 'publicada');
+    return this.publicaciones.filter(p => p.id_seccion === idSeccion && p.estado === 'aprobada');
   }
 
   buscarPublicaciones(consulta: string): Publicacion[] {
     const q = consulta.toLowerCase();
     return this.publicaciones.filter(p =>
-      p.estado === 'publicada' && (
+      p.estado === 'aprobada' && (
         p.titulo.toLowerCase().includes(q) ||
         p.nombre_cientifico.toLowerCase().includes(q) ||
         p.areas_habitat.toLowerCase().includes(q)
@@ -169,17 +169,17 @@ export class WikiService {
         .filter(p => p.estado === 'APROBADA')
         .map(p => ({
           id_publicacion: p.id,
-          id_seccion:     p.seccion,
-          id_autor:       p.autor,
-          titulo:         p.titulo,
+          id_seccion: p.seccion,
+          id_autor: p.autor,
+          titulo: p.titulo,
           nombre_cientifico: p.nombreCientifico,
-          foto_url:       p.foto,
-          areas_habitat:  Array.isArray(p.areasHabitat) ? p.areasHabitat.join(', ') : p.areasHabitat,
-          dieta:          p.dieta,
-          horas_activas:  p.horasActivas,
-          estado:         p.estado,
+          foto_url: p.foto,
+          areas_habitat: Array.isArray(p.areasHabitat) ? p.areasHabitat.join(', ') : p.areasHabitat,
+          dieta: p.dieta,
+          horas_activas: p.horasActivas,
+          estado: p.estado,
           fecha_creacion: p.fechaCreacion,
-          campos_extras:  p.camposExtra ?? []
+          campos_extras: p.camposExtra ?? []
         } as Publicacion))
       ),
       catchError(error => {

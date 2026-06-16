@@ -12,10 +12,9 @@
             <input type="text" class="form-control" name="nombre" [(ngModel)]="registerData.nombre"
               #nombreField="ngModel" required minlength="2"
               [class.is-invalid]="nombreField.invalid && (nombreField.touched || submitted)"
-              [class.is-valid]="nombreField.valid && nombreField.touched"
-              placeholder="Tu nombre">
+              [class.is-valid]="nombreField.valid && nombreField.touched" placeholder="Tu nombre">
             @if (nombreField.invalid && (nombreField.touched || submitted)) {
-              <div class="invalid-feedback">Ingresá tu nombre (mínimo 2 caracteres).</div>
+            <div class="invalid-feedback">Ingresá tu nombre (mínimo 2 caracteres).</div>
             }
           </div>
           <div class="col-md-6">
@@ -23,26 +22,23 @@
             <input type="text" class="form-control" name="apellido" [(ngModel)]="registerData.apellido"
               #apellidoField="ngModel" required minlength="2"
               [class.is-invalid]="apellidoField.invalid && (apellidoField.touched || submitted)"
-              [class.is-valid]="apellidoField.valid && apellidoField.touched"
-              placeholder="Tu apellido">
+              [class.is-valid]="apellidoField.valid && apellidoField.touched" placeholder="Tu apellido">
             @if (apellidoField.invalid && (apellidoField.touched || submitted)) {
-              <div class="invalid-feedback">Ingresá tu apellido (mínimo 2 caracteres).</div>
+            <div class="invalid-feedback">Ingresá tu apellido (mínimo 2 caracteres).</div>
             }
           </div>
         </div>
 
         <div class="mb-3">
           <label class="form-label fw-semibold">Correo electrónico</label>
-          <input type="email" class="form-control" name="email" [(ngModel)]="registerData.email"
-            #emailField="ngModel" required email
-            [class.is-invalid]="emailField.invalid && (emailField.touched || submitted)"
-            [class.is-valid]="emailField.valid && emailField.touched"
-            placeholder="tu@correo.com">
+          <input type="email" class="form-control" name="email" [(ngModel)]="registerData.email" #emailField="ngModel"
+            required email [class.is-invalid]="emailField.invalid && (emailField.touched || submitted)"
+            [class.is-valid]="emailField.valid && emailField.touched" placeholder="tu@correo.com">
           @if (emailField.errors?.['required'] && (emailField.touched || submitted)) {
-            <div class="invalid-feedback">El correo electrónico es obligatorio.</div>
+          <div class="invalid-feedback">El correo electrónico es obligatorio.</div>
           }
           @if (emailField.errors?.['email'] && (emailField.touched || submitted)) {
-            <div class="invalid-feedback">Ingresá un correo electrónico válido.</div>
+          <div class="invalid-feedback">Ingresá un correo electrónico válido.</div>
           }
         </div>
 
@@ -78,21 +74,19 @@
 
           <div class="mb-3">
             <label class="form-label fw-semibold">Foto de perfil</label>
-            <div class="upload-dropzone" [class.upload-active]="dragActive"
-              (dragover)="onDragOver($event)"
-              (dragleave)="onDragLeave()"
-              (drop)="onFileDrop($event)">
+            <div class="upload-dropzone" [class.upload-active]="dragActive" (dragover)="onDragOver($event)"
+              (dragleave)="onDragLeave()" (drop)="onFileDrop($event)">
               <p class="mb-2">Arrastrar una imagen o</p>
               <button type="button" class="btn btn-link p-0" (click)="fileInput.click()">examinar archivos</button>
               <input type="file" #fileInput accept="image/*" (change)="onFileSelected($event)" hidden>
             </div>
             @if (photoPreview) {
-              <div class="mt-3 preview-container">
-                <img [src]="photoPreview" class="img-fluid rounded" alt="Vista previa de la imagen">
-                <button type="button" class="btn btn-sm btn-outline-danger mt-2" (click)="removePhoto()">
-                  Quitar imagen
-                </button>
-              </div>
+            <div class="mt-3 preview-container">
+              <img [src]="photoPreview" class="img-fluid rounded" alt="Vista previa de la imagen">
+              <button type="button" class="btn btn-sm btn-outline-danger mt-2" (click)="removePhoto()">
+                Quitar imagen
+              </button>
+            </div>
             }
             <div class="form-text">También podés pegar una URL de imagen si no querés subir archivo.</div>
           </div>
@@ -100,46 +94,41 @@
           <div class="mb-3">
             <label class="form-label fw-semibold">URL de foto</label>
             <input type="url" class="form-control" name="fotoUrl" [(ngModel)]="registerData.fotoUrl"
-              (ngModelChange)="onFotoUrlChange()"
-              placeholder="https://example.com/mi-foto.jpg">
+              (ngModelChange)="onFotoUrlChange()" placeholder="https://example.com/mi-foto.jpg">
           </div>
         </div>
 
         <div class="mb-3">
           <label class="form-label fw-semibold">Contraseña</label>
           <input type="password" class="form-control" name="password" [(ngModel)]="registerData.password"
-            #passwordField="ngModel" required minlength="6"
-            (ngModelChange)="checkPasswordMatch()"
+            #passwordField="ngModel" required minlength="6" (ngModelChange)="checkPasswordMatch()"
             [class.is-invalid]="passwordField.invalid && (passwordField.touched || submitted)"
-            [class.is-valid]="passwordField.valid && passwordField.touched"
-            placeholder="Mínimo 6 caracteres">
+            [class.is-valid]="passwordField.valid && passwordField.touched" placeholder="Mínimo 6 caracteres">
           @if (passwordField.errors?.['required'] && (passwordField.touched || submitted)) {
-            <div class="invalid-feedback">La contraseña es obligatoria.</div>
+          <div class="invalid-feedback">La contraseña es obligatoria.</div>
           }
           @if (passwordField.errors?.['minlength'] && (passwordField.touched || submitted)) {
-            <div class="invalid-feedback">La contraseña debe tener al menos 6 caracteres.</div>
+          <div class="invalid-feedback">La contraseña debe tener al menos 6 caracteres.</div>
           }
         </div>
 
         <div class="mb-4">
           <label class="form-label fw-semibold">Confirmar Contraseña</label>
-          <input type="password" class="form-control" name="confirmPassword"
-            [(ngModel)]="registerData.confirmPassword"
-            #confirmField="ngModel" required
-            (ngModelChange)="checkPasswordMatch()"
+          <input type="password" class="form-control" name="confirmPassword" [(ngModel)]="registerData.confirmPassword"
+            #confirmField="ngModel" required (ngModelChange)="checkPasswordMatch()"
             [class.is-invalid]="(confirmField.invalid && (confirmField.touched || submitted)) || passwordMismatch"
             [class.is-valid]="confirmField.valid && confirmField.touched && !passwordMismatch"
             placeholder="Repetí tu contraseña">
           @if (confirmField.errors?.['required'] && (confirmField.touched || submitted)) {
-            <div class="invalid-feedback">Confirmá tu contraseña.</div>
+          <div class="invalid-feedback">Confirmá tu contraseña.</div>
           }
           @if (passwordMismatch) {
-            <div class="invalid-feedback d-block">Las contraseñas no coinciden.</div>
+          <div class="invalid-feedback d-block">Las contraseñas no coinciden.</div>
           }
         </div>
 
         @if (errorMessage) {
-          <div class="alert alert-danger py-2 mb-3 small">{{ errorMessage }}</div>
+        <div class="alert alert-danger py-2 mb-3 small">{{ errorMessage }}</div>
         }
 
         <button type="submit" class="btn btn-primary w-100 btn-lg fw-bold mb-3">

@@ -32,7 +32,7 @@ export class ListaPublicacionesComponent implements OnInit {
         this.cdr.detectChanges();
       },
       error: () => {
-        this.error = 'No se pudieron cargar las publicaciones. Verificá que el servidor esté activo.';
+        this.error = 'No se pudieron cargar las publicaciones.';
         this.cargando = false;
         this.cdr.detectChanges();
       }
