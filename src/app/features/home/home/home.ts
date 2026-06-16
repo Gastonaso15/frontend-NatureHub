@@ -20,6 +20,7 @@ export class HomeComponent implements AfterViewInit {
   articulosDestacados: Publicacion[] = this.wikiService.getArticulosDestacados();
   consultaBusqueda = '';
   resultadosBusqueda: Publicacion[] | null = null;
+  loading = false;
 
   ngAfterViewInit(): void {
     this.drawSectionStats();

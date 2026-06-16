@@ -1,11 +1,11 @@
-<div class="perfil-page">
+<div class="perfil-page min-vh-100 pb-5">
 
   @if (usuario) {
   <div class="perfil-header">
     <div class="container">
-      <div class="perfil-header-inner">
+      <div class="d-flex align-items-start gap-3 flex-wrap">
 
-        <div class="avatar-wrap">
+        <div class="position-relative flex-shrink-0">
           @if (usuario.fotoUrl) {
             <img [src]="obtenerImagenUrl(usuario.fotoUrl)" class="avatar-img" [alt]="usuario.nombre" />
           } @else {
@@ -13,78 +13,80 @@
           }
         </div>
 
-        <div class="perfil-header-info">
-          <h1 class="perfil-name">{{ usuario.nombre }} {{ usuario.apellido }}</h1>
-          <p class="perfil-email">{{ usuario.email }}</p>
+        <div class="flex-grow-1">
+          <h4 class="fw-bold text-white mb-1">{{ usuario.nombre }} {{ usuario.apellido }}</h4>
+          <p class="small text-white-50 mb-0">{{ usuario.email }}</p>
         </div>
 
-        <div class="perfil-header-actions">
-          <button class="btn-edit" (click)="toggleEdicion()">
+        <div class="d-flex flex-column gap-2 align-items-end ms-auto">
+          <button class="btn btn-outline-light btn-sm" (click)="toggleEdicion()">
             @if (modoEdicion) { Cancelar } @else { ✏️ Editar perfil }
           </button>
-          <button class="btn-logout" (click)="cerrarSesion()">Cerrar sesión</button>
+          <button class="btn btn-outline-danger btn-sm" (click)="cerrarSesion()">Cerrar sesión</button>
         </div>
 
       </div>
     </div>
   </div>
 
-  <div class="container perfil-body">
+  <div class="container pt-4">
 
     @if (!modoEdicion) {
 
-      <div class="perfil-grid">
+      <div class="row g-3">
 
-        <section class="perfil-card">
-          <h2 class="section-title">Datos personales</h2>
-          <div class="dato-list">
-            <div class="dato-item">
-              <span class="dato-label">Nombre completo</span>
-              <span class="dato-value">{{ usuario.nombre }} {{ usuario.apellido }}</span>
+        <div class="col-md-6">
+          <section class="card p-4 rounded-3 shadow-sm h-100">
+            <h2 class="section-title">Datos personales</h2>
+            <div>
+              <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                <span class="small text-muted">Nombre completo</span>
+                <span class="small fw-medium text-end">{{ usuario.nombre }} {{ usuario.apellido }}</span>
+              </div>
+              <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                <span class="small text-muted">Correo electrónico</span>
+                <span class="small fw-medium text-end">{{ usuario.email }}</span>
+              </div>
+              <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                <span class="small text-muted">País</span>
+                <span class="small fw-medium text-end">{{ usuario.pais || '—' }}</span>
+              </div>
+              <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                <span class="small text-muted">Sexo</span>
+                <span class="small fw-medium text-end">{{ labelSexo() || '—' }}</span>
+              </div>
+              <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                <span class="small text-muted">Fecha de nacimiento</span>
+                <span class="small fw-medium text-end">
+                  {{ usuario.fechaNacimiento ? usuario.fechaNacimiento.split(' ')[0] : '—' }}
+                </span>
+              </div>
+              <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                <span class="small text-muted">Rol en NatureHub</span>
+                <span class="badge rounded-pill role-pill badge-{{ usuario.rol }}">{{ labelRol() }}</span>
+              </div>
+              <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                <span class="small text-muted">Miembro desde</span>
+                <span class="small fw-medium text-end">{{ usuario.fechaRegistro ? fechaRegistroFormateada() : '—' }}</span>
+              </div>
+              <div class="d-flex justify-content-between align-items-center py-2">
+                <span class="small text-muted">Estado de cuenta</span>
+                <span class="small fw-medium text-end">
+                  <span class="estado-dot" [class.activo]="usuario.activo"></span>
+                  {{ usuario.activo ? 'Activa' : 'Inactiva' }}
+                </span>
+              </div>
             </div>
-            <div class="dato-item">
-              <span class="dato-label">Correo electrónico</span>
-              <span class="dato-value">{{ usuario.email }}</span>
-            </div>
-            <div class="dato-item">
-              <span class="dato-label">País</span>
-              <span class="dato-value">{{ usuario.pais || '—' }}</span>
-            </div>
-            <div class="dato-item">
-              <span class="dato-label">Sexo</span>
-              <span class="dato-value">{{ labelSexo() || '—' }}</span>
-            </div>
-            <div class="dato-item">
-              <span class="dato-label">Fecha de nacimiento</span>
-              <span class="dato-value">
-                {{ usuario.fechaNacimiento ? usuario.fechaNacimiento.split(' ')[0] : '—' }}
-              </span>
-            </div>
-            <div class="dato-item">
-              <span class="dato-label">Rol en NatureHub</span>
-              <span class="dato-value role-pill badge-{{ usuario.rol }}">{{ labelRol() }}</span>
-            </div>
-            <div class="dato-item">
-              <span class="dato-label">Miembro desde</span>
-              <span class="dato-value">{{ usuario.fechaRegistro ? fechaRegistroFormateada() : '—' }}</span>
-            </div>
-            <div class="dato-item">
-              <span class="dato-label">Estado de cuenta</span>
-              <span class="dato-value">
-                <span class="estado-dot" [class.activo]="usuario.activo"></span>
-                {{ usuario.activo ? 'Activa' : 'Inactiva' }}
-              </span>
-            </div>
-          </div>
-        </section>
+          </section>
+        </div>
 
-        <div class="perfil-side-cards">
-          <section class="perfil-card">
+        <div class="col-md-6">
+          <section class="card p-4 rounded-3 shadow-sm">
             <h2 class="section-title">Sobre mí</h2>
             @if (usuario.bio) {
-              <p class="bio-text">{{ usuario.bio }}</p>
+              <p class="small mb-0">{{ usuario.bio }}</p>
             } @else {
-              <p class="bio-empty">Todavía no agregaste una biografía.</p>
+              <p class="small text-muted fst-italic mb-0">Todavía no agregaste una biografía.</p>
             }
           </section>
         </div>
@@ -92,7 +94,7 @@
       </div>
 
       <div class="perfil-footer-baja">
-        <p>¿Deseas dejar de formar parte de la plataforma? 
+        <p>¿Deseas dejar de formar parte de la plataforma?
           <button type="button" class="btn-baja-discreto" (click)="eliminarCuenta()">
             Dar de baja cuenta
           </button>
@@ -101,110 +103,114 @@
 
     } @else {
 
-      <section class="perfil-card edit-card">
-        <h2 class="section-title">Editar perfil</h2>
+      <div class="row">
+        <div class="col-12">
+          <section class="card p-4 rounded-3 shadow-sm">
+            <h2 class="section-title">Editar perfil</h2>
 
-        <form #editForm="ngForm" (ngSubmit)="guardarCambios(editForm)" novalidate>
+            <form #editForm="ngForm" (ngSubmit)="guardarCambios(editForm)" novalidate>
 
-          <div class="form-row-2">
-            <div class="form-group">
-              <label class="form-label">Nombre <span class="req">*</span></label>
-              <input type="text" class="form-input" name="nombre"
-                [(ngModel)]="datosEdicion.nombre"
-                #nombreF="ngModel" required minlength="2"
-                [class.input-error]="nombreF.invalid && (nombreF.touched || enviado)">
-              @if (nombreF.invalid && (nombreF.touched || enviado)) {
-                <span class="form-error">Mínimo 2 caracteres.</span>
-              }
-            </div>
-            <div class="form-group">
-              <label class="form-label">Apellido <span class="req">*</span></label>
-              <input type="text" class="form-input" name="apellido"
-                [(ngModel)]="datosEdicion.apellido"
-                #apellidoF="ngModel" required minlength="2"
-                [class.input-error]="apellidoF.invalid && (apellidoF.touched || enviado)">
-              @if (apellidoF.invalid && (apellidoF.touched || enviado)) {
-                <span class="form-error">Mínimo 2 caracteres.</span>
-              }
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">Correo electrónico <span class="req">*</span></label>
-            <input type="email" class="form-input" name="email"
-              [(ngModel)]="datosEdicion.email"
-              #emailF="ngModel" required email
-              [class.input-error]="emailF.invalid && (emailF.touched || enviado)">
-            @if (emailF.invalid && (emailF.touched || enviado)) {
-              <span class="form-error">Ingresá un correo válido.</span>
-            }
-          </div>
-
-          <div class="form-row-2">
-            <div class="form-group">
-              <label class="form-label">País</label>
-              <input type="text" class="form-input" name="pais"
-                [(ngModel)]="datosEdicion.pais" placeholder="Tu país de residencia">
-            </div>
-            <div class="form-group">
-              <label class="form-label">Sexo</label>
-              <select class="form-input form-select" name="sexo" [(ngModel)]="datosEdicion.sexo">
-                <option value="">Seleccioná</option>
-                <option value="femenino">Femenino</option>
-                <option value="masculino">Masculino</option>
-                <option value="otro">Otro</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">Fecha de nacimiento</label>
-            <input type="date" class="form-input" name="fechaNacimiento"
-              [(ngModel)]="datosEdicion.fechaNacimiento">
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">Foto de perfil (URL)</label>
-            <input type="url" class="form-input" name="fotoUrl"
-              [(ngModel)]="datosEdicion.fotoUrl"
-              placeholder="https://ejemplo.com/mi-foto.jpg">
-            @if (datosEdicion.fotoUrl) {
-              <div class="foto-preview-wrap">
-                <img [src]="obtenerImagenUrl(datosEdicion.fotoUrl)" class="foto-preview" alt="Vista previa">
+              <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                  <label class="form-label fw-semibold">Nombre <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" name="nombre"
+                    [(ngModel)]="datosEdicion.nombre"
+                    #nombreF="ngModel" required minlength="2"
+                    [class.is-invalid]="nombreF.invalid && (nombreF.touched || enviado)">
+                  @if (nombreF.invalid && (nombreF.touched || enviado)) {
+                    <div class="invalid-feedback d-block">Mínimo 2 caracteres.</div>
+                  }
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label fw-semibold">Apellido <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" name="apellido"
+                    [(ngModel)]="datosEdicion.apellido"
+                    #apellidoF="ngModel" required minlength="2"
+                    [class.is-invalid]="apellidoF.invalid && (apellidoF.touched || enviado)">
+                  @if (apellidoF.invalid && (apellidoF.touched || enviado)) {
+                    <div class="invalid-feedback d-block">Mínimo 2 caracteres.</div>
+                  }
+                </div>
               </div>
-            }
-          </div>
 
-          <div class="form-group">
-            <label class="form-label">Biografía</label>
-            <textarea class="form-input form-textarea" name="bio" rows="4"
-              [(ngModel)]="datosEdicion.bio"
-              placeholder="Contanos algo sobre vos..."></textarea>
-          </div>
+              <div class="mb-3">
+                <label class="form-label fw-semibold">Correo electrónico <span class="text-danger">*</span></label>
+                <input type="email" class="form-control" name="email"
+                  [(ngModel)]="datosEdicion.email"
+                  #emailF="ngModel" required email
+                  [class.is-invalid]="emailF.invalid && (emailF.touched || enviado)">
+                @if (emailF.invalid && (emailF.touched || enviado)) {
+                  <div class="invalid-feedback d-block">Ingresá un correo válido.</div>
+                }
+              </div>
 
-          @if (mensajeExito) {
-            <div class="alert-success">{{ mensajeExito }}</div>
-          }
-          @if (mensajeError) {
-            <div class="alert-error">{{ mensajeError }}</div>
-          }
+              <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                  <label class="form-label fw-semibold">País</label>
+                  <input type="text" class="form-control" name="pais"
+                    [(ngModel)]="datosEdicion.pais" placeholder="Tu país de residencia">
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label fw-semibold">Sexo</label>
+                  <select class="form-select" name="sexo" [(ngModel)]="datosEdicion.sexo">
+                    <option value="">Seleccioná</option>
+                    <option value="femenino">Femenino</option>
+                    <option value="masculino">Masculino</option>
+                    <option value="otro">Otro</option>
+                  </select>
+                </div>
+              </div>
 
-          <div class="form-actions">
-            <button type="submit" class="btn-save">Guardar cambios</button>
-            <button type="button" class="btn-cancel" (click)="toggleEdicion()">Cancelar</button>
-          </div>
+              <div class="mb-3">
+                <label class="form-label fw-semibold">Fecha de nacimiento</label>
+                <input type="date" class="form-control" name="fechaNacimiento"
+                  [(ngModel)]="datosEdicion.fechaNacimiento">
+              </div>
 
-        </form>
-      </section>
+              <div class="mb-3">
+                <label class="form-label fw-semibold">Foto de perfil (URL)</label>
+                <input type="url" class="form-control" name="fotoUrl"
+                  [(ngModel)]="datosEdicion.fotoUrl"
+                  placeholder="https://ejemplo.com/mi-foto.jpg">
+                @if (datosEdicion.fotoUrl) {
+                  <div class="mt-2">
+                    <img [src]="obtenerImagenUrl(datosEdicion.fotoUrl)" class="foto-preview" alt="Vista previa">
+                  </div>
+                }
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label fw-semibold">Biografía</label>
+                <textarea class="form-control form-textarea" name="bio" rows="4"
+                  [(ngModel)]="datosEdicion.bio"
+                  placeholder="Contanos algo sobre vos..."></textarea>
+              </div>
+
+              @if (mensajeExito) {
+                <div class="alert alert-success py-2 mb-3 small">{{ mensajeExito }}</div>
+              }
+              @if (mensajeError) {
+                <div class="alert alert-danger py-2 mb-3 small">{{ mensajeError }}</div>
+              }
+
+              <div class="d-flex gap-3 mt-2">
+                <button type="submit" class="btn btn-primary">Guardar cambios</button>
+                <button type="button" class="btn btn-outline-secondary" (click)="toggleEdicion()">Cancelar</button>
+              </div>
+
+            </form>
+          </section>
+        </div>
+      </div>
 
     }
 
   </div>
 
   } @else {
-    <div class="no-session">
+    <div class="d-flex flex-column align-items-center gap-3 py-5 text-muted">
       <p>No hay sesión activa.</p>
-      <a routerLink="/auth/login" class="btn-edit">Iniciar sesión</a>
+      <a routerLink="/auth/login" class="btn btn-outline-secondary">Iniciar sesión</a>
     </div>
   }
 

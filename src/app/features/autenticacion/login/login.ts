@@ -13,6 +13,7 @@ import { AutenticacionService } from '../../../core/services/autenticacion';
 export class LoginComponent {
   loginData = { email: '', password: '' };
   submitted = false;
+  loading = false;
   errorMessage: string | null = null;
 
   constructor(

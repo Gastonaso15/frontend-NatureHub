@@ -1,4 +1,4 @@
-<div class="hero-section">
+<div class="hero-section d-flex align-items-center">
   <div class="container text-center">
     <h1 class="hero-title mb-2">🌿 NatureHub</h1>
     <p class="lead mb-4 opacity-75">Tu enciclopedia colaborativa de la naturaleza</p>
@@ -36,7 +36,7 @@
         <div class="row g-3">
           @for (articulo of resultadosBusqueda; track articulo.id_publicacion) {
             <div class="col-6 col-md-3">
-              <div class="card card-article shadow-sm h-100"
+              <div class="card card-article border-0 rounded-3 overflow-hidden shadow-sm h-100"
                    [routerLink]="['/wiki/article', articulo.id_publicacion]"
                    style="cursor:pointer">
                 <img [src]="articulo.foto_url"
@@ -65,7 +65,7 @@
       <div class="row g-3">
         @for (articulo of articulosDestacados; track articulo.id_publicacion) {
           <div class="col-6 col-md-3">
-            <div class="card card-article shadow-sm h-100"
+            <div class="card card-article border-0 rounded-3 overflow-hidden shadow-sm h-100"
                  [routerLink]="['/wiki/article', articulo.id_publicacion]"
                  style="cursor:pointer">
               <img [src]="articulo.foto_url"
@@ -87,7 +87,7 @@
       <div class="row g-3">
         @for (seccion of secciones; track seccion.id_seccion) {
           <div class="col-md-4">
-            <div class="card card-section p-4 shadow-sm h-100">
+            <div class="card card-section rounded bg-white p-4 shadow-sm h-100">
               <h5 class="fw-bold text-primary mb-2">{{ seccion.nombre }}</h5>
               <p class="text-muted small mb-0">{{ seccion.descripcion }}</p>
             </div>

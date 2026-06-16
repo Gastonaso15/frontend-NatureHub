@@ -1,6 +1,6 @@
 :host {
   transition: all 0.3s ease;
-  margin-left: -260px; 
+  margin-left: -260px;
   opacity: 0;
   visibility: hidden;
   z-index: 1000;
@@ -14,31 +14,17 @@
 
 .app-sidebar {
   width: 260px;
-  background-color: #f8f9fa;
-  border-right: 1px solid #dee2e6;
-  height: calc(100vh - 60px); 
+  height: calc(100vh - 60px);
   position: sticky;
   top: 60px;
 }
 
-.sidebar-nav {
-  display: flex;
-  flex-direction: column;
-  padding: 20px 10px;
-}
-
 .sidebar-link {
-  display: block;
-  padding: 12px 15px;
-  color: #333;
-  text-decoration: none;
-  border-radius: 6px;
-  margin-bottom: 5px;
   transition: background 0.2s;
 
   &:hover, &.active {
     background-color: #e8f5e9;
-    color: #2e7d32;
+    color: #2e7d32 !important;
     font-weight: bold;
   }
 }
