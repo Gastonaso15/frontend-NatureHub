@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom, Observable } from 'rxjs';
 import { tap, catchError, map } from 'rxjs/operators';
-import { Publicacion, Seccion } from '../../shared/models/wiki.models';
+import { Publicacion, Seccion } from '../../shared/models/wiki.modelos';
 
 const SECCIONES: Seccion[] = [
   { id_seccion: 1, nombre: 'Mamíferos', descripcion: 'Vertebrados de sangre caliente con pelo o pelaje y lactancia de sus crías' },

@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Location } from '@angular/common';
 import { SlicePipe } from '@angular/common';
 import { WikiService } from '../../../core/services/wiki';
-import { Publicacion, Seccion, Usuario } from '../../../shared/models/wiki.models';
+import { Publicacion, Seccion, Usuario } from '../../../shared/models/wiki.modelos';
 
 @Component({
   selector: 'app-article-detail',

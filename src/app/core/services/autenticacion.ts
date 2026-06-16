@@ -1,5 +1,5 @@
 import { Injectable, signal, inject } from '@angular/core';
-import { Usuario } from '../../shared/models/wiki.models';
+import { Usuario } from '../../shared/models/wiki.modelos';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 

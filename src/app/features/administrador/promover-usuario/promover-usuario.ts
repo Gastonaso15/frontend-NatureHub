@@ -1,6 +1,6 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { AutenticacionService } from '../../../core/services/autenticacion';
-import { Usuario } from '../../../shared/models/wiki.models';
+import { Usuario } from '../../../shared/models/wiki.modelos';
 import Swal from 'sweetalert2';
 
 @Component({

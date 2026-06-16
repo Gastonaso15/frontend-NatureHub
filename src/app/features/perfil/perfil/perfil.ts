@@ -2,7 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule, NgForm } from '@angular/forms';
 import { AutenticacionService } from '../../../core/services/autenticacion';
-import { Usuario } from '../../../shared/models/wiki.models';
+import { Usuario } from '../../../shared/models/wiki.modelos';
 import { HttpClient } from '@angular/common/http';
 import Swal from 'sweetalert2';
 

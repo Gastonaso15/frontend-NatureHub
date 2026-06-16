@@ -2,7 +2,7 @@ import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { WikiService } from '../../../core/services/wiki';
-import { Publicacion, Seccion } from '../../../shared/models/wiki.models';
+import { Publicacion, Seccion } from '../../../shared/models/wiki.modelos';
 
 @Component({
   selector: 'app-lista-publicaciones',

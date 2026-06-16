@@ -4,7 +4,7 @@ import { SlicePipe } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { AutenticacionService } from '../../../core/services/autenticacion';
 import { WikiService } from '../../../core/services/wiki';
-import { Publicacion } from '../../../shared/models/wiki.models';
+import { Publicacion } from '../../../shared/models/wiki.modelos';
 
 @Component({
     selector: 'app-mis-publicaciones',

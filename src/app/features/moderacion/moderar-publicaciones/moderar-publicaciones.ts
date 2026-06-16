@@ -4,24 +4,8 @@ import { RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { forkJoin } from 'rxjs';
 import { AutenticacionService } from '../../../core/services/autenticacion';
+import { PublicacionPendiente } from '../../../shared/models/wiki.modelos';
 import Swal from 'sweetalert2';
-
-interface PublicacionPendiente {
-  id: number;
-  titulo: string;
-  foto: string | null;
-  nombreCientifico: string;
-  areasHabitat: string;
-  dieta: string;
-  horasActivas: string;
-  estado: string;
-  fechaCreacion: string;
-  autorId: number;
-  autorNombre: string;
-  seccion: number;
-  seccionNombre: string;
-  camposExtra: { etiqueta: string; valor: string; tipo: string }[];
-}
 
 const SECCIONES: Record<number, string> = {
   1: 'Mamíferos',

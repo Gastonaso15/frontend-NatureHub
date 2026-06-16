@@ -45,3 +45,20 @@ export interface Seccion {
   nombre: string;
   descripcion: string;
 }
+
+export interface PublicacionPendiente {
+  id: number;
+  titulo: string;
+  foto: string | null;
+  nombreCientifico: string;
+  areasHabitat: string;
+  dieta: string;
+  horasActivas: string;
+  estado: string;
+  fechaCreacion: string;
+  autorId: number;
+  autorNombre: string;
+  seccion: number;
+  seccionNombre: string;
+  camposExtra: { etiqueta: string; valor: string; tipo: string }[];
+}

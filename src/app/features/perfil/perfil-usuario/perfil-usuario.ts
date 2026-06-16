@@ -2,7 +2,7 @@ import { Component, inject, OnInit, signal, computed } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { Location } from '@angular/common';
-import { Usuario } from '../../../shared/models/wiki.models';
+import { Usuario } from '../../../shared/models/wiki.modelos';
 
 @Component({
     selector: 'app-perfil-usuario',

@@ -4,7 +4,7 @@ import { FormsModule, NgForm } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { WikiService } from '../../../core/services/wiki';
 import { AutenticacionService } from '../../../core/services/autenticacion';
-import { TipoCampoPersonalizado, Publicacion } from '../../../shared/models/wiki.models';
+import { TipoCampoPersonalizado, Publicacion } from '../../../shared/models/wiki.modelos';
 
 @Component({
   selector: 'app-create-article',
