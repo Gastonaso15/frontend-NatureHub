@@ -166,7 +166,7 @@ export class WikiService {
     return this.http.get<any[]>(`${this.apiUrl}/listarPublicaciones`).pipe(
       tap(data => console.log('Publicaciones del API:', data)),
       map(data => data
-        .filter(p => p.estado === 'publicada')
+        .filter(p => p.estado === 'APROBADA')
         .map(p => ({
           id_publicacion: p.id,
           id_seccion:     p.seccion,
