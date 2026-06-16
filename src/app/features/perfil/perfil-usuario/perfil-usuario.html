@@ -45,18 +45,39 @@
                 <span class="small text-muted">Nombre completo</span>
                 <span class="small fw-medium text-end">{{ usuario.nombre }} {{ usuario.apellido }}</span>
               </div>
+              
+              <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                <span class="small text-muted">Correo electrónico</span>
+                <span class="small fw-medium text-end">{{ usuario.email }}</span>
+              </div>
+
               <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
                 <span class="small text-muted">País</span>
                 <span class="small fw-medium text-end">{{ usuario.pais || '—' }}</span>
               </div>
+
+              <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                <span class="small text-muted">Sexo</span>
+                <span class="small fw-medium text-end">{{ usuario.sexo || '—' }}</span>
+              </div>
+
+              <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                <span class="small text-muted">Fecha de nacimiento</span>
+                <span class="small fw-medium text-end">
+                  {{ usuario.fechaNacimiento ? usuario.fechaNacimiento.split(' ')[0] : '—' }}
+                </span>
+              </div>
+
               <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
                 <span class="small text-muted">Rol en NatureHub</span>
                 <span class="badge rounded-pill role-pill badge-{{ usuario.rol }}">{{ usuario.rol }}</span>
               </div>
+
               <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
                 <span class="small text-muted">Miembro desde</span>
-                <span class="small fw-medium text-end">{{ fechaRegistroFormateada() }}</span>
+                <span class="small fw-medium text-end">{{ usuario.fechaRegistro ? fechaRegistroFormateada() : '—' }}</span>
               </div>
+
               <div class="d-flex justify-content-between align-items-center py-2">
                 <span class="small text-muted">Estado de cuenta</span>
                 <span class="small fw-medium text-end">
