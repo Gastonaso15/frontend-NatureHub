@@ -1,4 +1,5 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { AutenticacionService } from '../../../core/services/autenticacion';
 import { Usuario } from '../../../shared/models/wiki.modelos';
 import Swal from 'sweetalert2';
@@ -6,7 +7,7 @@ import Swal from 'sweetalert2';
 @Component({
   selector: 'app-promover-moderador',
   standalone: true,
-  imports: [],
+  imports: [RouterLink],
   templateUrl: './promover-moderador.html',
   styleUrl: './promover-moderador.scss'
 })

@@ -12,16 +12,19 @@
         <tr>
           <th>Nombre</th>
           <th>Email</th>
-          <th>País</th>
           <th class="text-end">Acción</th>
         </tr>
       </thead>
       <tbody>
         @for (usuario of usuarios(); track usuario.id_usuario) {
         <tr>
-          <td>{{ usuario.nombre }} {{ usuario.apellido }}</td>
+          <td>
+            <a [routerLink]="['/perfil', usuario.id_usuario]" class="fw-semibold text-decoration-none"
+              style="color: #2d6a4f;">
+              {{ usuario.nombre }} {{ usuario.apellido }}
+            </a>
+          </td>
           <td>{{ usuario.email }}</td>
-          <td>{{ usuario.pais || '—' }}</td>
           <td class="text-end">
             <button class="btn btn-sm btn-success" (click)="promover(usuario)">
               Ascender a moderador
