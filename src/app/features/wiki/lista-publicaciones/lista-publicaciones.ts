@@ -1,5 +1,5 @@
 import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { WikiService } from '../../../core/services/wiki';
 import { Publicacion, Seccion } from '../../../shared/models/wiki.modelos';
@@ -13,6 +13,7 @@ import { Publicacion, Seccion } from '../../../shared/models/wiki.modelos';
 })
 export class ListaPublicacionesComponent implements OnInit {
   private wikiService = inject(WikiService);
+  private route = inject(ActivatedRoute);
   private cdr = inject(ChangeDetectorRef);
 
   secciones: Seccion[] = this.wikiService.getSecciones();
@@ -32,10 +33,18 @@ export class ListaPublicacionesComponent implements OnInit {
   ] as const;
 
   ngOnInit(): void {
+    const seccionParam = this.route.snapshot.queryParamMap.get('seccion');
+    if (seccionParam !== null) {
+      const id = Number(seccionParam);
+      if (!Number.isNaN(id)) {
+        this.seccionSeleccionada = id;
+      }
+    }
+
     this.wikiService.listarPublicacionesApi().subscribe({
       next: (data) => {
         this.publicaciones = data;
-        this.publicacionesFiltradas = data;
+        this.filtrar();
         this.cargando = false;
         this.cdr.detectChanges();
       },

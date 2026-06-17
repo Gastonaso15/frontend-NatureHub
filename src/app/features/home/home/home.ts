@@ -1,5 +1,5 @@
 import { Component, inject, ElementRef, ViewChild, AfterViewInit, OnInit, ChangeDetectorRef } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { WikiService } from '../../../core/services/wiki';
 import { Publicacion, Seccion } from '../../../shared/models/wiki.modelos';
@@ -15,31 +15,47 @@ export class HomeComponent implements AfterViewInit, OnInit {
   @ViewChild('statsCanvas') statsCanvas!: ElementRef<HTMLCanvasElement>;
 
   private wikiService = inject(WikiService);
+  private router = inject(Router);
   private cdr = inject(ChangeDetectorRef);
+
+  private chartRows: { id_seccion: number; y: number; h: number }[] = [];
+  private readonly chartLabelWidth = 110;
 
   secciones: Seccion[] = this.wikiService.getSecciones();
   articulosDestacados: Publicacion[] = [];
+  publicaciones: Publicacion[] = [];
   consultaBusqueda = '';
   resultadosBusqueda: Publicacion[] | null = null;
   loading = true;
 
+  private viewReady = false;
+
   ngOnInit(): void {
     this.wikiService.listarPublicacionesApi().subscribe({
       next: (data) => {
+        this.publicaciones = data;
         const mezclados = [...data].sort(() => Math.random() - 0.5);
         this.articulosDestacados = mezclados.slice(0, 4);
         this.loading = false;
         this.cdr.detectChanges();
+        this.tryDrawChart();
       },
       error: () => {
         this.loading = false;
         this.cdr.detectChanges();
+        this.tryDrawChart();
       }
     });
   }
 
   ngAfterViewInit(): void {
-    this.drawSectionStats();
+    this.viewReady = true;
+    this.tryDrawChart();
+  }
+
+  private tryDrawChart(): void {
+    if (!this.viewReady) return;
+    setTimeout(() => this.drawSectionStats());
   }
 
   onSearch(): void {
@@ -62,15 +78,18 @@ export class HomeComponent implements AfterViewInit, OnInit {
     if (!ctx) return;
 
     const data = this.secciones.map(s => ({
+      id_seccion: s.id_seccion,
       name: s.nombre,
-      count: this.wikiService.getPublicacionesPorSeccion(s.id_seccion).length
+      count: this.publicaciones.filter(p => p.id_seccion === s.id_seccion).length
     }));
+
+    this.chartRows = [];
 
     const colors = ['#2d6a4f', '#40916c', '#52b788'];
     const maxCount = Math.max(...data.map(d => d.count), 1);
     const barH = 38;
     const gap = 16;
-    const pl = 110, pr = 50, pt = 16, pb = 16;
+    const pl = this.chartLabelWidth, pr = 50, pt = 16, pb = 16;
 
     canvas.height = data.length * (barH + gap) + pt + pb;
     const chartW = canvas.width - pl - pr;
@@ -80,6 +99,8 @@ export class HomeComponent implements AfterViewInit, OnInit {
     data.forEach((d, i) => {
       const y = pt + i * (barH + gap);
       const barW = Math.max((d.count / maxCount) * chartW, 4);
+
+      this.chartRows.push({ id_seccion: d.id_seccion, y, h: barH });
 
       ctx.fillStyle = colors[i % colors.length];
       ctx.beginPath();
@@ -92,11 +113,34 @@ export class HomeComponent implements AfterViewInit, OnInit {
       ctx.textBaseline = 'middle';
       ctx.fillText(d.name, pl - 10, y + barH / 2);
 
-      ctx.fillStyle = '#fff';
+      const countLabel = String(d.count);
       ctx.font = 'bold 14px Segoe UI, sans-serif';
-      ctx.textAlign = 'left';
       ctx.textBaseline = 'middle';
-      ctx.fillText(String(d.count) + ' artículo' + (d.count !== 1 ? 's' : ''), pl + barW + 10, y + barH / 2);
+
+      if (barW >= 36) {
+        ctx.fillStyle = '#fff';
+        ctx.textAlign = 'right';
+        ctx.fillText(countLabel, pl + barW - 10, y + barH / 2);
+      } else {
+        ctx.fillStyle = '#1b4332';
+        ctx.textAlign = 'left';
+        ctx.fillText(countLabel, pl + barW + 10, y + barH / 2);
+      }
     });
+  }
+
+  onChartClick(event: MouseEvent): void {
+    const canvas = this.statsCanvas?.nativeElement;
+    if (!canvas || this.chartRows.length === 0) return;
+
+    const rect = canvas.getBoundingClientRect();
+    const scaleY = canvas.height / rect.height;
+    const x = (event.clientX - rect.left) * (canvas.width / rect.width);
+    const y = (event.clientY - rect.top) * scaleY;
+
+    const row = this.chartRows.find(r => y >= r.y && y <= r.y + r.h && x <= this.chartLabelWidth);
+    if (row) {
+      this.router.navigate(['/categorias'], { queryParams: { seccion: row.id_seccion } });
+    }
   }
 }

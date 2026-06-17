@@ -78,7 +78,10 @@
       @for (seccion of secciones; track seccion.id_seccion) {
       <div class="col-md-4">
         <div class="card card-section rounded bg-white p-4 shadow-sm h-100">
-          <h5 class="fw-bold text-primary mb-2">{{ seccion.nombre }}</h5>
+          <h5 class="fw-bold text-primary mb-2">
+            <a [routerLink]="['/categorias']" [queryParams]="{ seccion: seccion.id_seccion }"
+              class="text-primary text-decoration-none section-link">{{ seccion.nombre }}</a>
+          </h5>
           <p class="text-muted small mb-0">{{ seccion.descripcion }}</p>
         </div>
       </div>
@@ -89,7 +92,8 @@
   <section class="mb-2">
     <h4 class="fw-bold mb-3">📊 Artículos por sección</h4>
     <div class="bg-white rounded-3 p-4 shadow-sm">
-      <canvas #statsCanvas width="600" style="max-width:100%; display:block;"></canvas>
+      <canvas #statsCanvas width="600" style="max-width:100%; display:block; cursor:pointer;"
+        (click)="onChartClick($event)" title="Haz clic en una sección para ver sus publicaciones"></canvas>
     </div>
   </section>
 
