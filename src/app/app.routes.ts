@@ -36,6 +36,11 @@ export const routes: Routes = [
     loadComponent: () => import('./features/wiki/mis-publicaciones/mis-publicaciones').then(m => m.MisPublicacionesComponent)
   },
   {
+    path: 'wiki/editar/:id',
+    canActivate: [autenticacionGuard],
+    loadComponent: () => import('./features/wiki/modificar-publicacion/modificar-publicacion').then(m => m.ModificarPublicacionComponent)
+  },
+  {
     path: 'perfil',
     canActivate: [autenticacionGuard],
     loadComponent: () => import('./features/perfil/perfil/perfil').then(m => m.PerfilComponent)

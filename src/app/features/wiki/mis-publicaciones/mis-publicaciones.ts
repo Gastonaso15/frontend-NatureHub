@@ -53,7 +53,7 @@ export class MisPublicacionesComponent implements OnInit {
                                 : (p.areasHabitat ?? ''),
                             dieta: p.dieta,
                             horas_activas: p.horasActivas,
-                            estado: p.estado,
+                            estado: (p.estado ?? '').toLowerCase(),
                             fecha_creacion: p.fechaCreacion ?? '',
                             campos_extras: p.camposExtra ?? [],
                         } as Publicacion));
