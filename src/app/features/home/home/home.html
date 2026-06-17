@@ -49,7 +49,7 @@
   } @else {
 
   <section class="mb-5">
-    <h4 class="fw-bold mb-4">⭐ Destacados</h4>
+    <h4 class="fw-bold mb-4">Destacados</h4>
     @if (loading) {
     <div class="text-center py-3">
       <div class="spinner-border text-success" role="status"></div>
@@ -73,7 +73,7 @@
   </section>
 
   <section class="mb-5">
-    <h4 class="fw-bold mb-4">📂 Secciones</h4>
+    <h4 class="fw-bold mb-4">Secciones</h4>
     <div class="row g-3">
       @for (seccion of secciones; track seccion.id_seccion) {
       <div class="col-md-4">
@@ -90,7 +90,7 @@
   </section>
 
   <section class="mb-2">
-    <h4 class="fw-bold mb-3">📊 Artículos por sección</h4>
+    <h4 class="fw-bold mb-3">Artículos por sección</h4>
     <div class="bg-white rounded-3 p-4 shadow-sm">
       <canvas #statsCanvas width="600" style="max-width:100%; display:block; cursor:pointer;"
         (click)="onChartClick($event)" title="Haz clic en una sección para ver sus publicaciones"></canvas>

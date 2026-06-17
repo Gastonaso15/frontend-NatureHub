@@ -66,23 +66,23 @@
       <p class="text-muted fst-italic fs-5 mb-4">{{ articulo()!.nombre_cientifico }}</p>
 
       <div class="mb-4 pb-3 border-bottom">
-        <h5 class="fw-bold mb-2" style="color: #2d6a4f;">🌍 Áreas de hábitat</h5>
+        <h5 class="fw-bold mb-2" style="color: #2d6a4f;">Áreas de hábitat</h5>
         <p class="mb-0">{{ articulo()!.areas_habitat }}</p>
       </div>
 
       <div class="mb-4 pb-3 border-bottom">
-        <h5 class="fw-bold mb-2" style="color: #2d6a4f;">🍃 Dieta</h5>
+        <h5 class="fw-bold mb-2" style="color: #2d6a4f;">Dieta</h5>
         <p class="mb-0">{{ articulo()!.dieta }}</p>
       </div>
 
       <div class="mb-4 pb-3 border-bottom">
-        <h5 class="fw-bold mb-2" style="color: #2d6a4f;">🕐 Horas activas</h5>
+        <h5 class="fw-bold mb-2" style="color: #2d6a4f;">Horas activas</h5>
         <p class="mb-0">{{ articulo()!.horas_activas }}</p>
       </div>
 
       @if (articulo()!.campos_extras && articulo()!.campos_extras!.length > 0) {
       <div class="mb-4">
-        <h5 class="fw-bold mb-3" style="color: #2d6a4f;">📋 Información adicional</h5>
+        <h5 class="fw-bold mb-3" style="color: #2d6a4f;">Información adicional</h5>
         <div class="row g-2">
           @for (field of articulo()!.campos_extras!; track field.etiqueta) {
           <div class="col-sm-6">
