@@ -104,97 +104,191 @@
 
     } @else {
 
-    <div class="row">
-      <div class="col-12">
-        <section class="card p-4 rounded-3 shadow-sm">
-          <h2 class="section-title">Editar perfil</h2>
+    <div class="d-flex flex-column gap-4">
 
-          <form #editForm="ngForm" (ngSubmit)="guardarCambios(editForm)" novalidate>
+      <section class="card p-4 rounded-3 shadow-sm">
+        <h2 class="section-title">Datos del perfil</h2>
 
-            <div class="row g-3 mb-3">
-              <div class="col-md-6">
-                <label class="form-label fw-semibold">Nombre <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" name="nombre" [(ngModel)]="datosEdicion.nombre"
-                  #nombreF="ngModel" required minlength="2"
-                  [class.is-invalid]="nombreF.invalid && (nombreF.touched || enviado)">
-                @if (nombreF.invalid && (nombreF.touched || enviado)) {
-                <div class="invalid-feedback d-block">Mínimo 2 caracteres.</div>
-                }
-              </div>
-              <div class="col-md-6">
-                <label class="form-label fw-semibold">Apellido <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" name="apellido" [(ngModel)]="datosEdicion.apellido"
-                  #apellidoF="ngModel" required minlength="2"
-                  [class.is-invalid]="apellidoF.invalid && (apellidoF.touched || enviado)">
-                @if (apellidoF.invalid && (apellidoF.touched || enviado)) {
-                <div class="invalid-feedback d-block">Mínimo 2 caracteres.</div>
-                }
-              </div>
+        <form #editForm="ngForm" (ngSubmit)="guardarCambios(editForm)" novalidate>
+
+          <div class="mb-4">
+            <label class="form-label fw-semibold">Foto de perfil</label>
+            <div class="upload-dropzone" [class.upload-active]="dragActive"
+              (dragover)="onDragOver($event)" (dragleave)="onDragLeave()" (drop)="onFileDrop($event)">
+              <p class="mb-2 text-muted small">Arrastrar una imagen o</p>
+              <button type="button" class="btn btn-link p-0 small" (click)="fotoInput.click()">examinar archivos</button>
+              <input type="file" #fotoInput accept="image/*" (change)="onFileSelected($event)" hidden>
             </div>
+            @if (fotoPreview) {
+            <div class="mt-3 d-flex align-items-center gap-3">
+              <img [src]="fotoPreview" class="foto-preview-grande" alt="Vista previa">
+              <button type="button" class="btn btn-sm btn-outline-danger" (click)="removeFoto()">Quitar imagen</button>
+            </div>
+            } @else if (datosEdicion.fotoUrl) {
+            <div class="mt-3 d-flex align-items-center gap-3">
+              <img [src]="obtenerImagenUrl(datosEdicion.fotoUrl!)" class="foto-preview-grande" alt="Foto actual">
+            </div>
+            }
+            <div class="mt-2">
+              <label class="form-label fw-semibold small">O pegá una URL de imagen</label>
+              <input type="url" class="form-control form-control-sm" name="fotoUrl" [(ngModel)]="datosEdicion.fotoUrl"
+                (ngModelChange)="onFotoUrlChange()" placeholder="https://ejemplo.com/mi-foto.jpg">
+            </div>
+          </div>
 
-            <div class="mb-3">
-              <label class="form-label fw-semibold">Correo electrónico <span class="text-danger">*</span></label>
-              <input type="email" class="form-control" name="email" [(ngModel)]="datosEdicion.email" #emailF="ngModel"
-                required email [class.is-invalid]="emailF.invalid && (emailF.touched || enviado)">
-              @if (emailF.invalid && (emailF.touched || enviado)) {
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Nombre <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" name="nombre" [(ngModel)]="datosEdicion.nombre"
+                #nombreF="ngModel" required minlength="2"
+                [class.is-invalid]="nombreF.invalid && (nombreF.touched || enviado)">
+              @if (nombreF.invalid && (nombreF.touched || enviado)) {
+              <div class="invalid-feedback d-block">Mínimo 2 caracteres.</div>
+              }
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Apellido <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" name="apellido" [(ngModel)]="datosEdicion.apellido"
+                #apellidoF="ngModel" required minlength="2"
+                [class.is-invalid]="apellidoF.invalid && (apellidoF.touched || enviado)">
+              @if (apellidoF.invalid && (apellidoF.touched || enviado)) {
+              <div class="invalid-feedback d-block">Mínimo 2 caracteres.</div>
+              }
+            </div>
+          </div>
+
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">País</label>
+              <input type="text" class="form-control" name="pais" [(ngModel)]="datosEdicion.pais"
+                placeholder="Tu país de residencia">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Sexo</label>
+              <select class="form-select" name="sexo" [(ngModel)]="datosEdicion.sexo">
+                <option value="">Seleccioná</option>
+                <option value="femenino">Femenino</option>
+                <option value="masculino">Masculino</option>
+                <option value="otro">Otro</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Fecha de nacimiento</label>
+            <input type="date" class="form-control" name="fechaNacimiento" [(ngModel)]="datosEdicion.fechaNacimiento">
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label fw-semibold">Biografía</label>
+            <textarea class="form-control form-textarea" name="bio" rows="4" [(ngModel)]="datosEdicion.bio"
+              placeholder="Contanos algo sobre vos..."></textarea>
+          </div>
+
+          @if (mensajeExito) {
+          <div class="alert alert-success py-2 mb-3 small">{{ mensajeExito }}</div>
+          }
+          @if (mensajeError) {
+          <div class="alert alert-danger py-2 mb-3 small">{{ mensajeError }}</div>
+          }
+
+          <div class="d-flex gap-3">
+            <button type="submit" class="btn btn-primary">Guardar cambios</button>
+            <button type="button" class="btn btn-outline-secondary" (click)="toggleEdicion()">Cancelar</button>
+          </div>
+
+        </form>
+      </section>
+
+      <section class="card p-4 rounded-3 shadow-sm">
+        <h2 class="section-title">Cambiar correo electrónico</h2>
+        <p class="small text-muted mb-3">Tu correo actual es <strong>{{ usuario.email }}</strong>.</p>
+
+        <form #emailForm="ngForm" (ngSubmit)="cambiarEmail(emailForm)" novalidate>
+          <div class="row g-3 align-items-end">
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Nuevo correo electrónico <span class="text-danger">*</span></label>
+              <input type="email" class="form-control" name="nuevoEmail" [(ngModel)]="nuevoEmail"
+                #nuevoEmailF="ngModel" required email
+                [class.is-invalid]="nuevoEmailF.invalid && (nuevoEmailF.touched || enviadoEmail)">
+              @if (nuevoEmailF.errors?.['required'] && (nuevoEmailF.touched || enviadoEmail)) {
+              <div class="invalid-feedback d-block">El correo es obligatorio.</div>
+              }
+              @if (nuevoEmailF.errors?.['email'] && (nuevoEmailF.touched || enviadoEmail)) {
               <div class="invalid-feedback d-block">Ingresá un correo válido.</div>
               }
             </div>
-
-            <div class="row g-3 mb-3">
-              <div class="col-md-6">
-                <label class="form-label fw-semibold">País</label>
-                <input type="text" class="form-control" name="pais" [(ngModel)]="datosEdicion.pais"
-                  placeholder="Tu país de residencia">
-              </div>
-              <div class="col-md-6">
-                <label class="form-label fw-semibold">Sexo</label>
-                <select class="form-select" name="sexo" [(ngModel)]="datosEdicion.sexo">
-                  <option value="">Seleccioná</option>
-                  <option value="femenino">Femenino</option>
-                  <option value="masculino">Masculino</option>
-                  <option value="otro">Otro</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="mb-3">
-              <label class="form-label fw-semibold">Fecha de nacimiento</label>
-              <input type="date" class="form-control" name="fechaNacimiento" [(ngModel)]="datosEdicion.fechaNacimiento">
-            </div>
-
-            <div class="mb-3">
-              <label class="form-label fw-semibold">Foto de perfil (URL)</label>
-              <input type="url" class="form-control" name="fotoUrl" [(ngModel)]="datosEdicion.fotoUrl"
-                placeholder="https://ejemplo.com/mi-foto.jpg">
-              @if (datosEdicion.fotoUrl) {
-              <div class="mt-2">
-                <img [src]="obtenerImagenUrl(datosEdicion.fotoUrl)" class="foto-preview" alt="Vista previa">
-              </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Confirmar nuevo correo <span class="text-danger">*</span></label>
+              <input type="email" class="form-control" name="confirmarEmail" [(ngModel)]="confirmarEmail"
+                #confirmarEmailF="ngModel" required
+                [class.is-invalid]="(confirmarEmailF.invalid && (confirmarEmailF.touched || enviadoEmail)) || emailMismatch">
+              @if (confirmarEmailF.errors?.['required'] && (confirmarEmailF.touched || enviadoEmail)) {
+              <div class="invalid-feedback d-block">Confirmá el correo.</div>
+              }
+              @if (emailMismatch) {
+              <div class="invalid-feedback d-block">Los correos no coinciden.</div>
               }
             </div>
+          </div>
 
-            <div class="mb-3">
-              <label class="form-label fw-semibold">Biografía</label>
-              <textarea class="form-control form-textarea" name="bio" rows="4" [(ngModel)]="datosEdicion.bio"
-                placeholder="Contanos algo sobre vos..."></textarea>
+          @if (mensajeExitoEmail) {
+          <div class="alert alert-success py-2 mt-3 small">{{ mensajeExitoEmail }}</div>
+          }
+          @if (mensajeErrorEmail) {
+          <div class="alert alert-danger py-2 mt-3 small">{{ mensajeErrorEmail }}</div>
+          }
+
+          <div class="mt-3">
+            <button type="submit" class="btn btn-primary">Actualizar correo</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="card p-4 rounded-3 shadow-sm">
+        <h2 class="section-title">Cambiar contraseña</h2>
+
+        <form #passForm="ngForm" (ngSubmit)="cambiarPassword(passForm)" novalidate>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Nueva contraseña <span class="text-danger">*</span></label>
+              <input type="password" class="form-control" name="passwordNueva" [(ngModel)]="passwordNueva"
+                #passNuevaF="ngModel" required minlength="6"
+                [class.is-invalid]="passNuevaF.invalid && (passNuevaF.touched || enviadoPass)">
+              @if (passNuevaF.errors?.['required'] && (passNuevaF.touched || enviadoPass)) {
+              <div class="invalid-feedback d-block">Ingresá la nueva contraseña.</div>
+              }
+              @if (passNuevaF.errors?.['minlength'] && (passNuevaF.touched || enviadoPass)) {
+              <div class="invalid-feedback d-block">Mínimo 6 caracteres.</div>
+              }
             </div>
-
-            @if (mensajeExito) {
-            <div class="alert alert-success py-2 mb-3 small">{{ mensajeExito }}</div>
-            }
-            @if (mensajeError) {
-            <div class="alert alert-danger py-2 mb-3 small">{{ mensajeError }}</div>
-            }
-
-            <div class="d-flex gap-3 mt-2">
-              <button type="submit" class="btn btn-primary">Guardar cambios</button>
-              <button type="button" class="btn btn-outline-secondary" (click)="toggleEdicion()">Cancelar</button>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Confirmar contraseña <span class="text-danger">*</span></label>
+              <input type="password" class="form-control" name="passwordConfirm" [(ngModel)]="passwordConfirm"
+                #passConfirmF="ngModel" required
+                [class.is-invalid]="(passConfirmF.invalid && (passConfirmF.touched || enviadoPass)) || passwordMismatch">
+              @if (passConfirmF.errors?.['required'] && (passConfirmF.touched || enviadoPass)) {
+              <div class="invalid-feedback d-block">Confirmá la nueva contraseña.</div>
+              }
+              @if (passwordMismatch) {
+              <div class="invalid-feedback d-block">Las contraseñas no coinciden.</div>
+              }
             </div>
+          </div>
 
-          </form>
-        </section>
-      </div>
+          @if (mensajeExitoPass) {
+          <div class="alert alert-success py-2 mt-3 small">{{ mensajeExitoPass }}</div>
+          }
+          @if (mensajeErrorPass) {
+          <div class="alert alert-danger py-2 mt-3 small">{{ mensajeErrorPass }}</div>
+          }
+
+          <div class="mt-3">
+            <button type="submit" class="btn btn-primary">Cambiar contraseña</button>
+          </div>
+        </form>
+      </section>
+
     </div>
 
     }

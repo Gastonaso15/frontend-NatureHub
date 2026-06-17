@@ -83,6 +83,35 @@
   border: 2px solid #e0ede6;
 }
 
+.foto-preview-grande {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #d8f3dc;
+  flex-shrink: 0;
+}
+
+.upload-dropzone {
+  border: 2px dashed #ced4da;
+  border-radius: 0.75rem;
+  padding: 1.1rem;
+  text-align: center;
+  color: #495057;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+
+  &.upload-active {
+    border-color: #2d6a4f;
+    background-color: #e9f5ec;
+  }
+
+  &:hover {
+    border-color: #40916c;
+    background-color: #f6fdf9;
+  }
+}
+
 .perfil-footer-baja {
   margin-top: 40px;
   text-align: center;
