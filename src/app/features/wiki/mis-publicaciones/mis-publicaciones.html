@@ -19,7 +19,6 @@
     <div class="alert alert-danger">{{ error() }}</div>
     } @else if (publicaciones().length === 0) {
     <div class="text-center py-5">
-        <div style="font-size: 3rem;" class="mb-3">📝</div>
         <h5 class="fw-semibold text-muted">Todavía no creaste ningún artículo</h5>
         <p class="text-muted small mb-4">Compartí tu conocimiento sobre la naturaleza con la comunidad.</p>
         <a routerLink="/wiki/nuevo" class="btn btn-success fw-semibold">Crear mi primer artículo</a>
@@ -65,7 +64,6 @@
                                 } @else {
                                 Enviado el {{ pub.fecha_creacion | slice:0:10 }}
                                 }
-                                &nbsp;·&nbsp; {{ nombreSeccion(pub.id_seccion) }}
                             </small>
                             <div class="d-flex gap-2 flex-shrink-0">
                                 @if (pub.es_borrador) {

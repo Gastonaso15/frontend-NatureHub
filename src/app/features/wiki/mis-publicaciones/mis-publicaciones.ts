@@ -82,10 +82,6 @@ export class MisPublicacionesComponent implements OnInit {
         });
     }
 
-    nombreSeccion(id: number): string {
-        return this.wikiService.getSeccionPorId(id)?.nombre ?? `Sección ${id}`;
-    }
-
     etiquetaEstado(estado: string): string {
         const map: Record<string, string> = {
             aprobada: 'Aprobada',
