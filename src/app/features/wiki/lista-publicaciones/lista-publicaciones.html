@@ -3,6 +3,11 @@
   <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
     <h3 class="fw-bold mb-0" style="color: #1b4332;">Publicaciones</h3>
     <div class="d-flex gap-2 flex-wrap align-items-center">
+      <select class="form-select form-select-sm" style="width: 160px;" [(ngModel)]="orden" (ngModelChange)="filtrar()">
+        @for (op of opcionesOrden; track op.valor) {
+          <option [value]="op.valor">{{ op.etiqueta }}</option>
+        }
+      </select>
       <input type="text" class="form-control form-control-sm" style="width: 220px;" placeholder="Buscar..."
         [(ngModel)]="busqueda" (ngModelChange)="filtrar()">
     </div>

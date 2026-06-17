@@ -20,8 +20,16 @@ export class ListaPublicacionesComponent implements OnInit {
   publicacionesFiltradas: Publicacion[] = [];
   seccionSeleccionada: number | null = null;
   busqueda = '';
+  orden: 'az' | 'za' | 'recientes' | 'antiguos' = 'recientes';
   cargando = true;
   error: string | null = null;
+
+  readonly opcionesOrden = [
+    { valor: 'recientes', etiqueta: 'Más recientes' },
+    { valor: 'antiguos',  etiqueta: 'Más antiguos'  },
+    { valor: 'az',        etiqueta: 'A → Z'          },
+    { valor: 'za',        etiqueta: 'Z → A'          },
+  ] as const;
 
   ngOnInit(): void {
     this.wikiService.listarPublicacionesApi().subscribe({
@@ -51,7 +59,20 @@ export class ListaPublicacionesComponent implements OnInit {
         p.nombre_cientifico.toLowerCase().includes(q)
       );
     }
+    resultado = [...resultado].sort((a, b) => {
+      switch (this.orden) {
+        case 'az': return a.titulo.localeCompare(b.titulo, 'es');
+        case 'za': return b.titulo.localeCompare(a.titulo, 'es');
+        case 'antiguos': return a.fecha_creacion.localeCompare(b.fecha_creacion);
+        default:   return b.fecha_creacion.localeCompare(a.fecha_creacion);
+      }
+    });
     this.publicacionesFiltradas = resultado;
+  }
+
+  cambiarOrden(orden: typeof this.orden): void {
+    this.orden = orden;
+    this.filtrar();
   }
 
   seleccionarSeccion(id: number | null): void {
