@@ -1,6 +1,7 @@
 import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { forkJoin } from 'rxjs';
 import { WikiService } from '../../../core/services/wiki';
 import { Publicacion, Seccion } from '../../../shared/models/wiki.modelos';
 
@@ -33,28 +34,33 @@ export class ListaPublicacionesComponent implements OnInit {
   ] as const;
 
   ngOnInit(): void {
-    const seccionParam = this.route.snapshot.queryParamMap.get('seccion');
-    if (seccionParam !== null) {
-      const id = Number(seccionParam);
-      if (!Number.isNaN(id)) {
-        this.seccionSeleccionada = id;
-      }
+  const seccionParam = this.route.snapshot.queryParamMap.get('seccion');
+  if (seccionParam !== null) {
+    const id = Number(seccionParam);
+    if (!Number.isNaN(id)) {
+      this.seccionSeleccionada = id;
     }
-
-    this.wikiService.listarPublicacionesApi().subscribe({
-      next: (data) => {
-        this.publicaciones = data;
-        this.filtrar();
-        this.cargando = false;
-        this.cdr.detectChanges();
-      },
-      error: () => {
-        this.error = 'No se pudieron cargar las publicaciones.';
-        this.cargando = false;
-        this.cdr.detectChanges();
-      }
-    });
   }
+
+  forkJoin({
+    secciones: this.wikiService.listarSeccionesApi(),
+    publicaciones: this.wikiService.listarPublicacionesApi()
+  }).subscribe({
+    next: (resultado) => {
+      this.secciones = resultado.secciones;
+      this.publicaciones = resultado.publicaciones;
+      
+      this.filtrar();
+      this.cargando = false;
+      this.cdr.detectChanges();
+    },
+    error: () => {
+      this.error = 'No se pudieron cargar los datos de la plataforma.';
+      this.cargando = false;
+      this.cdr.detectChanges();
+    }
+  });
+}
 
   filtrar(): void {
     let resultado = this.publicaciones;

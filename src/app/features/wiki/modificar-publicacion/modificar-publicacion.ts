@@ -1,6 +1,7 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule, NgForm } from '@angular/forms';
+import { firstValueFrom } from 'rxjs';
 import Swal from 'sweetalert2';
 import { WikiService } from '../../../core/services/wiki';
 import { AutenticacionService } from '../../../core/services/autenticacion';
@@ -18,6 +19,7 @@ export class ModificarPublicacionComponent implements OnInit {
   private authService = inject(AutenticacionService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private cdr = inject(ChangeDetectorRef);
 
   secciones = this.wikiService.getSecciones();
   cargando = signal(true);
@@ -62,17 +64,26 @@ export class ModificarPublicacionComponent implements OnInit {
     }
 
     this.idPublicacion = id;
-    this.cargarPublicacion(id);
+    this.cargarDatos(id);
   }
 
-  private async cargarPublicacion(id: number): Promise<void> {
+  private async cargarDatos(id: number): Promise<void> {
     try {
-      const pub = await this.wikiService.obtenerPublicacionPorIdApi(id);
+      const [secciones, pub] = await Promise.all([
+        firstValueFrom(this.wikiService.listarSeccionesApi()),
+        this.wikiService.obtenerPublicacionPorIdApi(id)
+      ]);
+
+      if (secciones) {
+        this.secciones = secciones;
+      }
+
       const autorId = this.authService.currentUser()?.id_usuario;
 
       if (!pub || Number(pub.id_autor) !== Number(autorId)) {
         this.error.set('No se encontró la publicación o no tenés permiso para editarla.');
         this.cargando.set(false);
+        this.cdr.detectChanges();
         return;
       }
 
@@ -99,8 +110,15 @@ export class ModificarPublicacionComponent implements OnInit {
 
       this.cargando.set(false);
     } catch {
+      try {
+        const seccionesFallback = await firstValueFrom(this.wikiService.listarSeccionesApi());
+        this.secciones = seccionesFallback;
+      } catch {
+      }
       this.error.set('No se pudo cargar la publicación. Verificá que el servidor esté activo.');
       this.cargando.set(false);
+    } finally {
+      this.cdr.detectChanges();
     }
   }
 

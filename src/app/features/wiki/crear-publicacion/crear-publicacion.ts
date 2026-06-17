@@ -1,6 +1,7 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule, NgForm } from '@angular/forms';
+import { firstValueFrom } from 'rxjs';
 import Swal from 'sweetalert2';
 import { WikiService } from '../../../core/services/wiki';
 import { AutenticacionService } from '../../../core/services/autenticacion';
@@ -18,6 +19,7 @@ export class CrearPublicacionComponent implements OnInit {
   private authService = inject(AutenticacionService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private cdr = inject(ChangeDetectorRef);
 
   secciones = this.wikiService.getSecciones();
   enviado = false;
@@ -57,7 +59,15 @@ export class CrearPublicacionComponent implements OnInit {
     const autorId = this.authService.currentUser()!.id_usuario;
 
     try {
-      const borrador = await this.wikiService.obtenerBorrador(autorId);
+      const [secciones, borrador] = await Promise.all([
+        firstValueFrom(this.wikiService.listarSeccionesApi()),
+        this.wikiService.obtenerBorrador(autorId).catch(() => null)
+      ]);
+
+      if (secciones) {
+        this.secciones = secciones;
+      }
+
       const continuarDirecto = this.route.snapshot.queryParamMap.get('continuar') === '1';
 
       if (borrador && continuarDirecto) {
@@ -91,10 +101,15 @@ export class CrearPublicacionComponent implements OnInit {
         }
       }
     } catch {
-      // Si falla la carga del borrador, permitir crear normalmente
+      try {
+        const seccionesFallback = await firstValueFrom(this.wikiService.listarSeccionesApi());
+        this.secciones = seccionesFallback;
+      } catch {
+      }
     }
 
     this.inicializado = true;
+    this.cdr.detectChanges();
   }
 
   private cargarDesdeBorrador(borrador: {
