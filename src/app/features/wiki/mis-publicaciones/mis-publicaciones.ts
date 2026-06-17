@@ -1,6 +1,7 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { SlicePipe } from '@angular/common';
+import { forkJoin } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { AutenticacionService } from '../../../core/services/autenticacion';
 import { WikiService } from '../../../core/services/wiki';
@@ -35,43 +36,50 @@ export class MisPublicacionesComponent implements OnInit {
             return;
         }
 
-        this.http
-            .get<any[]>(`${this.apiUrl}/publicaciones/listarPublicaciones`)
-            .subscribe({
-                next: (data) => {
-                    const mias = data
-                        .filter((p) => p.autor === autorId)
-                        .map((p) => ({
-                            id_publicacion: p.id,
-                            id_seccion: p.seccion,
-                            id_autor: p.autor,
-                            titulo: p.titulo,
-                            nombre_cientifico: p.nombreCientifico,
-                            foto_url: p.foto ?? '',
-                            areas_habitat: Array.isArray(p.areasHabitat)
-                                ? p.areasHabitat.join(', ')
-                                : (p.areasHabitat ?? ''),
-                            dieta: p.dieta,
-                            horas_activas: p.horasActivas,
-                            estado: (p.estado ?? '').toLowerCase(),
-                            fecha_creacion: p.fechaCreacion ?? '',
-                            campos_extras: p.camposExtra ?? [],
-                        } as Publicacion));
+        forkJoin({
+            publicaciones: this.http.get<any[]>(`${this.apiUrl}/publicaciones/listarPublicaciones`),
+            borrador: this.wikiService.obtenerBorrador(autorId),
+        }).subscribe({
+            next: ({ publicaciones, borrador }) => {
+                const mias = publicaciones
+                    .filter((p) => Number(p.autor) === Number(autorId))
+                    .map((p) => ({
+                        id_publicacion: p.id,
+                        id_seccion: p.seccion,
+                        id_autor: p.autor,
+                        titulo: p.titulo,
+                        nombre_cientifico: p.nombreCientifico,
+                        foto_url: p.foto ?? '',
+                        areas_habitat: Array.isArray(p.areasHabitat)
+                            ? p.areasHabitat.join(', ')
+                            : (p.areasHabitat ?? ''),
+                        dieta: p.dieta,
+                        horas_activas: p.horasActivas,
+                        estado: (p.estado ?? '').toLowerCase(),
+                        fecha_creacion: p.fechaCreacion ?? '',
+                        campos_extras: p.camposExtra ?? [],
+                    } as Publicacion));
 
-                    mias.sort((a, b) =>
-                        b.fecha_creacion.localeCompare(a.fecha_creacion)
-                    );
+                if (borrador) {
+                    mias.unshift(this.wikiService.borradorComoPublicacion(borrador));
+                }
 
-                    this.publicaciones.set(mias);
-                    this.cargando.set(false);
-                },
-                error: () => {
-                    this.error.set(
-                        'No se pudieron cargar tus publicaciones. Verificá que el servidor esté activo.'
-                    );
-                    this.cargando.set(false);
-                },
-            });
+                mias.sort((a, b) => {
+                    if (a.es_borrador) return -1;
+                    if (b.es_borrador) return 1;
+                    return b.fecha_creacion.localeCompare(a.fecha_creacion);
+                });
+
+                this.publicaciones.set(mias);
+                this.cargando.set(false);
+            },
+            error: () => {
+                this.error.set(
+                    'No se pudieron cargar tus publicaciones. Verificá que el servidor esté activo.'
+                );
+                this.cargando.set(false);
+            },
+        });
     }
 
     nombreSeccion(id: number): string {
@@ -86,5 +94,9 @@ export class MisPublicacionesComponent implements OnInit {
             borrador: 'Borrador',
         };
         return map[estado] ?? estado;
+    }
+
+    trackPublicacion(pub: Publicacion): string | number {
+        return pub.es_borrador ? `borrador-${pub.id_borrador}` : pub.id_publicacion;
     }
 }

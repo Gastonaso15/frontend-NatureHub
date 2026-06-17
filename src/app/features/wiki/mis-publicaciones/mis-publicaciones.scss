@@ -46,3 +46,8 @@
 .estado-pendiente  { background: #fff3cd; color: #664d03; }
 .estado-borrador   { background: #e9ecef; color: #495057; }
 .estado-rechazada  { background: #f8d7da; color: #842029; }
+
+.pub-card-borrador {
+  border-style: dashed !important;
+  border-color: #adb5bd !important;
+}

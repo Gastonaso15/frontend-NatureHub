@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom, Observable } from 'rxjs';
 import { tap, catchError, map } from 'rxjs/operators';
-import { Publicacion, Seccion } from '../../shared/models/wiki.modelos';
+import { Publicacion, Seccion, Borrador } from '../../shared/models/wiki.modelos';
 
 const SECCIONES: Seccion[] = [
   { id_seccion: 1, nombre: 'Mamíferos', descripcion: 'Vertebrados de sangre caliente con pelo o pelaje y lactancia de sus crías' },
@@ -184,6 +184,104 @@ export class WikiService {
         })
       )
     );
+  }
+
+  guardarBorrador(
+    datos: Omit<Publicacion, 'id_publicacion' | 'fecha_creacion' | 'estado'>,
+    fotoFile?: File
+  ): Promise<{ id_borrador: number; mensaje: string }> {
+    const formData = new FormData();
+    formData.append('autor', String(datos.id_autor));
+    formData.append('titulo', datos.titulo ?? '');
+    formData.append('nombreCientifico', datos.nombre_cientifico ?? '');
+    formData.append('areasHabitat', datos.areas_habitat ?? '');
+    formData.append('dieta', datos.dieta ?? '');
+    formData.append('horasActivas', datos.horas_activas ?? '');
+    formData.append('camposExtra', JSON.stringify(datos.campos_extras ?? []));
+    formData.append('seccion', String(datos.id_seccion ?? 1));
+
+    if (fotoFile) {
+      formData.append('foto', fotoFile, fotoFile.name);
+    } else if (datos.foto_url) {
+      formData.append('fotoUrl', datos.foto_url);
+    }
+
+    return firstValueFrom(
+      this.http.post<{ id_borrador: number; mensaje: string }>(`${this.apiUrl}/guardarBorrador`, formData).pipe(
+        catchError((error) => {
+          console.error('Error al guardar borrador:', error);
+          throw error;
+        })
+      )
+    );
+  }
+
+  obtenerBorrador(idAutor: number): Promise<Borrador | null> {
+    return firstValueFrom(
+      this.http.get<any>(`${this.apiUrl}/obtenerBorrador`, { params: { idAutor } }).pipe(
+        map((data) => {
+          if (!data) return null;
+          return this.mapBorradorFromApi(data);
+        }),
+        catchError((error) => {
+          console.error('Error al obtener borrador:', error);
+          throw error;
+        })
+      )
+    );
+  }
+
+  eliminarBorrador(idAutor: number): Promise<void> {
+    return firstValueFrom(
+      this.http.delete<{ mensaje: string }>(`${this.apiUrl}/eliminarBorrador`, {
+        body: { idAutor },
+      }).pipe(
+        map(() => undefined),
+        catchError((error) => {
+          console.error('Error al eliminar borrador:', error);
+          throw error;
+        })
+      )
+    );
+  }
+
+  borradorComoPublicacion(borrador: Borrador): Publicacion {
+    return {
+      id_publicacion: 0,
+      id_borrador: borrador.id_borrador,
+      id_seccion: borrador.id_seccion ?? 1,
+      id_autor: borrador.id_autor,
+      titulo: borrador.titulo || 'Borrador sin título',
+      nombre_cientifico: borrador.nombre_cientifico || 'Sin nombre científico',
+      foto_url: borrador.foto_url ?? '',
+      areas_habitat: borrador.areas_habitat ?? '',
+      dieta: borrador.dieta ?? '',
+      horas_activas: borrador.horas_activas ?? '',
+      estado: 'borrador',
+      fecha_creacion: borrador.fecha_modificacion,
+      campos_extras: borrador.campos_extras ?? [],
+      es_borrador: true,
+    };
+  }
+
+  private mapBorradorFromApi(data: any): Borrador {
+    return {
+      id_borrador: data.id_borrador,
+      id_autor: data.autor,
+      id_seccion: data.seccion ?? 1,
+      titulo: data.titulo ?? '',
+      nombre_cientifico: data.nombreCientifico ?? '',
+      foto_url: data.foto ?? '',
+      areas_habitat: data.areasHabitat ?? '',
+      dieta: data.dieta ?? '',
+      horas_activas: data.horasActivas ?? '',
+      campos_extras: (data.camposExtra ?? []).map((c: any) => ({
+        etiqueta: c.etiqueta ?? '',
+        valor: c.valor ?? '',
+        tipo: (c.tipo ?? 'texto').toLowerCase(),
+      })),
+      fecha_modificacion: data.fechaModificacion ?? '',
+    };
   }
 
   obtenerPublicacionPorIdApi(id: number): Promise<Publicacion | undefined> {

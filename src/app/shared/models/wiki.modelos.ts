@@ -38,6 +38,22 @@ export interface Publicacion {
   estado: EstadoPublicacion;
   fecha_creacion: string;
   campos_extras?: CampoPersonalizado[];
+  es_borrador?: boolean;
+  id_borrador?: number;
+}
+
+export interface Borrador {
+  id_borrador: number;
+  id_autor: number;
+  id_seccion: number;
+  titulo: string;
+  nombre_cientifico: string;
+  foto_url: string;
+  areas_habitat: string;
+  dieta: string;
+  horas_activas: string;
+  campos_extras: CampoPersonalizado[];
+  fecha_modificacion: string;
 }
 
 export interface Seccion {
