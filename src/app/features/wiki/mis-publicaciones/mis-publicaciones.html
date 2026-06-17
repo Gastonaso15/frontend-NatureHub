@@ -60,12 +60,20 @@
                                 Enviado el {{ pub.fecha_creacion | slice:0:10 }}
                                 &nbsp;·&nbsp; {{ nombreSeccion(pub.id_seccion) }}
                             </small>
-                            @if (pub.estado === 'aprobada') {
-                            <a [routerLink]="['/wiki/article', pub.id_publicacion]"
-                                class="btn btn-sm btn-outline-success fw-semibold">
-                                Ver artículo
-                            </a>
-                            }
+                            <div class="d-flex gap-2 flex-shrink-0">
+                                <a [routerLink]="['/wiki/editar', pub.id_publicacion]"
+                                    class="btn btn-sm btn-outline-primary fw-semibold"
+                                    (click)="$event.stopPropagation()">
+                                    Modificar
+                                </a>
+                                @if (pub.estado === 'aprobada') {
+                                <a [routerLink]="['/wiki/article', pub.id_publicacion]"
+                                    class="btn btn-sm btn-outline-success fw-semibold"
+                                    (click)="$event.stopPropagation()">
+                                    Ver artículo
+                                </a>
+                                }
+                            </div>
                         </div>
                     </div>
                 </div>

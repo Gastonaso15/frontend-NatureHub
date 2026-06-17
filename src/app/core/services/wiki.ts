@@ -158,6 +158,75 @@ export class WikiService {
     ));
   }
 
+  modificarPublicacion(pub: Publicacion, fotoFile?: File): Promise<{ mensaje: string; estado?: string }> {
+    const formData = new FormData();
+    formData.append('id', String(pub.id_publicacion));
+    formData.append('titulo', pub.titulo);
+    formData.append('nombreCientifico', pub.nombre_cientifico);
+    formData.append('areasHabitat', JSON.stringify([pub.areas_habitat]));
+    formData.append('dieta', pub.dieta);
+    formData.append('horasActivas', pub.horas_activas);
+    formData.append('autor', String(pub.id_autor));
+    formData.append('camposExtra', JSON.stringify(pub.campos_extras ?? []));
+    formData.append('seccion', String(pub.id_seccion));
+
+    if (fotoFile) {
+      formData.append('foto', fotoFile, fotoFile.name);
+    } else if (pub.foto_url) {
+      formData.append('foto', pub.foto_url);
+    }
+
+    return firstValueFrom(
+      this.http.post<{ mensaje: string; estado?: string }>(`${this.apiUrl}/modificarPublicacion`, formData).pipe(
+        catchError((error) => {
+          console.error('Error al modificar publicación:', error);
+          throw error;
+        })
+      )
+    );
+  }
+
+  obtenerPublicacionPorIdApi(id: number): Promise<Publicacion | undefined> {
+    return firstValueFrom(
+      this.http.get<any[]>(`${this.apiUrl}/listarPublicaciones`).pipe(
+        map((data) => {
+          const p = data.find((item) => Number(item.id) === Number(id));
+          if (!p) return undefined;
+          return this.mapPublicacionFromApi(p);
+        }),
+        catchError((error) => {
+          console.error('Error al obtener publicación:', error);
+          throw error;
+        })
+      )
+    );
+  }
+
+  private mapPublicacionFromApi(p: any): Publicacion {
+    return {
+      id_publicacion: p.id,
+      id_seccion: p.seccion,
+      id_autor: p.autor,
+      titulo: p.titulo,
+      nombre_cientifico: p.nombreCientifico,
+      foto_url: p.foto ?? '',
+      areas_habitat: Array.isArray(p.areasHabitat)
+        ? p.areasHabitat.join(', ')
+        : (p.areasHabitat ?? ''),
+      dieta: p.dieta,
+      horas_activas: p.horasActivas,
+      estado: (p.estado ?? '').toLowerCase() as Publicacion['estado'],
+      fecha_creacion: p.fechaCreacion ?? '',
+      campos_extras: (p.camposExtra ?? []).map((c: any) => ({
+        id_campo: c.id,
+        id_publicacion: p.id,
+        etiqueta: c.etiqueta,
+        valor: c.valor,
+        tipo: (c.tipo ?? 'texto').toLowerCase(),
+      })),
+    };
+  }
+
   getSeccionPorId(id: number): Seccion | undefined {
     return SECCIONES.find(s => s.id_seccion === id);
   }
