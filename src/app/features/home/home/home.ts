@@ -1,4 +1,4 @@
-import { Component, inject, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, inject, ElementRef, ViewChild, AfterViewInit, OnInit, ChangeDetectorRef } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { WikiService } from '../../../core/services/wiki';
@@ -11,16 +11,32 @@ import { Publicacion, Seccion } from '../../../shared/models/wiki.modelos';
   templateUrl: './home.html',
   styleUrl: './home.scss'
 })
-export class HomeComponent implements AfterViewInit {
+export class HomeComponent implements AfterViewInit, OnInit {
   @ViewChild('statsCanvas') statsCanvas!: ElementRef<HTMLCanvasElement>;
 
   private wikiService = inject(WikiService);
+  private cdr = inject(ChangeDetectorRef);
 
   secciones: Seccion[] = this.wikiService.getSecciones();
-  articulosDestacados: Publicacion[] = this.wikiService.getArticulosDestacados();
+  articulosDestacados: Publicacion[] = [];
   consultaBusqueda = '';
   resultadosBusqueda: Publicacion[] | null = null;
-  loading = false;
+  loading = true;
+
+  ngOnInit(): void {
+    this.wikiService.listarPublicacionesApi().subscribe({
+      next: (data) => {
+        const mezclados = [...data].sort(() => Math.random() - 0.5);
+        this.articulosDestacados = mezclados.slice(0, 4);
+        this.loading = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.loading = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
 
   ngAfterViewInit(): void {
     this.drawSectionStats();
