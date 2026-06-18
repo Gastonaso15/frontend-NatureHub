@@ -96,6 +96,30 @@
       </div>
       }
 
+      <div class="article-actions mt-5 pt-4 border-top d-flex align-items-center justify-content-between flex-wrap gap-3">
+
+        @if (puedeReportar()) {
+        <button class="btn-accion-sutil btn-reportar" (click)="reportarPublicacion()" [disabled]="procesando()">
+          <span class="icono-accion">⚑</span> Reportar artículo
+        </button>
+        }
+
+        <div class="d-flex gap-2">
+          @if (puedeModificar()) {
+          <button class="btn-accion-sutil btn-modificar" (click)="modificarPublicacion()" [disabled]="procesando()">
+            <span class="icono-accion">✎</span> Modificar artículo
+          </button>
+          }
+
+          @if (puedeEliminar()) {
+          <button class="btn-accion-sutil btn-eliminar" (click)="eliminarPublicacion()" [disabled]="procesando()">
+            <span class="icono-accion">🗑</span> Eliminar artículo
+          </button>
+          }
+        </div>
+
+      </div>
+
     </div>
   </div>
 </div>
