@@ -69,3 +69,26 @@
 
   &.activo { background: #40916c; }
 }
+
+.perfil-footer-baja {
+  margin-top: 40px;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #999;
+
+  .btn-baja-discreto {
+    background: none;
+    border: none;
+    color: #b58888;
+    text-decoration: underline;
+    cursor: pointer;
+    font-size: 0.85rem;
+    padding: 0 5px;
+    display: inline;
+    font-weight: 500;
+    transition: color 0.2s ease;
+
+    &:hover:not(:disabled) { color: #dc3545; }
+    &:disabled { opacity: 0.5; cursor: not-allowed; }
+  }
+}

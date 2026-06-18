@@ -47,7 +47,6 @@ export const routes: Routes = [
   },
   {
     path: 'perfil/:id',
-    canActivate: [autenticacionGuard],
     loadComponent: () => import('./features/perfil/perfil-usuario/perfil-usuario').then(m => m.PerfilUsuarioComponent)
   },
   {

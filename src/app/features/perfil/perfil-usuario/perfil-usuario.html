@@ -102,6 +102,17 @@
       </div>
 
     </div>
+
+    @if (esAdministrador() && usuario.activo) {
+    <div class="perfil-footer-baja">
+      <p>¿Este usuario debe ser desactivado de la plataforma?
+        <button type="button" class="btn-baja-discreto" (click)="darDeBaja()" [disabled]="procesando()">
+          Dar de baja cuenta
+        </button>
+      </p>
+    </div>
+    }
+
   </div>
 
   } @else {

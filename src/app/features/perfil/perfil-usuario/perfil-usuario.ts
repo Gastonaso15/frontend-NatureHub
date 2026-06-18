@@ -2,6 +2,8 @@ import { Component, inject, OnInit, signal, computed } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { Location } from '@angular/common';
+import Swal from 'sweetalert2';
+import { AutenticacionService } from '../../../core/services/autenticacion';
 import { Usuario } from '../../../shared/models/wiki.modelos';
 
 @Component({
@@ -16,10 +18,12 @@ export class PerfilUsuarioComponent implements OnInit {
     private router = inject(Router);
     private http = inject(HttpClient);
     private location = inject(Location);
+    private authService = inject(AutenticacionService);
     private apiUrl = 'http://localhost/backend-NatureHub/src/index.php';
 
     usuario: Usuario | null = null;
     cargando = signal(true);
+    procesando = signal(false);
 
     ngOnInit(): void {
         const id = Number(this.route.snapshot.paramMap.get('id'));
@@ -57,6 +61,10 @@ export class PerfilUsuarioComponent implements OnInit {
             });
     }
 
+    esAdministrador(): boolean {
+        return this.authService.currentUser()?.rol === 'ADMINISTRADOR';
+    }
+
     iniciales(): string {
         return (
             (this.usuario?.nombre?.[0] ?? '') + (this.usuario?.apellido?.[0] ?? '')
@@ -69,6 +77,43 @@ export class PerfilUsuarioComponent implements OnInit {
         return new Date(f).toLocaleDateString('es-UY', {
             month: 'long',
             year: 'numeric',
+        });
+    }
+
+    async darDeBaja(): Promise<void> {
+        if (!this.usuario) return;
+
+        const result = await Swal.fire({
+            title: `¿Dar de baja a ${this.usuario.nombre} ${this.usuario.apellido}?`,
+            text: 'La cuenta quedará desactivada. El usuario no podrá iniciar sesión.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc3545',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Sí, dar de baja',
+            cancelButtonText: 'Cancelar',
+        });
+
+        if (!result.isConfirmed) return;
+
+        this.procesando.set(true);
+        this.http.delete(`${this.apiUrl}/usuarios/bajaUsuario`, {
+            body: { id: this.usuario.id_usuario }
+        }).subscribe({
+            next: () => {
+                this.procesando.set(false);
+                Swal.fire({
+                    title: 'Cuenta dada de baja',
+                    text: `La cuenta de ${this.usuario!.nombre} ${this.usuario!.apellido} fue desactivada.`,
+                    icon: 'success',
+                    confirmButtonColor: '#2d6a4f',
+                }).then(() => this.location.back());
+            },
+            error: (err) => {
+                this.procesando.set(false);
+                const msg = err?.error?.error ?? 'No se pudo dar de baja al usuario.';
+                Swal.fire('Error', msg, 'error');
+            },
         });
     }
 
