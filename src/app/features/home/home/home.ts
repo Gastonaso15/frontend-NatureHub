@@ -1,9 +1,15 @@
 import { Component, inject, ElementRef, ViewChild, AfterViewInit, OnInit, ChangeDetectorRef } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
 import { forkJoin } from 'rxjs';
 import { WikiService } from '../../../core/services/wiki';
-import { Publicacion, Seccion } from '../../../shared/models/wiki.modelos';
+import { AutenticacionService } from '../../../core/services/autenticacion';
+import { Publicacion, Seccion, Usuario } from '../../../shared/models/wiki.modelos';
+
+interface PublicacionConAutor extends Publicacion {
+  nombreAutor?: string;
+}
 
 @Component({
   selector: 'app-home',
@@ -16,17 +22,21 @@ export class HomeComponent implements AfterViewInit, OnInit {
   @ViewChild('statsCanvas') statsCanvas!: ElementRef<HTMLCanvasElement>;
 
   private wikiService = inject(WikiService);
+  private authService = inject(AutenticacionService);
+  private http = inject(HttpClient);
   private router = inject(Router);
   private cdr = inject(ChangeDetectorRef);
+  private apiUrl = 'http://localhost/backend-NatureHub/src/index.php';
 
   private chartRows: { id_seccion: number; y: number; h: number; barW: number }[] = [];
   private readonly chartLabelWidth = 110;
 
   secciones: Seccion[] = this.wikiService.getSecciones();
-  articulosDestacados: Publicacion[] = [];
-  publicaciones: Publicacion[] = [];
+  articulosDestacados: PublicacionConAutor[] = [];
+  publicaciones: PublicacionConAutor[] = [];
+  usuarios: Usuario[] = [];
   consultaBusqueda = '';
-  resultadosBusqueda: Publicacion[] | null = null;
+  resultadosBusqueda: PublicacionConAutor[] | null = null;
   loading = true;
 
   private viewReady = false;
@@ -34,13 +44,33 @@ export class HomeComponent implements AfterViewInit, OnInit {
   ngOnInit(): void {
     forkJoin({
       secciones: this.wikiService.listarSeccionesApi(),
-      publicaciones: this.wikiService.listarPublicacionesApi()
+      publicaciones: this.wikiService.listarPublicacionesApi(),
+      usuarios: this.http.get<any[]>(`${this.apiUrl}/usuarios/listarUsuarios`)
     }).subscribe({
       next: (resultado) => {
         this.secciones = resultado.secciones;
-        this.publicaciones = resultado.publicaciones;
+        this.usuarios = resultado.usuarios.map(u => ({
+          id_usuario: u.id,
+          nombre: u.nombre,
+          apellido: u.apellido,
+          email: u.email,
+          rol: u.rol,
+          activo: u.activo,
+          sexo: u.sexo ?? null,
+          fechaRegistro: u.fechaRegistro ?? null,
+          fechaNacimiento: u.fechaNacimiento ?? null,
+          pais: u.pais ?? null,
+          bio: u.bio ?? null,
+          fotoUrl: u.fotoUrl ?? null
+        }));
 
-        const mezclados = [...resultado.publicaciones].sort(() => Math.random() - 0.5);
+        // Enriquecer publicaciones con nombre de autor
+        this.publicaciones = resultado.publicaciones.map(p => ({
+          ...p,
+          nombreAutor: this.getNombreAutor(p.id_autor)
+        }));
+
+        const mezclados = [...this.publicaciones].sort(() => Math.random() - 0.5);
         this.articulosDestacados = mezclados.slice(0, 4);
 
         this.loading = false;
@@ -65,12 +95,24 @@ export class HomeComponent implements AfterViewInit, OnInit {
     requestAnimationFrame(() => this.drawSectionStats());
   }
 
+  private getNombreAutor(idAutor: number): string {
+    const u = this.usuarios.find(u => u.id_usuario === idAutor);
+    return u ? `${u.nombre} ${u.apellido}` : '';
+  }
+
   onSearch(): void {
-    if (this.consultaBusqueda.trim()) {
-      this.resultadosBusqueda = this.wikiService.buscarPublicaciones(this.consultaBusqueda.trim());
-    } else {
+    const q = this.consultaBusqueda.trim().toLowerCase();
+    if (!q) {
       this.resultadosBusqueda = null;
+      return;
     }
+
+    this.resultadosBusqueda = this.publicaciones.filter(p =>
+      p.titulo.toLowerCase().includes(q) ||
+      p.nombre_cientifico.toLowerCase().includes(q) ||
+      p.areas_habitat.toLowerCase().includes(q) ||
+      (p.nombreAutor ?? '').toLowerCase().includes(q)
+    );
   }
 
   clearSearch(): void {

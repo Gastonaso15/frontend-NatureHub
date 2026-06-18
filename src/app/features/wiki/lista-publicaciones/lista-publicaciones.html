@@ -8,7 +8,7 @@
           <option [value]="op.valor">{{ op.etiqueta }}</option>
         }
       </select>
-      <input type="text" class="form-control form-control-sm" style="width: 220px;" placeholder="Buscar..."
+      <input type="text" class="form-control form-control-sm" style="width: 220px;" placeholder="Buscar título, especie, autor..."
         [(ngModel)]="busqueda" (ngModelChange)="filtrar()">
     </div>
   </div>
@@ -53,11 +53,13 @@
         </div>
         }
         <div class="card-body p-3">
-          <span class="badge mb-2" style="background:#d8f3dc; color:#1b4332; font-size:0.7rem;">
-            {{ nombreSeccion(pub.id_seccion) }}
-          </span>
           <h6 class="card-title fw-bold mb-1">{{ pub.titulo }}</h6>
-          <small class="text-muted fst-italic">{{ pub.nombre_cientifico }}</small>
+          <small class="text-muted fst-italic d-block">{{ pub.nombre_cientifico }}</small>
+          @if (pub.nombreAutor) {
+          <small class="text-muted d-block mt-1">
+            por <span class="fw-semibold" style="color: #2d6a4f;">{{ pub.nombreAutor }}</span>
+          </small>
+          }
         </div>
       </div>
     </div>

@@ -25,9 +25,12 @@
         }
 
         @if (seccion()) {
-        <span class="badge-section d-inline-block mb-3">
-          {{ seccion()!.nombre }}
-        </span>
+        <div class="mb-3">
+          <div class="article-info-label">Sección</div>
+          <span class="badge-section d-inline-block mt-1">
+            {{ seccion()!.nombre }}
+          </span>
+        </div>
         }
 
         <div class="mb-3">

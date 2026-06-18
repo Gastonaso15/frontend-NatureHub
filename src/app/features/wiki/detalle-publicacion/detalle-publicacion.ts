@@ -3,6 +3,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { Location } from '@angular/common';
 import { SlicePipe } from '@angular/common';
+import { forkJoin } from 'rxjs';
 import Swal from 'sweetalert2';
 import { WikiService } from '../../../core/services/wiki';
 import { AutenticacionService } from '../../../core/services/autenticacion';
@@ -33,7 +34,7 @@ export class DetallePublicacionComponent implements OnInit {
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
-    this.cargarDesdeApi(id);
+    this.cargarDatos(id);
   }
 
   puedeEliminar(): boolean {
@@ -61,67 +62,65 @@ export class DetallePublicacionComponent implements OnInit {
     this.router.navigate(['/wiki/editar', pub.id_publicacion]);
   }
 
-  private cargarDesdeApi(id: number): void {
-    this.http.get<any[]>(`${this.apiUrl}/publicaciones/listarPublicaciones`).subscribe({
-      next: (data) => {
-        const encontrada = data.find((p) => p.id === id);
-        if (encontrada) {
-          const pub: Publicacion = {
-            id_publicacion: encontrada.id,
-            id_seccion: encontrada.seccion,
-            id_autor: encontrada.autor,
-            titulo: encontrada.titulo,
-            nombre_cientifico: encontrada.nombreCientifico,
-            foto_url: encontrada.foto ?? '',
-            areas_habitat: Array.isArray(encontrada.areasHabitat)
-              ? encontrada.areasHabitat.join(', ')
-              : (encontrada.areasHabitat ?? ''),
-            dieta: encontrada.dieta,
-            horas_activas: encontrada.horasActivas,
-            estado: encontrada.estado,
-            fecha_creacion: encontrada.fechaCreacion ?? '',
-            campos_extras: encontrada.camposExtra ?? [],
-          };
-          this.articulo.set(pub);
-          this.seccion.set(this.wikiService.getSeccionPorId(pub.id_seccion) ?? null);
-          this.cargarAutor(pub.id_autor);
-        } else {
+  private cargarDatos(id: number): void {
+    forkJoin({
+      publicaciones: this.http.get<any[]>(`${this.apiUrl}/publicaciones/listarPublicaciones`),
+      secciones: this.wikiService.listarSeccionesApi(),
+      usuarios: this.http.get<any[]>(`${this.apiUrl}/usuarios/listarUsuarios`)
+    }).subscribe({
+      next: ({ publicaciones, secciones, usuarios }) => {
+        const encontrada = publicaciones.find((p) => p.id === id);
+        if (!encontrada) {
           this.error.set('Artículo no encontrado.');
           this.cargando.set(false);
+          return;
         }
+
+        const pub: Publicacion = {
+          id_publicacion: encontrada.id,
+          id_seccion: Number(encontrada.seccion),
+          id_autor: encontrada.autor,
+          titulo: encontrada.titulo,
+          nombre_cientifico: encontrada.nombreCientifico,
+          foto_url: encontrada.foto ?? '',
+          areas_habitat: Array.isArray(encontrada.areasHabitat)
+            ? encontrada.areasHabitat.join(', ')
+            : (encontrada.areasHabitat ?? ''),
+          dieta: encontrada.dieta,
+          horas_activas: encontrada.horasActivas,
+          estado: encontrada.estado,
+          fecha_creacion: encontrada.fechaCreacion ?? '',
+          campos_extras: encontrada.camposExtra ?? [],
+        };
+        this.articulo.set(pub);
+
+        const seccionEncontrada = secciones.find(s => Number(s.id_seccion) === Number(pub.id_seccion)) ?? null;
+        this.seccion.set(seccionEncontrada);
+
+        const autorEncontrado = usuarios.find((u) => u.id === pub.id_autor);
+        if (autorEncontrado) {
+          this.autor.set({
+            id_usuario: autorEncontrado.id,
+            nombre: autorEncontrado.nombre,
+            apellido: autorEncontrado.apellido,
+            email: autorEncontrado.email,
+            rol: autorEncontrado.rol,
+            activo: autorEncontrado.activo,
+            sexo: autorEncontrado.sexo ?? null,
+            fechaRegistro: autorEncontrado.fechaRegistro ?? null,
+            fechaNacimiento: autorEncontrado.fechaNacimiento ?? null,
+            pais: autorEncontrado.pais ?? null,
+            bio: autorEncontrado.bio ?? null,
+            fotoUrl: autorEncontrado.fotoUrl ?? null,
+          });
+        }
+
+        this.cargando.set(false);
       },
       error: () => {
         this.error.set('No se pudo cargar el artículo.');
         this.cargando.set(false);
-      },
-    });
-  }
-
-  private cargarAutor(autorId: number): void {
-    this.http.get<any[]>(`${this.apiUrl}/usuarios/listarUsuarios`).subscribe({
-      next: (usuarios) => {
-        const encontrado = usuarios.find((u) => u.id === autorId);
-        if (encontrado) {
-          this.autor.set({
-            id_usuario: encontrado.id,
-            nombre: encontrado.nombre,
-            apellido: encontrado.apellido,
-            email: encontrado.email,
-            rol: encontrado.rol,
-            activo: encontrado.activo,
-            sexo: encontrado.sexo ?? null,
-            fechaRegistro: encontrado.fechaRegistro ?? null,
-            fechaNacimiento: encontrado.fechaNacimiento ?? null,
-            pais: encontrado.pais ?? null,
-            bio: encontrado.bio ?? null,
-            fotoUrl: encontrado.fotoUrl ?? null,
-          });
-        }
-        this.cargando.set(false);
-      },
-      error: () => {
-        this.cargando.set(false);
-      },
+      }
     });
   }
 
