@@ -25,6 +25,14 @@
          class="sidebar-link d-block text-decoration-none text-dark rounded mb-1 px-3 py-2">
         Moderar publicaciones
       </a>
+
+      <a routerLink="/moderacion/reportes" routerLinkActive="active"
+         class="sidebar-link d-block text-decoration-none text-dark rounded mb-1 px-3 py-2">
+        Reportes
+        @if (cantReportes() > 0) {
+          <span class="badge-sidebar-count ms-1">{{ cantReportes() }}</span>
+        }
+      </a>
     }
 
     @if (esAdministrador()) {

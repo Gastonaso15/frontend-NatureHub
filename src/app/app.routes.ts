@@ -55,6 +55,11 @@ export const routes: Routes = [
     loadComponent: () => import('./features/moderacion/moderar-publicaciones/moderar-publicaciones').then(m => m.ModerarPublicacionesComponent)
   },
   {
+    path: 'moderacion/reportes',
+    canActivate: [autenticacionGuard, moderadorGuard],
+    loadComponent: () => import('./features/moderacion/listar-reportes/listar-reportes').then(m => m.ListarReportesComponent)
+  },
+  {
     path: 'admin/promover-usuario',
     canActivate: [autenticacionGuard, administradorGuard],
     loadComponent: () => import('./features/administrador/promover-usuario/promover-usuario').then(m => m.PromoverUsuarioComponent)

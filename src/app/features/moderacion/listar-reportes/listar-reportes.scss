@@ -1,0 +1,48 @@
+.reporte-card {
+  transition: box-shadow 0.2s ease;
+
+  &:hover {
+    box-shadow: 0 4px 16px rgba(45, 106, 79, 0.12) !important;
+  }
+}
+
+.reporte-resuelto {
+  opacity: 0.6;
+  border-color: #dee2e6 !important;
+}
+
+.reporte-label {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: #6c757d;
+  margin-bottom: 0.15rem;
+}
+
+.pub-link {
+  color: #1b4332;
+  font-size: 0.95rem;
+
+  &:hover {
+    color: #2d6a4f;
+    text-decoration: underline !important;
+  }
+}
+
+.badge-resuelto {
+  background: #d8f3dc;
+  color: #1b4332;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  border-radius: 20px;
+  padding: 0.3rem 0.75rem;
+  white-space: nowrap;
+}
+
+.empty-state .empty-icon {
+  font-size: 3rem;
+}
