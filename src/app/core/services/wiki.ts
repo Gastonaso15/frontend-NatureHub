@@ -283,4 +283,16 @@ export class WikiService {
     );
   }
 
+  listarPublicacionesPropiasApi(idAutor: number): Observable<Publicacion[]> {
+  return this.http.post<any[]>(`${this.apiUrl}/listarPublicacionesPropias`, {
+    id: idAutor
+  }).pipe(
+    map(data => data.map(p => this.mapPublicacionFromApi(p))),
+    catchError(error => {
+      console.error('Error al listar publicaciones propias:', error);
+      throw error;
+    })
+  );
+}
+
 }
