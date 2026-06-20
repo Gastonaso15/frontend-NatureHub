@@ -22,6 +22,9 @@
           <button class="btn btn-outline-light btn-sm" (click)="toggleEdicion()">
             @if (modoEdicion) { Cancelar } @else { Editar perfil }
           </button>
+          <button class="btn btn-outline-light btn-sm" (click)="verPublicaciones()">
+            Ver mis publicaciones
+          </button>
           <button class="btn btn-outline-danger btn-sm" (click)="cerrarSesion()">Cerrar sesión</button>
         </div>
 
@@ -113,10 +116,11 @@
 
           <div class="mb-4">
             <label class="form-label fw-semibold">Foto de perfil</label>
-            <div class="upload-dropzone" [class.upload-active]="dragActive"
-              (dragover)="onDragOver($event)" (dragleave)="onDragLeave()" (drop)="onFileDrop($event)">
+            <div class="upload-dropzone" [class.upload-active]="dragActive" (dragover)="onDragOver($event)"
+              (dragleave)="onDragLeave()" (drop)="onFileDrop($event)">
               <p class="mb-2 text-muted small">Arrastrar una imagen o</p>
-              <button type="button" class="btn btn-link p-0 small" (click)="fotoInput.click()">examinar archivos</button>
+              <button type="button" class="btn btn-link p-0 small" (click)="fotoInput.click()">examinar
+                archivos</button>
               <input type="file" #fotoInput accept="image/*" (change)="onFileSelected($event)" hidden>
             </div>
             @if (fotoPreview) {
@@ -139,9 +143,8 @@
           <div class="row g-3 mb-3">
             <div class="col-md-6">
               <label class="form-label fw-semibold">Nombre <span class="text-danger">*</span></label>
-              <input type="text" class="form-control" name="nombre" [(ngModel)]="datosEdicion.nombre"
-                #nombreF="ngModel" required minlength="2"
-                [class.is-invalid]="nombreF.invalid && (nombreF.touched || enviado)">
+              <input type="text" class="form-control" name="nombre" [(ngModel)]="datosEdicion.nombre" #nombreF="ngModel"
+                required minlength="2" [class.is-invalid]="nombreF.invalid && (nombreF.touched || enviado)">
               @if (nombreF.invalid && (nombreF.touched || enviado)) {
               <div class="invalid-feedback d-block">Mínimo 2 caracteres.</div>
               }
@@ -208,9 +211,8 @@
           <div class="row g-3 align-items-end">
             <div class="col-md-6">
               <label class="form-label fw-semibold">Nuevo correo electrónico <span class="text-danger">*</span></label>
-              <input type="email" class="form-control" name="nuevoEmail" [(ngModel)]="nuevoEmail"
-                #nuevoEmailF="ngModel" required email
-                [class.is-invalid]="nuevoEmailF.invalid && (nuevoEmailF.touched || enviadoEmail)">
+              <input type="email" class="form-control" name="nuevoEmail" [(ngModel)]="nuevoEmail" #nuevoEmailF="ngModel"
+                required email [class.is-invalid]="nuevoEmailF.invalid && (nuevoEmailF.touched || enviadoEmail)">
               @if (nuevoEmailF.errors?.['required'] && (nuevoEmailF.touched || enviadoEmail)) {
               <div class="invalid-feedback d-block">El correo es obligatorio.</div>
               }

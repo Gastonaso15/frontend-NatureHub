@@ -50,6 +50,11 @@ export class ListaPublicacionesComponent implements OnInit {
       }
     }
 
+    const autorParam = this.route.snapshot.queryParamMap.get('autor');
+    if (autorParam) {
+      this.busqueda = autorParam;
+    }
+
     forkJoin({
       secciones: this.wikiService.listarSeccionesApi(),
       publicaciones: this.wikiService.listarPublicacionesApi(),

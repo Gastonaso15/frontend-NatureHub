@@ -436,4 +436,8 @@ export class PerfilComponent implements OnInit {
       });
     });
   }
+
+  verPublicaciones(): void {
+    this.router.navigate(['/wiki/mis-publicaciones']);
+  }
 }

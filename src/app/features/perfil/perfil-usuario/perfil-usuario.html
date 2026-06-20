@@ -24,7 +24,10 @@
           <p class="small text-white-50 mb-0">{{ usuario.email }}</p>
         </div>
 
-        <div class="ms-auto">
+        <div class="ms-auto d-flex gap-2">
+          <button class="btn btn-outline-light btn-sm" (click)="verPublicaciones()">
+            Ver publicaciones
+          </button>
           <button class="btn btn-outline-light btn-sm" (click)="volver()">
             ← Volver
           </button>

@@ -1,17 +1,17 @@
 <aside class="app-sidebar bg-light border-end">
   <nav class="d-flex flex-column p-3">
     <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}"
-       class="sidebar-link d-block text-decoration-none text-dark rounded mb-1 px-3 py-2">
+      class="sidebar-link d-block text-decoration-none text-dark rounded mb-1 px-3 py-2">
       Inicio
     </a>
 
     <a routerLink="/perfil" routerLinkActive="active"
-       class="sidebar-link d-block text-decoration-none text-dark rounded mb-1 px-3 py-2">
+      class="sidebar-link d-block text-decoration-none text-dark rounded mb-1 px-3 py-2">
       Mi perfil
     </a>
 
     <a routerLink="/wiki/nuevo" routerLinkActive="active"
-       class="sidebar-link d-block text-decoration-none text-dark rounded mb-1 px-3 py-2">
+      class="sidebar-link d-block text-decoration-none text-dark rounded mb-1 px-3 py-2">
       Crear artículo
     </a>
 
@@ -21,39 +21,39 @@
     </a>
 
     @if (esModerador()) {
-      <a routerLink="/moderacion/publicaciones" routerLinkActive="active"
-         class="sidebar-link d-block text-decoration-none text-dark rounded mb-1 px-3 py-2">
-        Moderar publicaciones
-      </a>
+    <a routerLink="/moderacion/publicaciones" routerLinkActive="active"
+      class="sidebar-link d-block text-decoration-none text-dark rounded mb-1 px-3 py-2">
+      Moderar publicaciones
+    </a>
 
-      <a routerLink="/moderacion/reportes" routerLinkActive="active"
-         class="sidebar-link d-block text-decoration-none text-dark rounded mb-1 px-3 py-2">
-        Reportes
-        @if (cantReportes() > 0) {
-          <span class="badge-sidebar-count ms-1">{{ cantReportes() }}</span>
-        }
-      </a>
+    <a routerLink="/moderacion/reportes" routerLinkActive="active"
+      class="sidebar-link d-block text-decoration-none text-dark rounded mb-1 px-3 py-2">
+      Reportes
+      @if (cantReportes() > 0) {
+      <span class="badge-sidebar-count ms-1">{{ cantReportes() }}</span>
+      }
+    </a>
     }
 
     @if (esAdministrador()) {
     <a routerLink="/admin/promover-usuario" routerLinkActive="active"
-       class="sidebar-link d-block text-decoration-none text-dark rounded mb-1 px-3 py-2">
-        Ascender a Usuario
+      class="sidebar-link d-block text-decoration-none text-dark rounded mb-1 px-3 py-2">
+      Ascender a Usuario
     </a>
 
     <a routerLink="/admin/degradar-moderador" routerLinkActive="active"
-       class="sidebar-link d-block text-decoration-none text-dark rounded mb-1 px-3 py-2">
-        Degradar a Moderador
+      class="sidebar-link d-block text-decoration-none text-dark rounded mb-1 px-3 py-2">
+      Degradar a Moderador
     </a>
 
     <a routerLink="/admin/promover-moderador" routerLinkActive="active"
-       class="sidebar-link d-block text-decoration-none text-dark rounded mb-1 px-3 py-2">
-        Ascender a Moderador
+      class="sidebar-link d-block text-decoration-none text-dark rounded mb-1 px-3 py-2">
+      Ascender a Moderador
     </a>
 
     <a routerLink="/admin/degradar-administrador" routerLinkActive="active"
-       class="sidebar-link d-block text-decoration-none text-dark rounded mb-1 px-3 py-2">
-        Degradar a Administrador
+      class="sidebar-link d-block text-decoration-none text-dark rounded mb-1 px-3 py-2">
+      Degradar a Administrador
     </a>
     }
 

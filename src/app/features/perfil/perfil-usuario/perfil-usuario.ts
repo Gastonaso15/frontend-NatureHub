@@ -120,4 +120,11 @@ export class PerfilUsuarioComponent implements OnInit {
     volver(): void {
         this.location.back();
     }
+
+    verPublicaciones(): void {
+    if (!this.usuario) return;
+    this.router.navigate(['/categorias'], {
+        queryParams: { autor: `${this.usuario.nombre} ${this.usuario.apellido}` }
+    });
+}
 }

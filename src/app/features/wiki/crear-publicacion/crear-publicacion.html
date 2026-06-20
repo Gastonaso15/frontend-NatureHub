@@ -53,8 +53,7 @@
             <div class="form-text">También podés pegar una URL si no querés subir archivo.</div>
             <input type="url" class="form-control mt-2" name="foto_url" [(ngModel)]="datosArticulo.foto_url"
               (ngModelChange)="onFotoUrlChange()" (blur)="onCampoBlur()" #urlField="ngModel"
-              [class.is-invalid]="imagenInvalida()"
-              [class.is-valid]="(fotoFile || datosArticulo.foto_url) && enviado"
+              [class.is-invalid]="imagenInvalida()" [class.is-valid]="(fotoFile || datosArticulo.foto_url) && enviado"
               placeholder="https://ejemplo.com/imagen.jpg">
             @if (imagenInvalida()) {
             <div class="text-danger small mt-1">Debes subir un archivo de imagen o ingresar una URL válida.</div>
@@ -87,9 +86,8 @@
 
           <div class="mb-3">
             <label class="form-label fw-semibold">Dieta <span class="text-danger">*</span></label>
-            <textarea class="form-control" name="dieta" [(ngModel)]="datosArticulo.dieta" #dietaField="ngModel"
-              required rows="2" (blur)="onCampoBlur()"
-              [class.is-invalid]="dietaField.invalid && (dietaField.touched || enviado)"
+            <textarea class="form-control" name="dieta" [(ngModel)]="datosArticulo.dieta" #dietaField="ngModel" required
+              rows="2" (blur)="onCampoBlur()" [class.is-invalid]="dietaField.invalid && (dietaField.touched || enviado)"
               [class.is-valid]="dietaField.valid && dietaField.touched"
               placeholder="Describí qué come esta especie..."></textarea>
             @if (dietaField.invalid && (dietaField.touched || enviado)) {

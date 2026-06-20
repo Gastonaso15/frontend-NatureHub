@@ -5,11 +5,11 @@
     <div class="d-flex gap-2 flex-wrap align-items-center">
       <select class="form-select form-select-sm" style="width: 160px;" [(ngModel)]="orden" (ngModelChange)="filtrar()">
         @for (op of opcionesOrden; track op.valor) {
-          <option [value]="op.valor">{{ op.etiqueta }}</option>
+        <option [value]="op.valor">{{ op.etiqueta }}</option>
         }
       </select>
-      <input type="text" class="form-control form-control-sm" style="width: 220px;" placeholder="Buscar título, especie, autor..."
-        [(ngModel)]="busqueda" (ngModelChange)="filtrar()">
+      <input type="text" class="form-control form-control-sm" style="width: 220px;"
+        placeholder="Buscar título, especie, autor..." [(ngModel)]="busqueda" (ngModelChange)="filtrar()">
     </div>
   </div>
 
