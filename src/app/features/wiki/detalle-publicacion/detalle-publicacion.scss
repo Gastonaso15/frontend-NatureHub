@@ -1,7 +1,39 @@
+.article-info-card {
+  background: #fff;
+  border-radius: 0.75rem;
+  border: 1px solid #e0ede6;
+  padding: 1.25rem;
+  position: sticky;
+  top: 80px;
+}
+
+.article-info-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: #6c757d;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.article-info-value {
+  font-size: 0.95rem;
+  color: #1b4332;
+}
+
 .article-detail-image {
   border-radius: 0.5rem;
   width: 100%;
   object-fit: cover;
+}
+
+.badge-section {
+  background-color: rgba(45, 106, 79, 0.12);
+  color: #2d6a4f;
+  font-weight: 500;
+  border-radius: 20px;
+  padding: 0.3rem 0.8rem;
+  font-size: 0.8rem;
 }
 
 .autor-link {
@@ -41,6 +73,13 @@
 
 .autor-nombre {
   font-size: 0.9rem;
+}
+
+.extra-field-row {
+  background: #f6fdf9;
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  border: 1px solid #d8f3dc;
 }
 
 .article-actions {

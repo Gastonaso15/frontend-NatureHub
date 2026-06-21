@@ -64,7 +64,6 @@ export class HomeComponent implements AfterViewInit, OnInit {
           fotoUrl: u.fotoUrl ?? null
         }));
 
-        // Enriquecer publicaciones con nombre de autor
         this.publicaciones = resultado.publicaciones.map(p => ({
           ...p,
           nombreAutor: this.getNombreAutor(p.id_autor)

@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom, Observable } from 'rxjs';
 import { tap, catchError, map } from 'rxjs/operators';
-import { Publicacion, Seccion, Borrador } from '../../shared/models/wiki.modelos';
+import { Publicacion, Seccion, Borrador, Usuario } from '../../shared/models/wiki.modelos';
 
 @Injectable({ providedIn: 'root' })
 export class WikiService {
@@ -10,6 +10,7 @@ export class WikiService {
   private secciones: Seccion[] = [];
   private http = inject(HttpClient);
   private apiUrl = 'http://localhost/backend-NatureHub/src/index.php/publicaciones';
+  private usuariosApiUrl = 'http://localhost/backend-NatureHub/src/index.php/usuarios';
 
   getSecciones(): Seccion[] {
     return this.secciones;
@@ -38,6 +39,77 @@ export class WikiService {
         p.titulo.toLowerCase().includes(q) ||
         p.nombre_cientifico.toLowerCase().includes(q) ||
         p.areas_habitat.toLowerCase().includes(q)
+      )
+    );
+  }
+
+  obtenerPublicacionPorIdDirecto(id: number): Promise<Publicacion | undefined> {
+    return firstValueFrom(
+      this.http.post<any>(`${this.apiUrl}/obtenerPublicacionPorId`, { id }).pipe(
+        map(p => p ? this.mapPublicacionFromApi(p) : undefined),
+        catchError(error => {
+          console.error('Error al obtener publicación por id:', error);
+          throw error;
+        })
+      )
+    );
+  }
+
+  obtenerUsuarioPorId(id: number): Promise<Usuario | undefined> {
+    return firstValueFrom(
+      this.http.post<any>(`${this.usuariosApiUrl}/obtenerUsuarioId`, { id }).pipe(
+        map(u => u ? this.mapUsuarioFromApi(u) : undefined),
+        catchError(error => {
+          console.error('Error al obtener usuario por id:', error);
+          throw error;
+        })
+      )
+    );
+  }
+
+  private mapUsuarioFromApi(u: any): Usuario {
+    return {
+      id_usuario: u.id,
+      nombre: u.nombre,
+      apellido: u.apellido,
+      email: u.email,
+      rol: u.rol,
+      activo: u.activo,
+      sexo: u.sexo ?? null,
+      fechaRegistro: u.fechaRegistro ?? null,
+      fechaNacimiento: u.fechaNacimiento ?? null,
+      pais: u.pais ?? null,
+      bio: u.bio ?? null,
+      fotoUrl: u.fotoUrl ?? null,
+    };
+  }
+
+  eliminarPublicacion(id: number): Promise<void> {
+    return firstValueFrom(
+      this.http.delete<any>(`${this.apiUrl}/bajaPublicacion`, {
+        body: { id }
+      }).pipe(
+        map(() => undefined),
+        catchError(error => {
+          console.error('Error al eliminar publicación:', error);
+          throw error;
+        })
+      )
+    );
+  }
+
+  reportarPublicacion(idPublicacion: number, idUsuario: number, motivo: string): Promise<void> {
+    return firstValueFrom(
+      this.http.post<any>(`${this.apiUrl}/reportePublicacion`, {
+        idPublicacion,
+        idUsuario,
+        motivo,
+      }).pipe(
+        map(() => undefined),
+        catchError(error => {
+          console.error('Error al reportar publicación:', error);
+          throw error;
+        })
       )
     );
   }
