@@ -375,5 +375,17 @@ export class WikiService {
       })
     );
   }
+
+  descargarPdfPublicacion(id: number): Observable<Blob> {
+    return this.http.get(`${this.publicacionesApiUrl}/generarPdfPublicacion`, {
+      params: { id: String(id) },
+      responseType: 'blob',
+    }).pipe(
+      catchError(error => {
+        console.error('Error al generar PDF de publicación:', error);
+        throw error;
+      })
+    );
+  }
 }
 

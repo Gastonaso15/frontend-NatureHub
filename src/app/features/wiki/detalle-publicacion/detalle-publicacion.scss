@@ -114,6 +114,15 @@
   }
 }
 
+.btn-pdf {
+  color: #2d6a4f;
+
+  &:hover:not(:disabled) {
+    background: #e8f5e9;
+    color: #1b4332;
+  }
+}
+
 .btn-modificar {
   color: #888;
 

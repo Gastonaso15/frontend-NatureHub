@@ -2,6 +2,7 @@ import { Component, inject, signal, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Location } from '@angular/common';
 import { SlicePipe } from '@angular/common';
+import { firstValueFrom } from 'rxjs';
 import Swal from 'sweetalert2';
 import { WikiService } from '../../../core/services/wiki';
 import { AutenticacionService } from '../../../core/services/autenticacion';
@@ -27,6 +28,7 @@ export class DetallePublicacionComponent implements OnInit {
   cargando = signal(true);
   error = signal<string | null>(null);
   procesando = signal(false);
+  descargandoPdf = signal(false);
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
@@ -183,6 +185,27 @@ export class DetallePublicacionComponent implements OnInit {
 
   volver(): void {
     this.location.back();
+  }
+
+  async descargarPdf(): Promise<void> {
+    const pub = this.articulo();
+    if (!pub) return;
+
+    this.descargandoPdf.set(true);
+    try {
+      const blob = await firstValueFrom(this.wikiService.descargarPdfPublicacion(pub.id_publicacion));
+      const nombreArchivo = `${pub.titulo.replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '').toLowerCase() || 'publicacion'}.pdf`;
+      const url = window.URL.createObjectURL(blob);
+      const enlace = document.createElement('a');
+      enlace.href = url;
+      enlace.download = nombreArchivo;
+      enlace.click();
+      window.URL.revokeObjectURL(url);
+    } catch {
+      Swal.fire('Error', 'No se pudo generar el PDF.', 'error');
+    } finally {
+      this.descargandoPdf.set(false);
+    }
   }
 
 
