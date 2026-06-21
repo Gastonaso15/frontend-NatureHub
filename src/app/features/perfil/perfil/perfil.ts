@@ -213,7 +213,7 @@ export class PerfilComponent implements OnInit {
           ...this.usuario!,
           ...this.datosEdicion,
           id_usuario: id,
-          fotoUrl: resp?.fotoUrl ?? d.fotoUrl ?? this.usuario?.fotoUrl ?? null
+          fotoUrl: resp?.fotoUrl ?? (this.fotoFile ? this.fotoPreview : null) ?? d.fotoUrl ?? this.usuario?.fotoUrl ?? null
         } as Usuario;
 
         this.usuario = updated;
