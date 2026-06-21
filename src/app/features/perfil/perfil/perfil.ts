@@ -3,7 +3,6 @@ import { Router, RouterLink } from '@angular/router';
 import { FormsModule, NgForm } from '@angular/forms';
 import { AutenticacionService } from '../../../core/services/autenticacion';
 import { Usuario } from '../../../shared/models/wiki.modelos';
-import { HttpClient } from '@angular/common/http';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -15,10 +14,8 @@ import Swal from 'sweetalert2';
 })
 export class PerfilComponent implements OnInit {
   private authService = inject(AutenticacionService);
-  private http = inject(HttpClient);
   private router = inject(Router);
   private cdr = inject(ChangeDetectorRef);
-  private apiUrl = 'http://localhost/backend-NatureHub/src/index.php';
 
   usuario: Usuario | null = null;
   modoEdicion = false;
@@ -218,7 +215,7 @@ export class PerfilComponent implements OnInit {
       formData.append('fotoUrl', d.fotoUrl);
     }
 
-    this.http.post(`${this.apiUrl}/usuarios/modificarUsuario`, formData).subscribe({
+    this.authService.modificarUsuarioApi(formData).subscribe({
       next: (resp: any) => {
         const updated: Usuario = {
           ...this.usuario!,
@@ -295,7 +292,7 @@ export class PerfilComponent implements OnInit {
     if (u?.bio) formData.append('bio', u.bio);
     if (this.usuario?.fotoUrl) formData.append('fotoUrl', this.usuario.fotoUrl);
 
-    this.http.post(`${this.apiUrl}/usuarios/modificarUsuario`, formData).subscribe({
+    this.authService.modificarUsuarioApi(formData).subscribe({
       next: () => {
         const updated: Usuario = { ...this.usuario!, email: this.nuevoEmail };
         this.usuario = updated;
@@ -372,7 +369,7 @@ export class PerfilComponent implements OnInit {
     if (u?.bio) formData.append('bio', u.bio);
     if (this.usuario?.fotoUrl) formData.append('fotoUrl', this.usuario.fotoUrl);
 
-    this.http.post(`${this.apiUrl}/usuarios/modificarUsuario`, formData).subscribe({
+    this.authService.modificarUsuarioApi(formData).subscribe({
       next: () => {
         this.mensajeExitoPass = 'Contraseña actualizada correctamente.';
         this.passwordNueva = '';
@@ -419,7 +416,7 @@ export class PerfilComponent implements OnInit {
         return;
       }
 
-      this.http.delete(`${this.apiUrl}/usuarios/bajaUsuario`, { body: { id } }).subscribe({
+      this.authService.bajaUsuarioApi(id).subscribe({
         next: () => {
           Swal.fire({
             title: 'Cuenta dada de baja',

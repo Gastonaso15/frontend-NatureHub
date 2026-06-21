@@ -1,11 +1,11 @@
 import { Component, inject, OnInit, signal, ChangeDetectorRef } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormsModule, NgForm } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
 import Swal from 'sweetalert2';
 import { WikiService } from '../../../core/services/wiki';
 import { AutenticacionService } from '../../../core/services/autenticacion';
-import { TipoCampoPersonalizado, Publicacion } from '../../../shared/models/wiki.modelos';
+import { TipoCampoPersonalizado, Publicacion, Seccion } from '../../../shared/models/wiki.modelos';
 
 @Component({
   selector: 'app-modificar-publicacion',
@@ -21,7 +21,7 @@ export class ModificarPublicacionComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private cdr = inject(ChangeDetectorRef);
 
-  secciones = this.wikiService.getSecciones();
+  secciones: Seccion[] = this.wikiService.getSecciones();
   cargando = signal(true);
   error = signal<string | null>(null);
   enviado = false;
@@ -71,7 +71,7 @@ export class ModificarPublicacionComponent implements OnInit {
     try {
       const [secciones, pub] = await Promise.all([
         firstValueFrom(this.wikiService.listarSeccionesApi()),
-        this.wikiService.obtenerPublicacionPorIdApi(id)
+        this.wikiService.obtenerPublicacionPorIdDirecto(id)
       ]);
 
       if (secciones) {

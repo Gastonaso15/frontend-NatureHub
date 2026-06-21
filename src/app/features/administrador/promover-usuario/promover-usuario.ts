@@ -28,20 +28,7 @@ export class PromoverUsuarioComponent implements OnInit {
         this.usuarios.set(
           resp
             .filter(u => u.rol === 'USUARIO')
-            .map(u => ({
-              id_usuario: u.id,
-              nombre: u.nombre,
-              apellido: u.apellido,
-              email: u.email,
-              rol: u.rol,
-              activo: u.activo,
-              sexo: u.sexo,
-              fechaRegistro: u.fechaRegistro,
-              fechaNacimiento: u.fechaNacimiento,
-              pais: u.pais,
-              bio: u.bio,
-              fotoUrl: u.fotoUrl
-            }))
+            .map(AutenticacionService.mapUsuario)
         );
         this.cargando.set(false);
       },

@@ -40,12 +40,25 @@
   white-space: nowrap;
 }
 
-.estado-aprobada   { background: #d8f3dc; color: #1b4332; }
-.estado-publicada  { background: #d8f3dc; color: #1b4332; }
-.estado-pendiente_revision { background: #fff3cd; color: #664d03; }
-.estado-pendiente  { background: #fff3cd; color: #664d03; }
-.estado-borrador   { background: #e9ecef; color: #495057; }
-.estado-rechazada  { background: #f8d7da; color: #842029; }
+.estado-aprobada {
+  background: #d8f3dc;
+  color: #1b4332;
+}
+
+.estado-pendiente_revision {
+  background: #fff3cd;
+  color: #664d03;
+}
+
+.estado-borrador {
+  background: #e9ecef;
+  color: #495057;
+}
+
+.estado-rechazada {
+  background: #f8d7da;
+  color: #842029;
+}
 
 .pub-card-borrador {
   border-style: dashed !important;

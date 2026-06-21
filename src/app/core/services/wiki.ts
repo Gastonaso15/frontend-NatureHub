@@ -3,14 +3,16 @@ import { HttpClient } from '@angular/common/http';
 import { firstValueFrom, Observable } from 'rxjs';
 import { tap, catchError, map } from 'rxjs/operators';
 import { Publicacion, Seccion, Borrador, Usuario } from '../../shared/models/wiki.modelos';
+import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class WikiService {
   private publicaciones: Publicacion[] = [];
   private secciones: Seccion[] = [];
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost/backend-NatureHub/src/index.php/publicaciones';
-  private usuariosApiUrl = 'http://localhost/backend-NatureHub/src/index.php/usuarios';
+  private apiUrl = environment.apiUrl;
+  private usuariosApiUrl = `${environment.apiUrl}/usuarios`;
+  private publicacionesApiUrl = `${environment.apiUrl}/publicaciones`;
 
   getSecciones(): Seccion[] {
     return this.secciones;
@@ -45,7 +47,7 @@ export class WikiService {
 
   obtenerPublicacionPorIdDirecto(id: number): Promise<Publicacion | undefined> {
     return firstValueFrom(
-      this.http.post<any>(`${this.apiUrl}/obtenerPublicacionPorId`, { id }).pipe(
+      this.http.post<any>(`${this.publicacionesApiUrl}/obtenerPublicacionPorId`, { id }).pipe(
         map(p => p ? this.mapPublicacionFromApi(p) : undefined),
         catchError(error => {
           console.error('Error al obtener publicación por id:', error);
@@ -86,7 +88,7 @@ export class WikiService {
 
   eliminarPublicacion(id: number): Promise<void> {
     return firstValueFrom(
-      this.http.delete<any>(`${this.apiUrl}/bajaPublicacion`, {
+      this.http.delete<any>(`${this.publicacionesApiUrl}/bajaPublicacion`, {
         body: { id }
       }).pipe(
         map(() => undefined),
@@ -100,7 +102,7 @@ export class WikiService {
 
   reportarPublicacion(idPublicacion: number, idUsuario: number, motivo: string): Promise<void> {
     return firstValueFrom(
-      this.http.post<any>(`${this.apiUrl}/reportePublicacion`, {
+      this.http.post<any>(`${this.publicacionesApiUrl}/reportePublicacion`, {
         idPublicacion,
         idUsuario,
         motivo,
@@ -114,11 +116,20 @@ export class WikiService {
     );
   }
 
+  listarReportesApi(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/publicaciones/listarReportes`);
+  }
+
+  resolverReporteApi(idReporte: number): Observable<any> {
+    return this.http.post(`${this.apiUrl}/publicaciones/resolverReporte`, { idReporte });
+  }
+
   agregarPublicacion(pub: Omit<Publicacion, 'id_publicacion' | 'fecha_creacion' | 'estado'>, fotoFile?: File): Promise<any> {
     const formData = new FormData();
     formData.append('titulo', pub.titulo);
     formData.append('nombreCientifico', pub.nombre_cientifico);
-    formData.append('areasHabitat', JSON.stringify([pub.areas_habitat]));
+    const areasArray = pub.areas_habitat ? pub.areas_habitat.split(',').map(s => s.trim()) : [];
+    formData.append('areasHabitat', JSON.stringify(areasArray));
     formData.append('dieta', pub.dieta);
     formData.append('horasActivas', pub.horas_activas);
     formData.append('autor', String(pub.id_autor));
@@ -131,7 +142,7 @@ export class WikiService {
       formData.append('fotoUrl', pub.foto_url);
     }
 
-    return firstValueFrom(this.http.post(`${this.apiUrl}/altaPublicacion`, formData).pipe(
+    return firstValueFrom(this.http.post(`${this.publicacionesApiUrl}/altaPublicacion`, formData).pipe(
       tap((response: any) => {
         console.log('Respuesta exitosa:', response);
       }),
@@ -147,7 +158,8 @@ export class WikiService {
     formData.append('id', String(pub.id_publicacion));
     formData.append('titulo', pub.titulo);
     formData.append('nombreCientifico', pub.nombre_cientifico);
-    formData.append('areasHabitat', JSON.stringify([pub.areas_habitat]));
+    const areasArray = pub.areas_habitat ? pub.areas_habitat.split(',').map(s => s.trim()) : [];
+    formData.append('areasHabitat', JSON.stringify(areasArray));
     formData.append('dieta', pub.dieta);
     formData.append('horasActivas', pub.horas_activas);
     formData.append('autor', String(pub.id_autor));
@@ -157,7 +169,7 @@ export class WikiService {
     if (fotoFile) {
       formData.append('foto', fotoFile, fotoFile.name);
     } else if (pub.foto_url) {
-      formData.append('foto', pub.foto_url);
+      formData.append('fotoUrl', pub.foto_url);
     }
 
     return firstValueFrom(
@@ -191,7 +203,7 @@ export class WikiService {
     }
 
     return firstValueFrom(
-      this.http.post<{ id_borrador: number; mensaje: string }>(`${this.apiUrl}/guardarBorrador`, formData).pipe(
+      this.http.post<{ id_borrador: number; mensaje: string }>(`${this.publicacionesApiUrl}/guardarBorrador`, formData).pipe(
         catchError((error) => {
           console.error('Error al guardar borrador:', error);
           throw error;
@@ -202,7 +214,7 @@ export class WikiService {
 
   obtenerBorrador(idAutor: number): Promise<Borrador | null> {
     return firstValueFrom(
-      this.http.get<any>(`${this.apiUrl}/obtenerBorrador`, { params: { idAutor } }).pipe(
+      this.http.get<any>(`${this.publicacionesApiUrl}/obtenerBorrador`, { params: { idAutor } }).pipe(
         map((data) => {
           if (!data) return null;
           return this.mapBorradorFromApi(data);
@@ -217,7 +229,7 @@ export class WikiService {
 
   eliminarBorrador(idAutor: number): Promise<void> {
     return firstValueFrom(
-      this.http.delete<{ mensaje: string }>(`${this.apiUrl}/eliminarBorrador`, {
+      this.http.delete<{ mensaje: string }>(`${this.publicacionesApiUrl}/eliminarBorrador`, {
         body: { idAutor },
       }).pipe(
         map(() => undefined),
@@ -268,28 +280,12 @@ export class WikiService {
     };
   }
 
-  obtenerPublicacionPorIdApi(id: number): Promise<Publicacion | undefined> {
-    return firstValueFrom(
-      this.http.get<any[]>(`${this.apiUrl}/listarPublicaciones`).pipe(
-        map((data) => {
-          const p = data.find((item) => Number(item.id) === Number(id));
-          if (!p) return undefined;
-          return this.mapPublicacionFromApi(p);
-        }),
-        catchError((error) => {
-          console.error('Error al obtener publicación:', error);
-          throw error;
-        })
-      )
-    );
-  }
-
   private normalizarEstado(estado: string): Publicacion['estado'] {
     const map: Record<string, Publicacion['estado']> = {
-      'APROBADA':           'aprobada',
+      'APROBADA': 'aprobada',
       'PENDIENTE_REVISION': 'pendiente_revision',
-      'RECHAZADA':          'rechazada',
-      'BORRADOR':           'borrador',
+      'RECHAZADA': 'rechazada',
+      'BORRADOR': 'borrador',
     };
     return map[estado?.toUpperCase()] ?? 'pendiente_revision';
   }
@@ -324,7 +320,7 @@ export class WikiService {
   }
 
   listarPublicacionesApi(): Observable<Publicacion[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/listarPublicaciones`).pipe(
+    return this.http.get<any[]>(`${this.publicacionesApiUrl}/listarPublicaciones`).pipe(
       tap(data => console.log('Publicaciones del API:', data)),
       map(data => data
         .filter(p => p.estado === 'APROBADA')
@@ -338,7 +334,7 @@ export class WikiService {
   }
 
   listarSeccionesApi(): Observable<Seccion[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/listarSecciones`).pipe(
+    return this.http.get<any[]>(`${this.publicacionesApiUrl}/listarSecciones`).pipe(
       map(data => data.map(s => ({
         id_seccion: s.id_seccion,
         nombre: s.nombre,
@@ -353,7 +349,7 @@ export class WikiService {
   }
 
   listarPublicacionesPropiasApi(idAutor: number): Observable<Publicacion[]> {
-    return this.http.post<any[]>(`${this.apiUrl}/listarPublicacionesPropias`, {
+    return this.http.post<any[]>(`${this.publicacionesApiUrl}/listarPublicacionesPropias`, {
       id: idAutor
     }).pipe(
       map(data => data.map(p => this.mapPublicacionFromApi(p))),
@@ -363,4 +359,26 @@ export class WikiService {
       })
     );
   }
+
+  listarPublicacionesPendientesApi(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/publicaciones/listarPublicacionesPendientes`);
+  }
+
+  moderarPublicacionApi(
+    idPublicacion: number,
+    idModerador: number,
+    resultado: 'APROBADA' | 'RECHAZADA',
+    motivoRechazo: string | null
+  ): Observable<any> {
+    const body: Record<string, unknown> = {
+      idPublicacion,
+      idModerador,
+      resultado,
+    };
+    if (motivoRechazo) {
+      body['motivoRechazo'] = motivoRechazo;
+    }
+    return this.http.post(`${this.apiUrl}/publicaciones/moderarPublicacion`, body);
+  }
 }
+

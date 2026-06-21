@@ -5,11 +5,9 @@ import { HttpClient } from '@angular/common/http';
 import { forkJoin } from 'rxjs';
 import { WikiService } from '../../../core/services/wiki';
 import { AutenticacionService } from '../../../core/services/autenticacion';
-import { Publicacion, Seccion, Usuario } from '../../../shared/models/wiki.modelos';
+import { Publicacion, Seccion, Usuario, PublicacionConAutor } from '../../../shared/models/wiki.modelos';
+import { environment } from '../../../../environments/environment';
 
-interface PublicacionConAutor extends Publicacion {
-  nombreAutor?: string;
-}
 
 @Component({
   selector: 'app-home',
@@ -26,7 +24,7 @@ export class HomeComponent implements AfterViewInit, OnInit {
   private http = inject(HttpClient);
   private router = inject(Router);
   private cdr = inject(ChangeDetectorRef);
-  private apiUrl = 'http://localhost/backend-NatureHub/src/index.php';
+  private apiUrl = environment.apiUrl;
 
   private chartRows: { id_seccion: number; y: number; h: number; barW: number }[] = [];
   private readonly chartLabelWidth = 110;
@@ -45,25 +43,11 @@ export class HomeComponent implements AfterViewInit, OnInit {
     forkJoin({
       secciones: this.wikiService.listarSeccionesApi(),
       publicaciones: this.wikiService.listarPublicacionesApi(),
-      usuarios: this.http.get<any[]>(`${this.apiUrl}/usuarios/listarUsuarios`)
+      usuarios: this.authService.listarUsuarios()
     }).subscribe({
       next: (resultado) => {
         this.secciones = resultado.secciones;
-        this.usuarios = resultado.usuarios.map(u => ({
-          id_usuario: u.id,
-          nombre: u.nombre,
-          apellido: u.apellido,
-          email: u.email,
-          rol: u.rol,
-          activo: u.activo,
-          sexo: u.sexo ?? null,
-          fechaRegistro: u.fechaRegistro ?? null,
-          fechaNacimiento: u.fechaNacimiento ?? null,
-          pais: u.pais ?? null,
-          bio: u.bio ?? null,
-          fotoUrl: u.fotoUrl ?? null
-        }));
-
+        this.usuarios = resultado.usuarios.map(AutenticacionService.mapUsuario);
         this.publicaciones = resultado.publicaciones.map(p => ({
           ...p,
           nombreAutor: this.getNombreAutor(p.id_autor)

@@ -78,3 +78,21 @@ export interface PublicacionPendiente {
   seccionNombre: string;
   camposExtra: { etiqueta: string; valor: string; tipo: string }[];
 }
+
+export interface PublicacionConAutor extends Publicacion {
+  nombreAutor?: string;
+}
+
+
+export interface ReporteVista {
+  id_reporte: number;
+  id_publicacion: number;
+  id_usuario: number;
+  motivo: string;
+  fecha: string;
+  resuelto: boolean;
+  tituloPub: string;
+  nombreUsuario: string;
+}
+
+export type Filtro = 'pendientes' | 'resueltos' | 'todos';

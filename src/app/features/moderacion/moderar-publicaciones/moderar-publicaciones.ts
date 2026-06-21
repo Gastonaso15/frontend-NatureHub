@@ -1,11 +1,10 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { SlicePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
 import { forkJoin } from 'rxjs';
 import { AutenticacionService } from '../../../core/services/autenticacion';
 import { WikiService } from '../../../core/services/wiki';
-import { PublicacionPendiente, Seccion } from '../../../shared/models/wiki.modelos';
+import { PublicacionPendiente, Seccion, Usuario } from '../../../shared/models/wiki.modelos';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -16,10 +15,8 @@ import Swal from 'sweetalert2';
   styleUrl: './moderar-publicaciones.scss',
 })
 export class ModerarPublicacionesComponent implements OnInit {
-  private http = inject(HttpClient);
   private authService = inject(AutenticacionService);
   private wikiService = inject(WikiService);
-  private apiUrl = 'http://localhost/backend-NatureHub/src/index.php';
 
   publicaciones = signal<PublicacionPendiente[]>([]);
   cargando = signal(true);
@@ -36,19 +33,20 @@ export class ModerarPublicacionesComponent implements OnInit {
     this.cargando.set(true);
 
     forkJoin({
-      publicaciones: this.http.get<any[]>(`${this.apiUrl}/publicaciones/listarPublicacionesPendientes`),
-      usuarios: this.http.get<any[]>(`${this.apiUrl}/usuarios/listarUsuarios`),
+      publicaciones: this.wikiService.listarPublicacionesPendientesApi(),
+      usuarios: this.authService.listarUsuarios(),
       secciones: this.wikiService.listarSeccionesApi(),
     }).subscribe({
       next: ({ publicaciones, usuarios, secciones }) => {
         this.secciones = secciones;
 
+        const usuariosMapeados = usuarios.map(AutenticacionService.mapUsuario);
         const mapaUsuarios = new Map<number, string>(
-          usuarios.map((u) => [u.id, `${u.nombre} ${u.apellido}`])
+          usuariosMapeados.map((u: Usuario) => [Number(u.id_usuario), `${u.nombre} ${u.apellido}`])
         );
 
         this.publicaciones.set(
-          publicaciones.map((p) => ({
+          publicaciones.map((p: any) => ({
             id: p.id,
             titulo: p.titulo,
             foto: p.foto ?? null,
@@ -61,7 +59,7 @@ export class ModerarPublicacionesComponent implements OnInit {
             estado: p.estado,
             fechaCreacion: p.fechaCreacion ?? '',
             autorId: p.autor,
-            autorNombre: mapaUsuarios.get(p.autor) ?? `Usuario #${p.autor}`,
+            autorNombre: mapaUsuarios.get(Number(p.autor)) ?? `Usuario #${p.autor}`,
             seccion: p.seccion,
             seccionNombre: this.getNombreSeccion(p.seccion),
             camposExtra: Array.isArray(p.camposExtra) ? p.camposExtra : [],
@@ -130,17 +128,7 @@ export class ModerarPublicacionesComponent implements OnInit {
     this.procesando.set(idPublicacion);
     this.accionActual.set(resultado);
 
-    const body: Record<string, unknown> = {
-      idPublicacion,
-      idModerador: moderador,
-      resultado,
-    };
-    if (motivoRechazo) {
-      body['motivoRechazo'] = motivoRechazo;
-    }
-
-    this.http
-      .post(`${this.apiUrl}/publicaciones/moderarPublicacion`, body)
+    this.wikiService.moderarPublicacionApi(idPublicacion, moderador, resultado, motivoRechazo)
       .subscribe({
         next: () => {
           this.procesando.set(null);

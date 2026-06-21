@@ -1,14 +1,10 @@
 import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
 import { forkJoin } from 'rxjs';
 import { WikiService } from '../../../core/services/wiki';
-import { Publicacion, Seccion, Usuario } from '../../../shared/models/wiki.modelos';
-
-interface PublicacionConAutor extends Publicacion {
-  nombreAutor?: string;
-}
+import { AutenticacionService } from '../../../core/services/autenticacion';
+import { Seccion, Usuario, PublicacionConAutor } from '../../../shared/models/wiki.modelos';
 
 @Component({
   selector: 'app-lista-publicaciones',
@@ -19,10 +15,9 @@ interface PublicacionConAutor extends Publicacion {
 })
 export class ListaPublicacionesComponent implements OnInit {
   private wikiService = inject(WikiService);
+  private authService = inject(AutenticacionService);
   private route = inject(ActivatedRoute);
   private cdr = inject(ChangeDetectorRef);
-  private http = inject(HttpClient);
-  private apiUrl = 'http://localhost/backend-NatureHub/src/index.php';
 
   secciones: Seccion[] = this.wikiService.getSecciones();
   publicaciones: PublicacionConAutor[] = [];
@@ -36,9 +31,9 @@ export class ListaPublicacionesComponent implements OnInit {
 
   readonly opcionesOrden = [
     { valor: 'recientes', etiqueta: 'Más recientes' },
-    { valor: 'antiguos',  etiqueta: 'Más antiguos'  },
-    { valor: 'az',        etiqueta: 'A → Z'          },
-    { valor: 'za',        etiqueta: 'Z → A'          },
+    { valor: 'antiguos', etiqueta: 'Más antiguos' },
+    { valor: 'az', etiqueta: 'A → Z' },
+    { valor: 'za', etiqueta: 'Z → A' },
   ] as const;
 
   ngOnInit(): void {
@@ -58,24 +53,11 @@ export class ListaPublicacionesComponent implements OnInit {
     forkJoin({
       secciones: this.wikiService.listarSeccionesApi(),
       publicaciones: this.wikiService.listarPublicacionesApi(),
-      usuarios: this.http.get<any[]>(`${this.apiUrl}/usuarios/listarUsuarios`)
+      usuarios: this.authService.listarUsuarios()
     }).subscribe({
       next: (resultado) => {
         this.secciones = resultado.secciones;
-        this.usuarios = resultado.usuarios.map(u => ({
-          id_usuario: u.id,
-          nombre: u.nombre,
-          apellido: u.apellido,
-          email: u.email,
-          rol: u.rol,
-          activo: u.activo,
-          sexo: u.sexo ?? null,
-          fechaRegistro: u.fechaRegistro ?? null,
-          fechaNacimiento: u.fechaNacimiento ?? null,
-          pais: u.pais ?? null,
-          bio: u.bio ?? null,
-          fotoUrl: u.fotoUrl ?? null
-        }));
+        this.usuarios = resultado.usuarios.map(AutenticacionService.mapUsuario);
 
         this.publicaciones = resultado.publicaciones.map(p => ({
           ...p,
@@ -117,7 +99,7 @@ export class ListaPublicacionesComponent implements OnInit {
         case 'az': return a.titulo.localeCompare(b.titulo, 'es');
         case 'za': return b.titulo.localeCompare(a.titulo, 'es');
         case 'antiguos': return a.fecha_creacion.localeCompare(b.fecha_creacion);
-        default:   return b.fecha_creacion.localeCompare(a.fecha_creacion);
+        default: return b.fecha_creacion.localeCompare(a.fecha_creacion);
       }
     });
     this.publicacionesFiltradas = resultado;

@@ -1,22 +1,11 @@
 import { Component, inject, OnInit, signal, computed } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { SlicePipe } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
 import { forkJoin } from 'rxjs';
 import Swal from 'sweetalert2';
-
-interface ReporteVista {
-  id_reporte: number;
-  id_publicacion: number;
-  id_usuario: number;
-  motivo: string;
-  fecha: string;
-  resuelto: boolean;
-  tituloPub: string;
-  nombreUsuario: string;
-}
-
-type Filtro = 'pendientes' | 'resueltos' | 'todos';
+import { WikiService } from '../../../core/services/wiki';
+import { AutenticacionService } from '../../../core/services/autenticacion';
+import { ReporteVista, Filtro, Usuario } from '../../../shared/models/wiki.modelos';
 
 @Component({
   selector: 'app-listar-reportes',
@@ -26,8 +15,8 @@ type Filtro = 'pendientes' | 'resueltos' | 'todos';
   styleUrl: './listar-reportes.scss',
 })
 export class ListarReportesComponent implements OnInit {
-  private http = inject(HttpClient);
-  private apiUrl = 'http://localhost/backend-NatureHub/src/index.php';
+  private wikiService = inject(WikiService);
+  private authService = inject(AutenticacionService);
 
   private reportes = signal<ReporteVista[]>([]);
   filtro = signal<Filtro>('pendientes');
@@ -56,20 +45,23 @@ export class ListarReportesComponent implements OnInit {
     this.cargando.set(true);
 
     forkJoin({
-      reportes: this.http.get<any[]>(`${this.apiUrl}/publicaciones/listarReportes`),
-      publicaciones: this.http.get<any[]>(`${this.apiUrl}/publicaciones/listarPublicaciones`),
-      usuarios: this.http.get<any[]>(`${this.apiUrl}/usuarios/listarUsuarios`),
+      reportes: this.wikiService.listarReportesApi(),
+      publicaciones: this.wikiService.listarPublicacionesApi(),
+      usuarios: this.authService.listarUsuarios(),
     }).subscribe({
       next: ({ reportes, publicaciones, usuarios }) => {
+
         const mapaPubs = new Map<number, string>(
-          publicaciones.map(p => [Number(p.id), p.titulo])
+          publicaciones.map(p => [Number(p.id_publicacion), p.titulo])
         );
+
+        const usuariosMapeados = usuarios.map(AutenticacionService.mapUsuario);
         const mapaUsers = new Map<number, string>(
-          usuarios.map(u => [Number(u.id), `${u.nombre} ${u.apellido}`])
+          usuariosMapeados.map((u: Usuario) => [Number(u.id_usuario), `${u.nombre} ${u.apellido}`])
         );
 
         const vista: ReporteVista[] = reportes
-          .map(r => ({
+          .map((r: any) => ({
             id_reporte: Number(r.id_reporte),
             id_publicacion: Number(r.id_publicacion),
             id_usuario: Number(r.id_usuario),
@@ -97,9 +89,7 @@ export class ListarReportesComponent implements OnInit {
   marcarResuelto(reporte: ReporteVista): void {
     this.procesando.set(reporte.id_reporte);
 
-    this.http.post(`${this.apiUrl}/publicaciones/resolverReporte`, {
-      idReporte: reporte.id_reporte,
-    }).subscribe({
+    this.wikiService.resolverReporteApi(reporte.id_reporte).subscribe({
       next: () => {
         this.procesando.set(null);
         this.reportes.update(lista =>

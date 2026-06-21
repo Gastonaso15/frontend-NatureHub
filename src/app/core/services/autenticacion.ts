@@ -2,12 +2,13 @@ import { Injectable, signal, inject } from '@angular/core';
 import { Usuario } from '../../shared/models/wiki.modelos';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class AutenticacionService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost/backend-NatureHub/src/index.php';
-  
+  private apiUrl = environment.apiUrl;
+
   currentUser = signal<Usuario | null>(this.loadFromStorage());
 
   private loadFromStorage(): Usuario | null {
@@ -20,13 +21,13 @@ export class AutenticacionService {
   }
 
   login(email: string, password: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/usuarios/iniciarSesion`, {email, password});
+    return this.http.post(`${this.apiUrl}/usuarios/iniciarSesion`, { email, password });
   }
 
   logout(): void {
     const token = localStorage.getItem('nh_token');
     if (token) {
-        this.http.post(`${this.apiUrl}/usuarios/cerrarSesion`, { token }).subscribe();
+      this.http.post(`${this.apiUrl}/usuarios/cerrarSesion`, { token }).subscribe();
     }
     this.currentUser.set(null);
     localStorage.removeItem('nh_user');
@@ -70,5 +71,29 @@ export class AutenticacionService {
     return this.http.get(`${this.apiUrl}/usuarios/listarUsuarios`);
   }
 
+  modificarUsuarioApi(formData: FormData): Observable<any> {
+    return this.http.post(`${this.apiUrl}/usuarios/modificarUsuario`, formData);
+  }
+
+  bajaUsuarioApi(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/usuarios/bajaUsuario`, { body: { id } });
+  }
+
+  static mapUsuario(u: any): Usuario {
+    return {
+      id_usuario: u.id,
+      nombre: u.nombre,
+      apellido: u.apellido,
+      email: u.email,
+      rol: u.rol,
+      activo: u.activo,
+      sexo: u.sexo ?? null,
+      fechaRegistro: u.fechaRegistro ?? null,
+      fechaNacimiento: u.fechaNacimiento ?? null,
+      pais: u.pais ?? null,
+      bio: u.bio ?? null,
+      fotoUrl: u.fotoUrl ?? null,
+    };
+  }
 
 }

@@ -39,7 +39,13 @@ export class LoginComponent {
           apellido: response.apellido,
           email: response.email,
           rol: response.rol,
-          activo: true
+          activo: true,
+          sexo: response.sexo || null,
+          fechaRegistro: response.fechaRegistro || null,
+          fechaNacimiento: response.fechaNacimiento || null,
+          pais: response.pais || null,
+          bio: response.bio || null,
+          fotoUrl: response.fotoUrl || null
         }));
         this.authService.currentUser.set({
           id_usuario: response.idusuario,
