@@ -46,7 +46,7 @@ export class ListarReportesComponent implements OnInit {
 
     forkJoin({
       reportes: this.wikiService.listarReportesApi(),
-      publicaciones: this.wikiService.listarPublicacionesApi(),
+      publicaciones: this.wikiService.listarTodasPublicacionesApi(),
       usuarios: this.authService.listarUsuarios(),
     }).subscribe({
       next: ({ reportes, publicaciones, usuarios }) => {

@@ -365,5 +365,15 @@ export class WikiService {
     return this.http.post(`${this.publicacionesApiUrl}/moderarPublicacion`, body);
   }
 
+
+  listarTodasPublicacionesApi(): Observable<Publicacion[]> {
+    return this.http.get<any[]>(`${this.publicacionesApiUrl}/listarPublicaciones`).pipe(
+      map(data => data.map(p => this.mapPublicacionDesdeApi(p))),
+      catchError(error => {
+        console.error('Error al listar publicaciones:', error);
+        throw error;
+      })
+    );
+  }
 }
 
