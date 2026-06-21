@@ -1,17 +1,17 @@
 <app-navbar></app-navbar>
 
-@if (authService.isLoggedIn()) {
+@if (authService.estaLogueado()) {
   <button class="menu-toggle" (click)="toggleSidebar()">
     ☰
   </button>
 }
 
 <div class="app-layout">
-  @if (authService.isLoggedIn()) {
+  @if (authService.estaLogueado()) {
     <app-sidebar [class.abierto]="sidebarAbierta()"></app-sidebar>
   }
 
-  @if (authService.isLoggedIn() && sidebarAbierta()) {
+  @if (authService.estaLogueado() && sidebarAbierta()) {
     <div class="sidebar-overlay" (click)="toggleSidebar()"></div>
   }
 

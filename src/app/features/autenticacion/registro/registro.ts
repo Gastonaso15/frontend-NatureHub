@@ -4,14 +4,14 @@ import { FormsModule, NgForm } from '@angular/forms';
 import { AutenticacionService } from '../../../core/services/autenticacion';
 
 @Component({
-  selector: 'app-register',
+  selector: 'app-registro',
   standalone: true,
   imports: [FormsModule, RouterLink],
   templateUrl: './registro.html',
   styleUrl: './registro.scss'
 })
 export class RegistroComponent {
-  registerData = {
+  registrarInformacion = {
     nombre: '',
     apellido: '',
     email: '',
@@ -33,8 +33,8 @@ export class RegistroComponent {
   constructor(private authService: AutenticacionService, private router: Router) { }
 
   checkPasswordMatch(): void {
-    if (this.registerData.confirmPassword.length > 0) {
-      this.passwordMismatch = this.registerData.password !== this.registerData.confirmPassword;
+    if (this.registrarInformacion.confirmPassword.length > 0) {
+      this.passwordMismatch = this.registrarInformacion.password !== this.registrarInformacion.confirmPassword;
     } else {
       this.passwordMismatch = false;
     }
@@ -73,7 +73,7 @@ export class RegistroComponent {
     }
     this.photoFile = file;
     this.photoPreview = URL.createObjectURL(file);
-    this.registerData.fotoUrl = '';
+    this.registrarInformacion.fotoUrl = '';
   }
 
   removePhoto(): void {
@@ -85,7 +85,7 @@ export class RegistroComponent {
   }
 
   onFotoUrlChange(): void {
-    if (this.registerData.fotoUrl) {
+    if (this.registrarInformacion.fotoUrl) {
       this.photoFile = undefined;
       if (this.photoPreview) {
         URL.revokeObjectURL(this.photoPreview);
@@ -100,16 +100,16 @@ export class RegistroComponent {
 
     if (form.invalid || this.passwordMismatch) return;
 
-    this.authService.register(
-      this.registerData.nombre,
-      this.registerData.apellido,
-      this.registerData.email,
-      this.registerData.password,
-      this.registerData.sexo || undefined,
-      this.registerData.fechaNacimiento || undefined,
-      this.registerData.pais || undefined,
-      this.registerData.bio || undefined,
-      this.registerData.fotoUrl || undefined,
+    this.authService.registrar(
+      this.registrarInformacion.nombre,
+      this.registrarInformacion.apellido,
+      this.registrarInformacion.email,
+      this.registrarInformacion.password,
+      this.registrarInformacion.sexo || undefined,
+      this.registrarInformacion.fechaNacimiento || undefined,
+      this.registrarInformacion.pais || undefined,
+      this.registrarInformacion.bio || undefined,
+      this.registrarInformacion.fotoUrl || undefined,
       this.photoFile
     ).subscribe({
       next: (response) => {

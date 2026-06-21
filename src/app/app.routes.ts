@@ -80,6 +80,11 @@ export const routes: Routes = [
     loadComponent: () => import('./features/administrador/degradar-administrador/degradar-administrador').then(m => m.DegradarAdministradorComponent)
   },
   {
+    path: 'wiki/favoritas',
+    canActivate: [autenticacionGuard],
+    loadComponent: () => import('./features/wiki/mis-favoritas/mis-favoritas').then(m => m.MisFavoritasComponent)
+  },
+  {
     path: '**',
     redirectTo: ''
   }

@@ -27,7 +27,7 @@
     <div class="d-flex flex-column gap-3">
         @for (pub of publicaciones(); track trackPublicacion(pub)) {
         <div class="pub-card bg-white rounded-3 border overflow-hidden" [class.pub-card-borrador]="pub.es_borrador"
-            [routerLink]="pub.es_borrador ? ['/wiki/nuevo'] : ['/wiki/article', pub.id_publicacion]"
+            [routerLink]="pub.es_borrador ? ['/wiki/nuevo'] : ['/wiki/publicacion', pub.id_publicacion]"
             [queryParams]="pub.es_borrador ? { continuar: 1 } : null" style="cursor: pointer;">
             <div class="row g-0">
 

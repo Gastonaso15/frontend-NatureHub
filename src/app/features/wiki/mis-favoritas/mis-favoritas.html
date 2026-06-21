@@ -1,0 +1,29 @@
+<div class="container py-5">
+    <h3 class="fw-bold mb-4" style="color: #1b4332;">Mis favoritas</h3>
+
+    @if (cargando()) {
+    <div class="text-center py-5">
+        <div class="spinner-border text-success"></div>
+    </div>
+    } @else if (error()) {
+    <div class="alert alert-danger">{{ error() }}</div>
+    } @else if (publicaciones().length === 0) {
+    <p class="text-muted">Todavía no marcaste ninguna publicación como favorita.</p>
+    } @else {
+    <div class="row g-3">
+        @for (pub of publicaciones(); track pub.id_publicacion) {
+        <div class="col-6 col-md-3">
+            <div class="card border-0 rounded-3 overflow-hidden shadow-sm h-100">
+                <img [src]="pub.foto_url" class="card-img-top" style="height:160px; object-fit:cover"
+                    [routerLink]="['/wiki/publicacion', pub.id_publicacion]" style="cursor:pointer">
+                <div class="card-body p-3">
+                    <h6 class="fw-bold mb-1">{{ pub.titulo }}</h6>
+                    <small class="text-muted fst-italic d-block">{{ pub.nombre_cientifico }}</small>
+                    <button class="btn btn-sm btn-outline-danger mt-2" (click)="quitarFavorita(pub)">Quitar</button>
+                </div>
+            </div>
+        </div>
+        }
+    </div>
+    }
+</div>

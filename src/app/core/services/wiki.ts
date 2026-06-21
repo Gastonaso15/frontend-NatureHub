@@ -49,7 +49,7 @@ export class WikiService {
   obtenerPublicacionPorIdDirecto(id: number): Promise<Publicacion | undefined> {
     return firstValueFrom(
       this.http.post<any>(`${this.publicacionesApiUrl}/obtenerPublicacionPorId`, { id }).pipe(
-        map(p => p ? this.mapPublicacionFromApi(p) : undefined),
+        map(p => p ? this.mapPublicacionDesdeApi(p) : undefined),
         catchError(error => {
           console.error('Error al obtener publicación por id:', error);
           throw error;
@@ -201,7 +201,7 @@ export class WikiService {
       this.http.get<any>(`${this.publicacionesApiUrl}/obtenerBorrador`, { params: { idAutor } }).pipe(
         map((data) => {
           if (!data) return null;
-          return this.mapBorradorFromApi(data);
+          return this.mapBorradorDesdeApi(data);
         }),
         catchError((error) => {
           console.error('Error al obtener borrador:', error);
@@ -244,7 +244,7 @@ export class WikiService {
     };
   }
 
-  private mapBorradorFromApi(data: any): Borrador {
+  private mapBorradorDesdeApi(data: any): Borrador {
     return {
       id_borrador: data.id_borrador,
       id_autor: data.autor,
@@ -274,7 +274,7 @@ export class WikiService {
     return map[estado?.toUpperCase()] ?? 'pendiente_revision';
   }
 
-  private mapPublicacionFromApi(p: any): Publicacion {
+  mapPublicacionDesdeApi(p: any): Publicacion {
     return {
       id_publicacion: p.id,
       id_seccion: p.seccion,
@@ -308,7 +308,7 @@ export class WikiService {
       tap(data => console.log('Publicaciones del API:', data)),
       map(data => data
         .filter(p => p.estado === 'APROBADA')
-        .map(p => this.mapPublicacionFromApi(p))
+        .map(p => this.mapPublicacionDesdeApi(p))
       ),
       catchError(error => {
         console.error('Error al listar publicaciones:', error);
@@ -336,7 +336,7 @@ export class WikiService {
     return this.http.post<any[]>(`${this.publicacionesApiUrl}/listarPublicacionesPropias`, {
       id: idAutor
     }).pipe(
-      map(data => data.map(p => this.mapPublicacionFromApi(p))),
+      map(data => data.map(p => this.mapPublicacionDesdeApi(p))),
       catchError(error => {
         console.error('Error al listar publicaciones propias:', error);
         throw error;
@@ -364,5 +364,6 @@ export class WikiService {
     }
     return this.http.post(`${this.publicacionesApiUrl}/moderarPublicacion`, body);
   }
+
 }
 

@@ -37,7 +37,7 @@
       @for (articulo of resultadosBusqueda; track articulo.id_publicacion) {
       <div class="col-6 col-md-3">
         <div class="card card-article border-0 rounded-3 overflow-hidden shadow-sm h-100"
-          [routerLink]="['/wiki/article', articulo.id_publicacion]" style="cursor:pointer">
+          [routerLink]="['/wiki/publicacion', articulo.id_publicacion]" style="cursor:pointer">
           <img [src]="articulo.foto_url" class="card-img-top" style="height:160px; object-fit:cover"
             [alt]="articulo.titulo">
           <div class="card-body p-3">
@@ -68,7 +68,7 @@
       @for (articulo of articulosDestacados; track articulo.id_publicacion) {
       <div class="col-6 col-md-3">
         <div class="card card-article border-0 rounded-3 overflow-hidden shadow-sm h-100"
-          [routerLink]="['/wiki/article', articulo.id_publicacion]" style="cursor:pointer">
+          [routerLink]="['/wiki/publicacion', articulo.id_publicacion]" style="cursor:pointer">
           <img [src]="articulo.foto_url" class="card-img-top" style="height:160px; object-fit:cover"
             [alt]="articulo.titulo">
           <div class="card-body p-3">

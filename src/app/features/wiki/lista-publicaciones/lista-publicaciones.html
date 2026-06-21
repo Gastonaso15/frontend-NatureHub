@@ -43,7 +43,7 @@
     @for (pub of publicacionesFiltradas; track pub.id_publicacion) {
     <div class="col-6 col-md-4 col-lg-3">
       <div class="card card-pub border-0 rounded-3 overflow-hidden shadow-sm h-100"
-        [routerLink]="['/wiki/article', pub.id_publicacion]" style="cursor: pointer;">
+        [routerLink]="['/wiki/publicacion', pub.id_publicacion]" style="cursor: pointer;">
         @if (pub.foto_url) {
         <img [src]="pub.foto_url" class="card-img-top" style="height: 160px; object-fit: cover;" [alt]="pub.titulo">
         } @else {

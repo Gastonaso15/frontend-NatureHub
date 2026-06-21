@@ -51,7 +51,7 @@ export class ModificarPublicacionComponent implements OnInit {
   ];
 
   ngOnInit(): void {
-    if (!this.authService.isLoggedIn()) {
+    if (!this.authService.estaLogueado()) {
       this.router.navigate(['/auth/login']);
       return;
     }

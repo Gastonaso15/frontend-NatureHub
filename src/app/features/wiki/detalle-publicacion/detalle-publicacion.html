@@ -65,8 +65,21 @@
     </div>
 
     <div class="col-md-8 col-lg-9">
-      <h1 class="fw-bold mb-1" style="color: #1b4332;">{{ articulo()!.titulo }}</h1>
-      <p class="text-muted fst-italic fs-5 mb-4">{{ articulo()!.nombre_cientifico }}</p>
+      <div class="d-flex align-items-start justify-content-between gap-3">
+        <div>
+          <h1 class="fw-bold mb-1" style="color: #1b4332;">{{ articulo()!.titulo }}</h1>
+          <p class="text-muted fst-italic fs-5 mb-4">{{ articulo()!.nombre_cientifico }}</p>
+        </div>
+
+        @if (authService.estaLogueado()) {
+        <button class="btn-favorita-titulo" (click)="toggleFavorita()" [disabled]="procesandoFavorita()"
+          [class.activa]="esFavorita()">
+          <span class="estrella">{{ esFavorita() ? '★' : '☆' }}</span>
+          <span class="texto-favorita">{{ esFavorita() ? 'Guardado' : 'Guardar' }}</span>
+        </button>
+        }
+      </div>
+
 
       <div class="mb-4 pb-3 border-bottom">
         <h5 class="fw-bold mb-2" style="color: #2d6a4f;">Áreas de hábitat</h5>

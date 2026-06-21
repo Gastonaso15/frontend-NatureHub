@@ -135,3 +135,44 @@
 .icono-accion {
   font-size: 0.85rem;
 }
+
+.btn-favorita-titulo {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: #fff;
+  border: 1px solid #d8f3dc;
+  border-radius: 20px;
+  padding: 0.45rem 0.9rem;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: #2d6a4f;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background 0.15s ease, border-color 0.15s ease;
+
+  .estrella {
+    font-size: 1.1rem;
+    color: #adb5bd;
+  }
+
+  &:hover:not(:disabled) {
+    background: #f6fdf9;
+    border-color: #2d6a4f;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  &.activa {
+    background: #fff8e1;
+    border-color: #f4b400;
+
+    .estrella {
+      color: #f4b400;
+    }
+  }
+}

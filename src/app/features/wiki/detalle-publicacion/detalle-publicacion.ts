@@ -19,7 +19,7 @@ export class DetallePublicacionComponent implements OnInit {
   private router = inject(Router);
   private wikiService = inject(WikiService);
   private location = inject(Location);
-  private authService = inject(AutenticacionService);
+  authService = inject(AutenticacionService);
 
   articulo = signal<Publicacion | null>(null);
   seccion = signal<Seccion | null>(null);
@@ -84,6 +84,17 @@ export class DetallePublicacionComponent implements OnInit {
       this.error.set('No se pudo cargar el artículo.');
     } finally {
       this.cargando.set(false);
+    }
+
+
+    const user = this.authService.currentUser();
+    if (user) {
+      this.authService.listarFavoritasApi(user.id_usuario).subscribe({
+        next: (favoritas) => {
+          this.esFavorita.set(favoritas.some((f: any) => Number(f.id) === Number(id)));
+        },
+        error: () => { }
+      });
     }
   }
 
@@ -172,5 +183,35 @@ export class DetallePublicacionComponent implements OnInit {
 
   volver(): void {
     this.location.back();
+  }
+
+
+  esFavorita = signal(false);
+  procesandoFavorita = signal(false);
+
+  async toggleFavorita(): Promise<void> {
+    const user = this.authService.currentUser();
+    const pub = this.articulo();
+    if (!user || !pub) {
+      this.router.navigate(['/auth/login']);
+      return;
+    }
+
+    this.procesandoFavorita.set(true);
+    const accion$ = this.esFavorita()
+      ? this.authService.eliminarFavoritaApi(user.id_usuario, pub.id_publicacion)
+      : this.authService.agregarFavoritaApi(user.id_usuario, pub.id_publicacion);
+
+    accion$.subscribe({
+      next: () => {
+        this.esFavorita.update(v => !v);
+        this.procesandoFavorita.set(false);
+      },
+      error: (err) => {
+        this.procesandoFavorita.set(false);
+        const msg = err?.error?.error ?? 'No se pudo actualizar tus favoritas.';
+        Swal.fire('Error', msg, 'error');
+      }
+    });
   }
 }

@@ -16,7 +16,7 @@ export class AutenticacionService {
     return saved ? JSON.parse(saved) : null;
   }
 
-  isLoggedIn(): boolean {
+  estaLogueado(): boolean {
     return this.currentUser() !== null;
   }
 
@@ -35,7 +35,7 @@ export class AutenticacionService {
   }
 
 
-  register(nombre: string, apellido: string, email: string, password: string, sexo?: string, fechaNacimiento?: string, pais?: string, bio?: string, fotoUrl?: string, fotoFile?: File): Observable<any> {
+  registrar(nombre: string, apellido: string, email: string, password: string, sexo?: string, fechaNacimiento?: string, pais?: string, bio?: string, fotoUrl?: string, fotoFile?: File): Observable<any> {
     const formData = new FormData();
     formData.append('nombre', nombre);
     formData.append('apellido', apellido);
@@ -77,6 +77,20 @@ export class AutenticacionService {
 
   bajaUsuarioApi(id: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/usuarios/bajaUsuario`, { body: { id } });
+  }
+
+  agregarFavoritaApi(idUsuario: number, idPublicacion: number): Observable<any> {
+    return this.http.post(`${this.apiUrl}/usuarios/agregarFavoritas`, { idUsuario, idPublicacion });
+  }
+
+  eliminarFavoritaApi(idUsuario: number, idPublicacion: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/usuarios/eliminarFavorita`, {
+      body: { idUsuario, idPublicacion }
+    });
+  }
+
+  listarFavoritasApi(idUsuario: number): Observable<any[]> {
+    return this.http.post<any[]>(`${this.apiUrl}/usuarios/listarFavoritas`, { idUsuario });
   }
 
   static mapUsuario(u: any): Usuario {

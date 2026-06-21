@@ -9,7 +9,7 @@
         <div class="row g-3 mb-3">
           <div class="col-md-6">
             <label class="form-label fw-semibold">Nombre</label>
-            <input type="text" class="form-control" name="nombre" [(ngModel)]="registerData.nombre"
+            <input type="text" class="form-control" name="nombre" [(ngModel)]="registrarInformacion.nombre"
               #nombreField="ngModel" required minlength="2"
               [class.is-invalid]="nombreField.invalid && (nombreField.touched || submitted)"
               [class.is-valid]="nombreField.valid && nombreField.touched" placeholder="Tu nombre">
@@ -19,7 +19,7 @@
           </div>
           <div class="col-md-6">
             <label class="form-label fw-semibold">Apellido</label>
-            <input type="text" class="form-control" name="apellido" [(ngModel)]="registerData.apellido"
+            <input type="text" class="form-control" name="apellido" [(ngModel)]="registrarInformacion.apellido"
               #apellidoField="ngModel" required minlength="2"
               [class.is-invalid]="apellidoField.invalid && (apellidoField.touched || submitted)"
               [class.is-valid]="apellidoField.valid && apellidoField.touched" placeholder="Tu apellido">
@@ -31,7 +31,7 @@
 
         <div class="mb-3">
           <label class="form-label fw-semibold">Correo electrónico</label>
-          <input type="email" class="form-control" name="email" [(ngModel)]="registerData.email" #emailField="ngModel"
+          <input type="email" class="form-control" name="email" [(ngModel)]="registrarInformacion.email" #emailField="ngModel"
             required email [class.is-invalid]="emailField.invalid && (emailField.touched || submitted)"
             [class.is-valid]="emailField.valid && emailField.touched" placeholder="tu@correo.com">
           @if (emailField.errors?.['required'] && (emailField.touched || submitted)) {
@@ -47,7 +47,7 @@
           <div class="row g-3">
             <div class="col-md-6">
               <label class="form-label fw-semibold">Sexo</label>
-              <select class="form-select" name="sexo" [(ngModel)]="registerData.sexo">
+              <select class="form-select" name="sexo" [(ngModel)]="registrarInformacion.sexo">
                 <option value="">Seleccioná una opción</option>
                 <option value="femenino">Femenino</option>
                 <option value="masculino">Masculino</option>
@@ -56,19 +56,19 @@
             </div>
             <div class="col-md-6">
               <label class="form-label fw-semibold">Fecha de nacimiento</label>
-              <input type="date" class="form-control" name="fechaNacimiento" [(ngModel)]="registerData.fechaNacimiento">
+              <input type="date" class="form-control" name="fechaNacimiento" [(ngModel)]="registrarInformacion.fechaNacimiento">
             </div>
           </div>
 
           <div class="mb-3 mt-3">
             <label class="form-label fw-semibold">País</label>
-            <input type="text" class="form-control" name="pais" [(ngModel)]="registerData.pais"
+            <input type="text" class="form-control" name="pais" [(ngModel)]="registrarInformacion.pais"
               placeholder="Tu país de residencia">
           </div>
 
           <div class="mb-3">
             <label class="form-label fw-semibold">Biografía</label>
-            <textarea class="form-control" rows="3" name="bio" [(ngModel)]="registerData.bio"
+            <textarea class="form-control" rows="3" name="bio" [(ngModel)]="registrarInformacion.bio"
               placeholder="Contanos algo sobre vos (opcional)"></textarea>
           </div>
 
@@ -93,14 +93,14 @@
 
           <div class="mb-3">
             <label class="form-label fw-semibold">URL de foto</label>
-            <input type="url" class="form-control" name="fotoUrl" [(ngModel)]="registerData.fotoUrl"
+            <input type="url" class="form-control" name="fotoUrl" [(ngModel)]="registrarInformacion.fotoUrl"
               (ngModelChange)="onFotoUrlChange()" placeholder="https://example.com/mi-foto.jpg">
           </div>
         </div>
 
         <div class="mb-3">
           <label class="form-label fw-semibold">Contraseña</label>
-          <input type="password" class="form-control" name="password" [(ngModel)]="registerData.password"
+          <input type="password" class="form-control" name="password" [(ngModel)]="registrarInformacion.password"
             #passwordField="ngModel" required minlength="6" (ngModelChange)="checkPasswordMatch()"
             [class.is-invalid]="passwordField.invalid && (passwordField.touched || submitted)"
             [class.is-valid]="passwordField.valid && passwordField.touched" placeholder="Mínimo 6 caracteres">
@@ -114,7 +114,7 @@
 
         <div class="mb-4">
           <label class="form-label fw-semibold">Confirmar Contraseña</label>
-          <input type="password" class="form-control" name="confirmPassword" [(ngModel)]="registerData.confirmPassword"
+          <input type="password" class="form-control" name="confirmPassword" [(ngModel)]="registrarInformacion.confirmPassword"
             #confirmField="ngModel" required (ngModelChange)="checkPasswordMatch()"
             [class.is-invalid]="(confirmField.invalid && (confirmField.touched || submitted)) || passwordMismatch"
             [class.is-valid]="confirmField.valid && confirmField.touched && !passwordMismatch"
