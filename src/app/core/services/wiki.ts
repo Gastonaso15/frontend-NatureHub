@@ -212,6 +212,16 @@ export class WikiService {
     );
   }
 
+  private normalizarEstado(estado: string): Publicacion['estado'] {
+    const map: Record<string, Publicacion['estado']> = {
+      'APROBADA':           'aprobada',
+      'PENDIENTE_REVISION': 'pendiente_revision',
+      'RECHAZADA':          'rechazada',
+      'BORRADOR':           'borrador',
+    };
+    return map[estado?.toUpperCase()] ?? 'pendiente_revision';
+  }
+
   private mapPublicacionFromApi(p: any): Publicacion {
     return {
       id_publicacion: p.id,
@@ -225,7 +235,7 @@ export class WikiService {
         : (p.areasHabitat ?? ''),
       dieta: p.dieta,
       horas_activas: p.horasActivas,
-      estado: (p.estado ?? '').toLowerCase() as Publicacion['estado'],
+      estado: this.normalizarEstado(p.estado),
       fecha_creacion: p.fechaCreacion ?? '',
       campos_extras: (p.camposExtra ?? []).map((c: any) => ({
         id_campo: c.id,
@@ -246,20 +256,7 @@ export class WikiService {
       tap(data => console.log('Publicaciones del API:', data)),
       map(data => data
         .filter(p => p.estado === 'APROBADA')
-        .map(p => ({
-          id_publicacion: p.id,
-          id_seccion: p.seccion,
-          id_autor: p.autor,
-          titulo: p.titulo,
-          nombre_cientifico: p.nombreCientifico,
-          foto_url: p.foto,
-          areas_habitat: Array.isArray(p.areasHabitat) ? p.areasHabitat.join(', ') : p.areasHabitat,
-          dieta: p.dieta,
-          horas_activas: p.horasActivas,
-          estado: p.estado,
-          fecha_creacion: p.fechaCreacion,
-          campos_extras: p.camposExtra ?? []
-        } as Publicacion))
+        .map(p => this.mapPublicacionFromApi(p))
       ),
       catchError(error => {
         console.error('Error al listar publicaciones:', error);
@@ -284,15 +281,14 @@ export class WikiService {
   }
 
   listarPublicacionesPropiasApi(idAutor: number): Observable<Publicacion[]> {
-  return this.http.post<any[]>(`${this.apiUrl}/listarPublicacionesPropias`, {
-    id: idAutor
-  }).pipe(
-    map(data => data.map(p => this.mapPublicacionFromApi(p))),
-    catchError(error => {
-      console.error('Error al listar publicaciones propias:', error);
-      throw error;
-    })
-  );
-}
-
+    return this.http.post<any[]>(`${this.apiUrl}/listarPublicacionesPropias`, {
+      id: idAutor
+    }).pipe(
+      map(data => data.map(p => this.mapPublicacionFromApi(p))),
+      catchError(error => {
+        console.error('Error al listar publicaciones propias:', error);
+        throw error;
+      })
+    );
+  }
 }

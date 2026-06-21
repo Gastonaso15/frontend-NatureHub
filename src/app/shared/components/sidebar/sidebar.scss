@@ -29,6 +29,21 @@
   }
 }
 
+.badge-sidebar-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 9px;
+  background-color: #dc3545;
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
 @media (max-width: 768px) {
   .app-sidebar {
     position: fixed;

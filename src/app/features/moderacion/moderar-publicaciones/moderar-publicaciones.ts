@@ -4,14 +4,9 @@ import { RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { forkJoin } from 'rxjs';
 import { AutenticacionService } from '../../../core/services/autenticacion';
-import { PublicacionPendiente } from '../../../shared/models/wiki.modelos';
+import { WikiService } from '../../../core/services/wiki';
+import { PublicacionPendiente, Seccion } from '../../../shared/models/wiki.modelos';
 import Swal from 'sweetalert2';
-
-const SECCIONES: Record<number, string> = {
-  1: 'Mamíferos',
-  2: 'Aves',
-  3: 'Reptiles',
-};
 
 @Component({
   selector: 'app-moderar-publicaciones',
@@ -23,12 +18,15 @@ const SECCIONES: Record<number, string> = {
 export class ModerarPublicacionesComponent implements OnInit {
   private http = inject(HttpClient);
   private authService = inject(AutenticacionService);
+  private wikiService = inject(WikiService);
   private apiUrl = 'http://localhost/backend-NatureHub/src/index.php';
 
   publicaciones = signal<PublicacionPendiente[]>([]);
   cargando = signal(true);
   procesando = signal<number | null>(null);
   accionActual = signal<'APROBADA' | 'RECHAZADA' | null>(null);
+
+  private secciones: Seccion[] = [];
 
   ngOnInit(): void {
     this.cargarPendientes();
@@ -40,8 +38,11 @@ export class ModerarPublicacionesComponent implements OnInit {
     forkJoin({
       publicaciones: this.http.get<any[]>(`${this.apiUrl}/publicaciones/listarPublicacionesPendientes`),
       usuarios: this.http.get<any[]>(`${this.apiUrl}/usuarios/listarUsuarios`),
+      secciones: this.wikiService.listarSeccionesApi(),
     }).subscribe({
-      next: ({ publicaciones, usuarios }) => {
+      next: ({ publicaciones, usuarios, secciones }) => {
+        this.secciones = secciones;
+
         const mapaUsuarios = new Map<number, string>(
           usuarios.map((u) => [u.id, `${u.nombre} ${u.apellido}`])
         );
@@ -62,7 +63,7 @@ export class ModerarPublicacionesComponent implements OnInit {
             autorId: p.autor,
             autorNombre: mapaUsuarios.get(p.autor) ?? `Usuario #${p.autor}`,
             seccion: p.seccion,
-            seccionNombre: SECCIONES[p.seccion] ?? `Sección ${p.seccion}`,
+            seccionNombre: this.getNombreSeccion(p.seccion),
             camposExtra: Array.isArray(p.camposExtra) ? p.camposExtra : [],
           }))
         );
@@ -73,6 +74,11 @@ export class ModerarPublicacionesComponent implements OnInit {
         Swal.fire('Error', 'No se pudieron cargar las publicaciones pendientes.', 'error');
       },
     });
+  }
+
+  private getNombreSeccion(idSeccion: number): string {
+    const seccion = this.secciones.find(s => Number(s.id_seccion) === Number(idSeccion));
+    return seccion?.nombre ?? `Sección ${idSeccion}`;
   }
 
   aprobar(pub: PublicacionPendiente): void {

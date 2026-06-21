@@ -1,7 +1,8 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { SlicePipe } from '@angular/common';
-import { forkJoin } from 'rxjs';
+import { forkJoin, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { AutenticacionService } from '../../../core/services/autenticacion';
 import { WikiService } from '../../../core/services/wiki';
 import { Publicacion } from '../../../shared/models/wiki.modelos';
@@ -35,7 +36,7 @@ export class MisPublicacionesComponent implements OnInit {
 
         forkJoin({
             publicaciones: this.wikiService.listarPublicacionesPropiasApi(autorId),
-            borrador: this.wikiService.obtenerBorrador(autorId),
+            borrador: this.wikiService.obtenerBorrador(autorId).then(b => b).catch(() => null),
         }).subscribe({
             next: ({ publicaciones, borrador }) => {
                 const mias = [...publicaciones];

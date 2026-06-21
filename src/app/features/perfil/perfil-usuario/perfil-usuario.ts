@@ -1,5 +1,5 @@
 import { Component, inject, OnInit, signal, computed } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { Location } from '@angular/common';
 import Swal from 'sweetalert2';
@@ -9,7 +9,7 @@ import { Usuario } from '../../../shared/models/wiki.modelos';
 @Component({
     selector: 'app-perfil-usuario',
     standalone: true,
-    imports: [],
+    imports: [RouterLink],
     templateUrl: './perfil-usuario.html',
     styleUrl: './perfil-usuario.scss',
 })
@@ -122,9 +122,9 @@ export class PerfilUsuarioComponent implements OnInit {
     }
 
     verPublicaciones(): void {
-    if (!this.usuario) return;
-    this.router.navigate(['/categorias'], {
-        queryParams: { autor: `${this.usuario.nombre} ${this.usuario.apellido}` }
-    });
-}
+        if (!this.usuario) return;
+        this.router.navigate(['/categorias'], {
+            queryParams: { autor: `${this.usuario.nombre} ${this.usuario.apellido}` }
+        });
+    }
 }

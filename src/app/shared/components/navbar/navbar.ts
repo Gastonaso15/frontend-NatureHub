@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Component, inject } from '@angular/core';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { UpperCasePipe } from '@angular/common';
 import { AutenticacionService } from '../../../core/services/autenticacion';
 
@@ -11,10 +11,12 @@ import { AutenticacionService } from '../../../core/services/autenticacion';
   styleUrl: './navbar.scss'
 })
 export class NavbarComponent {
+  private router = inject(Router);
+
   constructor(public authService: AutenticacionService) {}
 
   cerrarSesion(): void {
     this.authService.logout();
-    window.location.href = '/';
+    this.router.navigate(['/']);
   }
 }
