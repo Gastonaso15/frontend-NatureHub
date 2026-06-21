@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { firstValueFrom, Observable } from 'rxjs';
 import { tap, catchError, map } from 'rxjs/operators';
 import { Publicacion, Seccion, Borrador, Usuario } from '../../shared/models/wiki.modelos';
+import { AutenticacionService } from '../../core/services/autenticacion';
 import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
@@ -60,30 +61,13 @@ export class WikiService {
   obtenerUsuarioPorId(id: number): Promise<Usuario | undefined> {
     return firstValueFrom(
       this.http.post<any>(`${this.usuariosApiUrl}/obtenerUsuarioId`, { id }).pipe(
-        map(u => u ? this.mapUsuarioFromApi(u) : undefined),
+        map(u => u ? AutenticacionService.mapUsuario(u) : undefined),
         catchError(error => {
           console.error('Error al obtener usuario por id:', error);
           throw error;
         })
       )
     );
-  }
-
-  private mapUsuarioFromApi(u: any): Usuario {
-    return {
-      id_usuario: u.id,
-      nombre: u.nombre,
-      apellido: u.apellido,
-      email: u.email,
-      rol: u.rol,
-      activo: u.activo,
-      sexo: u.sexo ?? null,
-      fechaRegistro: u.fechaRegistro ?? null,
-      fechaNacimiento: u.fechaNacimiento ?? null,
-      pais: u.pais ?? null,
-      bio: u.bio ?? null,
-      fotoUrl: u.fotoUrl ?? null,
-    };
   }
 
   eliminarPublicacion(id: number): Promise<void> {
@@ -121,7 +105,7 @@ export class WikiService {
   }
 
   resolverReporteApi(idReporte: number): Observable<any> {
-    return this.http.post(`${this.apiUrl}/publicaciones/resolverReporte`, { idReporte });
+    return this.http.post(`${this.publicacionesApiUrl}/resolverReporte`, { idReporte });
   }
 
   agregarPublicacion(pub: Omit<Publicacion, 'id_publicacion' | 'fecha_creacion' | 'estado'>, fotoFile?: File): Promise<any> {
@@ -173,7 +157,7 @@ export class WikiService {
     }
 
     return firstValueFrom(
-      this.http.post<{ mensaje: string; estado?: string }>(`${this.apiUrl}/modificarPublicacion`, formData).pipe(
+      this.http.post<{ mensaje: string; estado?: string }>(`${this.publicacionesApiUrl}/modificarPublicacion`, formData).pipe(
         catchError((error) => {
           console.error('Error al modificar publicación:', error);
           throw error;
@@ -361,7 +345,7 @@ export class WikiService {
   }
 
   listarPublicacionesPendientesApi(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/publicaciones/listarPublicacionesPendientes`);
+    return this.http.get<any[]>(`${this.publicacionesApiUrl}/listarPublicacionesPendientes`);
   }
 
   moderarPublicacionApi(
@@ -378,7 +362,7 @@ export class WikiService {
     if (motivoRechazo) {
       body['motivoRechazo'] = motivoRechazo;
     }
-    return this.http.post(`${this.apiUrl}/publicaciones/moderarPublicacion`, body);
+    return this.http.post(`${this.publicacionesApiUrl}/moderarPublicacion`, body);
   }
 }
 

@@ -1,12 +1,10 @@
 import { Component, inject, ElementRef, ViewChild, AfterViewInit, OnInit, ChangeDetectorRef } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
 import { forkJoin } from 'rxjs';
 import { WikiService } from '../../../core/services/wiki';
 import { AutenticacionService } from '../../../core/services/autenticacion';
-import { Publicacion, Seccion, Usuario, PublicacionConAutor } from '../../../shared/models/wiki.modelos';
-import { environment } from '../../../../environments/environment';
+import { Seccion, Usuario, PublicacionConAutor } from '../../../shared/models/wiki.modelos';
 
 
 @Component({
@@ -21,10 +19,8 @@ export class HomeComponent implements AfterViewInit, OnInit {
 
   private wikiService = inject(WikiService);
   private authService = inject(AutenticacionService);
-  private http = inject(HttpClient);
   private router = inject(Router);
   private cdr = inject(ChangeDetectorRef);
-  private apiUrl = environment.apiUrl;
 
   private chartRows: { id_seccion: number; y: number; h: number; barW: number }[] = [];
   private readonly chartLabelWidth = 110;

@@ -8,7 +8,7 @@ import { AutenticacionService } from '../../../core/services/autenticacion';
 import { Publicacion, Seccion, Usuario } from '../../../shared/models/wiki.modelos';
 
 @Component({
-  selector: 'app-article-detail',
+  selector: 'app-detalle-publicacion',
   standalone: true,
   imports: [RouterLink, SlicePipe],
   templateUrl: './detalle-publicacion.html',

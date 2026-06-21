@@ -52,14 +52,6 @@ export class PerfilComponent implements OnInit {
     }
   }
 
-  obtenerImagenUrl(url: string | null | undefined): string | null {
-    if (!url) return null;
-    if (url.startsWith('http://') || url.startsWith('https://')) {
-      return url;
-    }
-    return `http://localhost/backend-NatureHub/${url}`;
-  }
-
   iniciales(): string {
     if (!this.usuario) return '';
     return ((this.usuario.nombre?.[0] ?? '') + (this.usuario.apellido?.[0] ?? '')).toUpperCase();

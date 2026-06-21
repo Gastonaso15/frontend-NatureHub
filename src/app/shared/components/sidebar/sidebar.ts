@@ -25,18 +25,6 @@ export class SidebarComponent implements OnInit {
   esAdministrador = computed(() => this.authService.currentUser()?.rol === 'ADMINISTRADOR');
 
   ngOnInit(): void {
-    if (this.esModerador()) {
-      this.cargarContadorReportes();
-    }
   }
 
-  private cargarContadorReportes(): void {
-    this.wikiService.listarReportesApi().subscribe({
-      next: (reportes) => {
-        const pendientes = reportes.filter(r => r.resuelto !== true && r.resuelto !== 1 && r.resuelto !== '1').length;
-        this._cantReportes.set(pendientes);
-      },
-      error: () => { }
-    });
-  }
 }

@@ -19,7 +19,7 @@
   height: 100px;
   border-radius: 50%;
   object-fit: cover;
-  border: 3px solid rgba(255,255,255,0.4);
+  border: 3px solid rgba(255, 255, 255, 0.4);
   display: block;
 }
 
@@ -27,8 +27,8 @@
   width: 100px;
   height: 100px;
   border-radius: 50%;
-  background: rgba(255,255,255,0.15);
-  border: 3px solid rgba(255,255,255,0.35);
+  background: rgba(255, 255, 255, 0.15);
+  border: 3px solid rgba(255, 255, 255, 0.35);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -38,9 +38,20 @@
   letter-spacing: -1px;
 }
 
-.badge-USUARIO       { background: #d8f3dc; color: #1b4332; }
-.badge-MODERADOR     { background: #fff3cd; color: #664d03; }
-.badge-ADMINISTRADOR { background: #cfe2ff; color: #084298; }
+.badge-USUARIO {
+  background: #d8f3dc;
+  color: #1b4332;
+}
+
+.badge-MODERADOR {
+  background: #fff3cd;
+  color: #664d03;
+}
+
+.badge-ADMINISTRADOR {
+  background: #cfe2ff;
+  color: #084298;
+}
 
 .role-pill {
   text-transform: uppercase;
@@ -67,7 +78,9 @@
   margin-right: 0.4rem;
   vertical-align: middle;
 
-  &.activo { background: #40916c; }
+  &.activo {
+    background: #40916c;
+  }
 }
 
 .perfil-footer-baja {
@@ -88,7 +101,13 @@
     font-weight: 500;
     transition: color 0.2s ease;
 
-    &:hover:not(:disabled) { color: #dc3545; }
-    &:disabled { opacity: 0.5; cursor: not-allowed; }
+    &:hover:not(:disabled) {
+      color: #dc3545;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
   }
 }

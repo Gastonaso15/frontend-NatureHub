@@ -22,7 +22,7 @@ export const routes: Routes = [
     loadComponent: () => import('./features/wiki/lista-publicaciones/lista-publicaciones').then(m => m.ListaPublicacionesComponent)
   },
   {
-    path: 'wiki/article/:id',
+    path: 'wiki/publicacion/:id',
     loadComponent: () => import('./features/wiki/detalle-publicacion/detalle-publicacion').then(m => m.DetallePublicacionComponent)
   },
   {

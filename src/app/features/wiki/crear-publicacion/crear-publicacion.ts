@@ -8,7 +8,7 @@ import { AutenticacionService } from '../../../core/services/autenticacion';
 import { TipoCampoPersonalizado, Publicacion } from '../../../shared/models/wiki.modelos';
 
 @Component({
-  selector: 'app-create-article',
+  selector: 'app-crear-publicacion',
   standalone: true,
   imports: [FormsModule],
   templateUrl: './crear-publicacion.html',
