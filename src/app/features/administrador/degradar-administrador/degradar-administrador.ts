@@ -1,5 +1,6 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 import { AutenticacionService } from '../../../core/services/autenticacion';
 import { Usuario } from '../../../shared/models/wiki.modelos';
 import Swal from 'sweetalert2';
@@ -7,7 +8,7 @@ import Swal from 'sweetalert2';
 @Component({
   selector: 'app-degradar-administrador',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, FormsModule],
   templateUrl: './degradar-administrador.html',
   styleUrl: './degradar-administrador.scss'
 })
@@ -15,6 +16,8 @@ export class DegradarAdministradorComponent implements OnInit {
   private authService = inject(AutenticacionService);
 
   usuarios = signal<Usuario[]>([]);
+  usuariosFiltrados = signal<Usuario[]>([]);
+  busqueda = signal('');
   cargando = signal(true);
 
   ngOnInit(): void {
@@ -26,11 +29,11 @@ export class DegradarAdministradorComponent implements OnInit {
     this.authService.listarUsuarios().subscribe({
       next: (resp: any[]) => {
         const emailLogueado = this.authService.currentUser()?.email;
-        this.usuarios.set(
-          resp
-            .filter(u => u.rol === 'ADMINISTRADOR' && u.email !== emailLogueado)
-            .map(AutenticacionService.mapUsuario)
-        );
+        const lista = resp
+          .filter(u => u.rol === 'ADMINISTRADOR' && u.activo && u.email !== emailLogueado)
+          .map(AutenticacionService.mapUsuario);
+        this.usuarios.set(lista);
+        this.usuariosFiltrados.set(lista);
         this.cargando.set(false);
       },
       error: () => {
@@ -38,6 +41,18 @@ export class DegradarAdministradorComponent implements OnInit {
         Swal.fire('Error', 'No se pudo cargar la lista de administradores.', 'error');
       }
     });
+  }
+
+  filtrar(termino: string): void {
+    this.busqueda.set(termino);
+    const t = termino.toLowerCase();
+    this.usuariosFiltrados.set(
+      this.usuarios().filter(u =>
+        u.nombre.toLowerCase().includes(t) ||
+        u.apellido.toLowerCase().includes(t) ||
+        u.email.toLowerCase().includes(t)
+      )
+    );
   }
 
   degradar(usuario: Usuario): void {

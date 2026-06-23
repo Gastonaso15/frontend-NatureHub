@@ -1,5 +1,6 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 import { AutenticacionService } from '../../../core/services/autenticacion';
 import { Usuario } from '../../../shared/models/wiki.modelos';
 import Swal from 'sweetalert2';
@@ -7,7 +8,7 @@ import Swal from 'sweetalert2';
 @Component({
   selector: 'app-promover-usuario',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, FormsModule],
   templateUrl: './promover-usuario.html',
   styleUrl: './promover-usuario.scss'
 })
@@ -15,6 +16,8 @@ export class PromoverUsuarioComponent implements OnInit {
   private authService = inject(AutenticacionService);
 
   usuarios = signal<Usuario[]>([]);
+  usuariosFiltrados = signal<Usuario[]>([]);
+  busqueda = signal('');
   cargando = signal(true);
 
   ngOnInit(): void {
@@ -25,11 +28,11 @@ export class PromoverUsuarioComponent implements OnInit {
     this.cargando.set(true);
     this.authService.listarUsuarios().subscribe({
       next: (resp: any[]) => {
-        this.usuarios.set(
-          resp
-            .filter(u => u.rol === 'USUARIO')
-            .map(AutenticacionService.mapUsuario)
-        );
+        const lista = resp
+          .filter(u => u.rol === 'USUARIO' && u.activo)
+          .map(AutenticacionService.mapUsuario);
+        this.usuarios.set(lista);
+        this.usuariosFiltrados.set(lista);
         this.cargando.set(false);
       },
       error: () => {
@@ -37,6 +40,18 @@ export class PromoverUsuarioComponent implements OnInit {
         Swal.fire('Error', 'No se pudo cargar la lista de usuarios.', 'error');
       }
     });
+  }
+
+  filtrar(termino: string): void {
+    this.busqueda.set(termino);
+    const t = termino.toLowerCase();
+    this.usuariosFiltrados.set(
+      this.usuarios().filter(u =>
+        u.nombre.toLowerCase().includes(t) ||
+        u.apellido.toLowerCase().includes(t) ||
+        u.email.toLowerCase().includes(t)
+      )
+    );
   }
 
   promover(usuario: Usuario): void {

@@ -3,7 +3,11 @@
 
   @if (cargando()) {
   <p class="text-muted">Cargando moderadores...</p>
-  } @else if (usuarios().length === 0) {
+  } @else {
+  <input type="text" class="form-control mb-3" placeholder="Buscar por nombre, apellido o email..." [value]="busqueda()"
+    (input)="filtrar($any($event.target).value)" />
+
+  @if (usuariosFiltrados().length === 0) {
   <div class="alert alert-info">No hay moderadores disponibles para degradar.</div>
   } @else {
   <div class="table-responsive">
@@ -16,7 +20,7 @@
         </tr>
       </thead>
       <tbody>
-        @for (usuario of usuarios(); track usuario.id_usuario) {
+        @for (usuario of usuariosFiltrados(); track usuario.id_usuario) {
         <tr>
           <td>
             <a [routerLink]="['/perfil', usuario.id_usuario]" class="fw-semibold text-decoration-none"
@@ -35,5 +39,6 @@
       </tbody>
     </table>
   </div>
+  }
   }
 </div>
