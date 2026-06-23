@@ -23,6 +23,7 @@ export class PerfilUsuarioComponent implements OnInit {
     usuario: Usuario | null = null;
     cargando = signal(true);
     procesando = signal(false);
+    esFavorito = signal(false);
 
     ngOnInit(): void {
         const id = Number(this.route.snapshot.paramMap.get('id'));
@@ -35,11 +36,61 @@ export class PerfilUsuarioComponent implements OnInit {
             .then((usuarioMapeado) => {
                 this.usuario = usuarioMapeado ?? null;
                 this.cargando.set(false);
+                this.verificarSiEsFavorito();
             })
             .catch(() => {
                 this.cargando.set(false);
                 Swal.fire('Error', 'No se pudo cargar el perfil del usuario.', 'error');
             });
+    }
+
+    private verificarSiEsFavorito(): void {
+        const idUsuarioActual = this.authService.currentUser()?.id_usuario;
+        if (!idUsuarioActual || !this.usuario) return;
+
+        this.authService.listarUsuariosFavoritosApi(idUsuarioActual).subscribe({
+            next: (lista) => {
+                const encontrado = lista.some((u: any) => u.id === this.usuario!.id_usuario);
+                this.esFavorito.set(encontrado);
+            },
+            error: () => { }
+        });
+    }
+
+    toggleFavorito(): void {
+        const idUsuarioActual = this.authService.currentUser()?.id_usuario;
+        if (!idUsuarioActual || !this.usuario) return;
+
+        this.procesando.set(true);
+
+        if (this.esFavorito()) {
+            this.authService.eliminarUsuarioFavoritoApi(idUsuarioActual, this.usuario.id_usuario).subscribe({
+                next: () => {
+                    this.esFavorito.set(false);
+                    this.procesando.set(false);
+                },
+                error: (err) => {
+                    this.procesando.set(false);
+                    Swal.fire('Error', err?.error?.error ?? 'No se pudo quitar de favoritos.', 'error');
+                }
+            });
+        } else {
+            this.authService.agregarUsuarioFavoritoApi(idUsuarioActual, this.usuario.id_usuario).subscribe({
+                next: () => {
+                    this.esFavorito.set(true);
+                    this.procesando.set(false);
+                },
+                error: (err) => {
+                    this.procesando.set(false);
+                    Swal.fire('Error', err?.error?.error ?? 'No se pudo agregar a favoritos.', 'error');
+                }
+            });
+        }
+    }
+
+    esPropioPerfilONoLogueado(): boolean {
+        const idActual = this.authService.currentUser()?.id_usuario;
+        return !idActual || idActual === this.usuario?.id_usuario;
     }
 
     esAdministrador(): boolean {

@@ -85,6 +85,11 @@ export const routes: Routes = [
     loadComponent: () => import('./features/wiki/mis-favoritas/mis-favoritas').then(m => m.MisFavoritasComponent)
   },
   {
+    path: 'usuarios/favoritos',
+    canActivate: [autenticacionGuard],
+    loadComponent: () => import('./features/perfil/mis-usuarios-favoritos/mis-usuarios-favoritos').then(m => m.MisUsuariosFavoritosComponent)
+  },
+  {
     path: '**',
     redirectTo: ''
   }

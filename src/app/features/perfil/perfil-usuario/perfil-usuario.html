@@ -24,7 +24,13 @@
           <p class="small text-white-50 mb-0">{{ usuario.email }}</p>
         </div>
 
-        <div class="ms-auto d-flex gap-2">
+        <div class="ms-auto d-flex gap-2 flex-wrap">
+          @if (!esPropioPerfilONoLogueado()) {
+          <button class="btn btn-sm" [class.btn-warning]="esFavorito()" [class.btn-outline-light]="!esFavorito()"
+            (click)="toggleFavorito()" [disabled]="procesando()">
+            {{ esFavorito() ? '★ Quitar de favoritos' : '☆ Agregar a favoritos' }}
+          </button>
+          }
           <button class="btn btn-outline-light btn-sm" (click)="verPublicaciones()">
             Ver publicaciones
           </button>

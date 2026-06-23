@@ -34,7 +34,6 @@ export class AutenticacionService {
     localStorage.removeItem('nh_token');
   }
 
-
   registrar(nombre: string, apellido: string, email: string, password: string, sexo?: string, fechaNacimiento?: string, pais?: string, bio?: string, fotoUrl?: string, fotoFile?: File): Observable<any> {
     const formData = new FormData();
     formData.append('nombre', nombre);
@@ -93,6 +92,20 @@ export class AutenticacionService {
     return this.http.post<any[]>(`${this.apiUrl}/usuarios/listarFavoritas`, { idUsuario });
   }
 
+  agregarUsuarioFavoritoApi(idUsuario: number, idUsuarioFavorito: number): Observable<any> {
+    return this.http.post(`${this.apiUrl}/usuarios/agregarUsuarioFavorito`, { idUsuario, idUsuarioFavorito });
+  }
+
+  eliminarUsuarioFavoritoApi(idUsuario: number, idUsuarioFavorito: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/usuarios/eliminarUsuarioFavorito`, {
+      body: { idUsuario, idUsuarioFavorito }
+    });
+  }
+
+  listarUsuariosFavoritosApi(idUsuario: number): Observable<any[]> {
+    return this.http.post<any[]>(`${this.apiUrl}/usuarios/listarUsuariosFavoritos`, { idUsuario });
+  }
+
   static mapUsuario(u: any): Usuario {
     return {
       id_usuario: u.id,
@@ -109,5 +122,4 @@ export class AutenticacionService {
       fotoUrl: u.fotoUrl ?? null,
     };
   }
-
 }

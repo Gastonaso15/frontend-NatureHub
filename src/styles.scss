@@ -46,12 +46,10 @@ main {
   box-shadow: 0 8px 24px rgba(45, 106, 79, 0.2) !important;
 }
 
-// card-article: cursor + overflow handled here; use border-0 rounded-3 overflow-hidden in HTML
 .card-article {
   cursor: pointer;
 }
 
-// card-section: left border accent + hover color; use card rounded bg-white in HTML
 .card-section {
   cursor: pointer;
   border-left: 4px solid $primary !important;

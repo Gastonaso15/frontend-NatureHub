@@ -1,0 +1,49 @@
+<div class="container py-5">
+  <h3 class="fw-bold mb-4" style="color: #1b4332;">Usuarios favoritos</h3>
+
+  @if (cargando()) {
+  <div class="text-center py-5">
+    <div class="spinner-border text-success"></div>
+  </div>
+  } @else if (error()) {
+  <div class="alert alert-danger">{{ error() }}</div>
+  } @else if (usuarios().length === 0) {
+  <p class="text-muted">Todavía no agregaste ningún usuario a favoritos.</p>
+  } @else {
+  <div class="row g-3">
+    @for (usuario of usuarios(); track usuario.id_usuario) {
+    <div class="col-6 col-md-3">
+      <div class="card border-0 rounded-3 shadow-sm h-100 text-center p-3">
+
+        @if (usuario.fotoUrl) {
+        <img [src]="usuario.fotoUrl" class="rounded-circle mx-auto mb-3"
+          style="width:72px; height:72px; object-fit:cover;"
+          [routerLink]="['/perfil', usuario.id_usuario]"
+          style="cursor:pointer" />
+        } @else {
+        <div class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center mx-auto mb-3 fw-bold fs-5"
+          style="width:72px; height:72px; cursor:pointer"
+          [routerLink]="['/perfil', usuario.id_usuario]">
+          {{ iniciales(usuario) }}
+        </div>
+        }
+
+        <h6 class="fw-bold mb-0">{{ usuario.nombre }} {{ usuario.apellido }}</h6>
+        <small class="text-muted d-block mb-1">{{ usuario.pais || '—' }}</small>
+        <span class="badge rounded-pill bg-secondary mb-2">{{ usuario.rol }}</span>
+
+        <div class="d-flex gap-2 justify-content-center mt-auto">
+          <a class="btn btn-sm btn-outline-success" [routerLink]="['/perfil', usuario.id_usuario]">
+            Ver perfil
+          </a>
+          <button class="btn btn-sm btn-outline-danger" (click)="quitarFavorito(usuario)">
+            Quitar
+          </button>
+        </div>
+
+      </div>
+    </div>
+    }
+  </div>
+  }
+</div>
