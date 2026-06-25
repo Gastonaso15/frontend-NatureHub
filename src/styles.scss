@@ -127,3 +127,13 @@ main {
 .status-pendiente_revision { background: #fff3cd; color: #664d03; }
 .status-borrador { background: #e9ecef; color: #495057; }
 .status-rechazada { background: #f8d7da; color: #842029; }
+
+@media (max-width: 575px) {
+  .hero-section {
+    padding: 2rem 0 1.5rem;
+  }
+
+  .hero-title {
+    font-size: 1.9rem;
+  }
+}

@@ -53,3 +53,9 @@ app-navbar {
     z-index: 999;
   }
 }
+
+@media (max-width: 991px) {
+  .app-content {
+    padding: 10px;
+  }
+}
