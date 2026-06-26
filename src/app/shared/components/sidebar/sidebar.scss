@@ -117,6 +117,7 @@
   }
 }
 
+/* Mobile: overlay desde la izquierda */
 @media (max-width: 768px) {
   :host {
     width: min(85vw, 300px);

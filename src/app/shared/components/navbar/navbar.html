@@ -1,31 +1,41 @@
-<nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #1b4332;">
-  <div class="container">
+<nav class="navbar navbar-dark" style="background-color: #1b4332;">
+  <div class="container d-flex align-items-center">
+
     @if (authService.estaLogueado()) {
       <button class="btn-sidebar-toggle" (click)="toggleSidebar.emit()" aria-label="Abrir menú lateral">☰</button>
     }
-    <a class="navbar-brand fw-bold fs-5 position-absolute start-50 translate-middle-x mb-0" routerLink="/">🌿 NatureHub</a>
 
-    @if (!authService.estaLogueado()) {
-      <button class="navbar-toggler border-0" type="button"
-        data-bs-toggle="collapse" data-bs-target="#mainNavbar"
-        aria-controls="mainNavbar" aria-expanded="false" aria-label="Abrir menú">
-        <span class="navbar-toggler-icon"></span>
-      </button>
+    <!-- Logo: siempre visible, centrado en mobile, normal en desktop -->
+    <a class="navbar-brand fw-bold fs-5 mb-0 mx-auto mx-lg-0" routerLink="/">🌿 NatureHub</a>
 
-      <div class="collapse navbar-collapse" id="mainNavbar">
-        <div class="navbar-nav me-auto ms-lg-3 mt-2 mt-lg-0">
-          <a class="nav-link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
-            Inicio
-          </a>
-          <a class="nav-link" routerLink="/categorias" routerLinkActive="active">
-            Categorías
-          </a>
-        </div>
-        <div class="d-flex align-items-center gap-2 flex-wrap py-2 py-lg-0">
-          <a routerLink="/auth/login" class="btn btn-outline-light btn-sm">Iniciar Sesión</a>
-          <a routerLink="/auth/register" class="btn btn-success btn-sm">Registrarse</a>
-        </div>
-      </div>
-    }
+    <!-- Centro: solo en desktop -->
+    <div class="d-none d-lg-flex align-items-center gap-3 mx-auto">
+      <a class="nav-link text-white" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Inicio</a>
+      <a class="nav-link text-white" routerLink="/categorias" routerLinkActive="active">Categorías</a>
+    </div>
+
+    <!-- Derecha: solo en desktop -->
+    <div class="d-none d-lg-flex align-items-center gap-2">
+      @if (!authService.estaLogueado()) {
+        <a routerLink="/auth/login" class="btn btn-outline-light btn-sm">Iniciar Sesión</a>
+        <a routerLink="/auth/register" class="btn btn-success btn-sm">Registrarse</a>
+      } @else {
+        <a routerLink="/wiki/nuevo" class="btn btn-outline-light btn-sm">+ Crear Artículo</a>
+        <a routerLink="/perfil" class="d-flex align-items-center gap-2 text-decoration-none navbar-user-link">
+          @if (authService.currentUser()?.fotoUrl) {
+            <img [src]="authService.currentUser()?.fotoUrl" class="navbar-avatar" [alt]="authService.currentUser()?.nombre">
+          } @else {
+            <span class="navbar-avatar-initials">
+              {{ (authService.currentUser()?.nombre?.[0] ?? '') + (authService.currentUser()?.apellido?.[0] ?? '') | uppercase }}
+            </span>
+          }
+          <span class="text-white small fw-semibold">
+            {{ authService.currentUser()?.nombre }} {{ authService.currentUser()?.apellido }}
+          </span>
+        </a>
+        <button (click)="cerrarSesion()" class="btn btn-outline-danger btn-sm">Salir</button>
+      }
+    </div>
+
   </div>
 </nav>

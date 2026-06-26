@@ -1,21 +1,26 @@
 :host {
   display: flex;
-  flex-direction: column;
   min-height: 100vh;
-  position: relative;
 }
 
-.app-layout {
+.app-shell {
   display: flex;
   flex: 1;
-  position: relative;
+  min-height: 100vh;
+}
+
+.main-panel {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  min-height: 100vh;
 }
 
 .app-content {
   flex: 1;
   min-width: 0;
   padding: 20px;
-  transition: margin-left 0.3s ease;
 }
 
 app-navbar {
