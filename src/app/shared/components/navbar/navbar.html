@@ -5,16 +5,13 @@
       <button class="btn-sidebar-toggle" (click)="toggleSidebar.emit()" aria-label="Abrir menú lateral">☰</button>
     }
 
-    <!-- Logo: siempre visible, centrado en mobile, normal en desktop -->
     <a class="navbar-brand fw-bold fs-5 mb-0 mx-auto mx-lg-0" routerLink="/">🌿 NatureHub</a>
 
-    <!-- Centro: solo en desktop -->
     <div class="d-none d-lg-flex align-items-center gap-3 mx-auto">
       <a class="nav-link text-white" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Inicio</a>
       <a class="nav-link text-white" routerLink="/categorias" routerLinkActive="active">Categorías</a>
     </div>
 
-    <!-- Derecha: solo en desktop -->
     <div class="d-none d-lg-flex align-items-center gap-2">
       @if (!authService.estaLogueado()) {
         <a routerLink="/auth/login" class="btn btn-outline-light btn-sm">Iniciar Sesión</a>
