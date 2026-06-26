@@ -1,4 +1,8 @@
-<aside class="app-sidebar bg-light border-end">
+<aside class="app-sidebar bg-white border-end">
+  <div class="sidebar-mobile-header">
+    <span class="sidebar-brand fw-bold">🌿 NatureHub</span>
+    <button class="btn-cerrar-sidebar" (click)="cerrar.emit()" aria-label="Cerrar menú">✕</button>
+  </div>
   <nav class="d-flex flex-column p-3">
     <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}"
       class="sidebar-link d-block text-decoration-none text-dark rounded mb-1 px-3 py-2">

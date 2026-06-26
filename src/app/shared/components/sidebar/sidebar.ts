@@ -1,4 +1,4 @@
-import { Component, inject, computed, signal, OnInit } from '@angular/core';
+import { Component, inject, computed, signal, OnInit, Output, EventEmitter } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { AutenticacionService } from '../../../core/services/autenticacion';
 import { WikiService } from '../../../core/services/wiki';
@@ -11,6 +11,8 @@ import { WikiService } from '../../../core/services/wiki';
   styleUrl: './sidebar.scss'
 })
 export class SidebarComponent implements OnInit {
+  @Output() cerrar = new EventEmitter<void>();
+
   private authService = inject(AutenticacionService);
   private wikiService = inject(WikiService);
 
