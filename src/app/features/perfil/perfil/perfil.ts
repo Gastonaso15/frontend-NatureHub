@@ -158,6 +158,41 @@ export class PerfilComponent implements OnInit {
     }
   }
 
+  private async solicitarPasswordActual(titulo: string, inputLabel: string): Promise<string | null> {
+    const result = await Swal.fire({
+      title: titulo,
+      input: 'password',
+      inputLabel,
+      inputPlaceholder: 'Tu contraseña actual',
+      inputAttributes: {
+        autocapitalize: 'off',
+        autocorrect: 'off',
+        autocomplete: 'current-password',
+      },
+      showCancelButton: true,
+      confirmButtonColor: '#2d6a4f',
+      confirmButtonText: 'Confirmar',
+      cancelButtonText: 'Cancelar',
+      inputValidator: (value) => {
+        if (!value?.trim()) {
+          return 'Debés ingresar tu contraseña actual.';
+        }
+        return null;
+      },
+    });
+
+    if (!result.isConfirmed || !result.value?.trim()) {
+      return null;
+    }
+
+    return result.value.trim();
+  }
+
+  private appendPasswordActual(formData: FormData, passwordActual: string): void {
+    formData.append('passwordActual', passwordActual);
+    formData.append('password', passwordActual);
+  }
+
   async guardarCambios(form: NgForm): Promise<void> {
     this.enviado = true;
     this.mensajeExito = null;
@@ -173,17 +208,12 @@ export class PerfilComponent implements OnInit {
       return;
     }
 
-    const { value: passwordConfirmada } = await Swal.fire({
-      title: 'Confirmar cambios',
-      input: 'password',
-      inputLabel: 'Ingresá tu contraseña actual para guardar las modificaciones',
-      inputPlaceholder: 'Tu contraseña',
-      showCancelButton: true,
-      confirmButtonColor: '#2d6a4f',
-      cancelButtonText: 'Cancelar'
-    });
+    const passwordActual = await this.solicitarPasswordActual(
+      'Confirmar cambios',
+      'Ingresá tu contraseña actual para guardar las modificaciones'
+    );
 
-    if (!passwordConfirmada) {
+    if (!passwordActual) {
       this.enviado = false;
       this.cdr.detectChanges();
       return;
@@ -194,8 +224,8 @@ export class PerfilComponent implements OnInit {
     formData.append('id', String(id));
     formData.append('nombre', d.nombre ?? '');
     formData.append('apellido', d.apellido ?? '');
-    formData.append('email', d.email ?? '');
-    formData.append('password', passwordConfirmada);
+    formData.append('email', d.email ?? this.usuario?.email ?? '');
+    this.appendPasswordActual(formData, passwordActual);
     if (d.sexo) formData.append('sexo', d.sexo);
     if (d.fechaNacimiento) formData.append('fechaNacimiento', d.fechaNacimiento);
     if (d.pais) formData.append('pais', d.pais);
@@ -251,17 +281,12 @@ export class PerfilComponent implements OnInit {
       return;
     }
 
-    const { value: passwordConfirmada } = await Swal.fire({
-      title: 'Confirmar cambio de correo',
-      input: 'password',
-      inputLabel: 'Ingresá tu contraseña actual para autorizar el cambio',
-      inputPlaceholder: 'Tu contraseña',
-      showCancelButton: true,
-      confirmButtonColor: '#2d6a4f',
-      cancelButtonText: 'Cancelar'
-    });
+    const passwordActual = await this.solicitarPasswordActual(
+      'Confirmar cambio de correo',
+      'Ingresá tu contraseña actual para autorizar el cambio'
+    );
 
-    if (!passwordConfirmada) {
+    if (!passwordActual) {
       this.enviadoEmail = false;
       this.cdr.detectChanges();
       return;
@@ -274,8 +299,8 @@ export class PerfilComponent implements OnInit {
     formData.append('id', String(id));
     formData.append('nombre', this.usuario?.nombre ?? '');
     formData.append('apellido', this.usuario?.apellido ?? '');
-    formData.append('email', this.nuevoEmail); 
-    formData.append('password', passwordConfirmada);
+    formData.append('email', this.nuevoEmail);
+    this.appendPasswordActual(formData, passwordActual);
 
     const u = this.usuario as any;
     if (u?.sexo) formData.append('sexo', u.sexo);
@@ -327,17 +352,12 @@ export class PerfilComponent implements OnInit {
       return;
     }
 
-    const { value: passwordConfirmada } = await Swal.fire({
-      title: 'Confirmar cambio de contraseña',
-      input: 'password',
-      inputLabel: 'Ingresá tu contraseña actual para autorizar el cambio',
-      inputPlaceholder: 'Tu contraseña actual',
-      showCancelButton: true,
-      confirmButtonColor: '#2d6a4f',
-      cancelButtonText: 'Cancelar'
-    });
+    const passwordActual = await this.solicitarPasswordActual(
+      'Confirmar cambio de contraseña',
+      'Ingresá tu contraseña actual para autorizar el cambio'
+    );
 
-    if (!passwordConfirmada) {
+    if (!passwordActual) {
       this.enviadoPass = false;
       this.cdr.detectChanges();
       return;
@@ -351,7 +371,7 @@ export class PerfilComponent implements OnInit {
     formData.append('nombre', this.usuario?.nombre ?? '');
     formData.append('apellido', this.usuario?.apellido ?? '');
     formData.append('email', this.usuario?.email ?? '');
-    formData.append('password', passwordConfirmada);
+    this.appendPasswordActual(formData, passwordActual);
     formData.append('nuevaPassword', this.passwordNueva);
 
     const u = this.usuario as any;
