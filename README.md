@@ -2,6 +2,10 @@
 
 Trabajo de laboratorio RIA 2026 — Universidad Tecnológica del Uruguay (CURE)
 
+## Documento
+
+`https://docs.google.com/document/d/124Ltu4Ul_7TxXVgmE4MrFdNYRSvTmsJ2/edit?usp=sharing&ouid=104428281300881096134&rtpof=true&sd=true`
+
 ## Descripción
 
 NatureHub es una wiki colaborativa sobre naturaleza. Los usuarios pueden registrarse, crear artículos sobre especies animales y enviarlos para revisión. Los moderadores aprueban o rechazan los artículos antes de que queden publicados.
