@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, Output, EventEmitter } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { UpperCasePipe } from '@angular/common';
 import { AutenticacionService } from '../../../core/services/autenticacion';
@@ -11,6 +11,8 @@ import { AutenticacionService } from '../../../core/services/autenticacion';
   styleUrl: './navbar.scss'
 })
 export class NavbarComponent {
+  @Output() toggleSidebar = new EventEmitter<void>();
+
   private router = inject(Router);
 
   constructor(public authService: AutenticacionService) {}

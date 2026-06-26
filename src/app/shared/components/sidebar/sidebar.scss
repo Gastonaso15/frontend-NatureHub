@@ -48,6 +48,43 @@
   line-height: 1;
 }
 
+.sidebar-user-footer {
+  flex-shrink: 0;
+}
+
+.sidebar-user-link {
+  padding: 0.4rem 0.5rem;
+  border-radius: 8px;
+  transition: background 0.15s;
+
+  &:hover {
+    background: #f0f4f1;
+  }
+}
+
+.sidebar-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #d8f3dc;
+  flex-shrink: 0;
+}
+
+.sidebar-avatar-initials {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #2d6a4f;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+}
+
 .sidebar-mobile-header {
   background: linear-gradient(135deg, #1b4332 0%, #2d6a4f 100%);
   padding: 1rem;

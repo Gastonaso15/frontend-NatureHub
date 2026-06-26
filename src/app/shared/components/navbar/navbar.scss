@@ -1,3 +1,20 @@
+.btn-sidebar-toggle {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 1.25rem;
+  padding: 4px 10px;
+  cursor: pointer;
+  border-radius: 4px;
+  line-height: 1;
+  transition: background 0.15s, color 0.15s;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+  }
+}
+
 .navbar-user-link {
   padding: 0.2rem 0.5rem;
   border-radius: 20px;

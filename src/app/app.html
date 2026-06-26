@@ -1,10 +1,4 @@
-<app-navbar></app-navbar>
-
-@if (authService.estaLogueado()) {
-  <button class="menu-toggle" [class.hidden]="sidebarAbierta()" (click)="toggleSidebar()">
-    ☰
-  </button>
-}
+<app-navbar (toggleSidebar)="toggleSidebar()"></app-navbar>
 
 <div class="app-layout">
   @if (authService.estaLogueado()) {

@@ -1,13 +1,20 @@
 <aside class="app-sidebar bg-white border-end">
   <div class="sidebar-mobile-header">
-    <span class="sidebar-brand fw-bold">🌿 NatureHub</span>
     <button class="btn-cerrar-sidebar" (click)="cerrar.emit()" aria-label="Cerrar menú">✕</button>
   </div>
+
   <nav class="d-flex flex-column p-3">
     <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}"
       class="sidebar-link d-block text-decoration-none text-dark rounded mb-1 px-3 py-2">
       Inicio
     </a>
+
+    <a routerLink="/categorias" routerLinkActive="active"
+      class="sidebar-link d-block text-decoration-none text-dark rounded mb-1 px-3 py-2">
+      Categorías
+    </a>
+
+    <hr class="my-2">
 
     <a routerLink="/perfil" routerLinkActive="active"
       class="sidebar-link d-block text-decoration-none text-dark rounded mb-1 px-3 py-2">
@@ -67,6 +74,21 @@
       Degradar Administrador a Moderador
     </a>
     }
-
   </nav>
+
+  <div class="sidebar-user-footer mt-auto p-3 border-top">
+    <a routerLink="/perfil" class="d-flex align-items-center gap-2 text-decoration-none mb-2 sidebar-user-link">
+      @if (authService.currentUser()?.fotoUrl) {
+        <img [src]="authService.currentUser()?.fotoUrl" class="sidebar-avatar" [alt]="authService.currentUser()?.nombre">
+      } @else {
+        <span class="sidebar-avatar-initials">
+          {{ (authService.currentUser()?.nombre?.[0] ?? '') + (authService.currentUser()?.apellido?.[0] ?? '') | uppercase }}
+        </span>
+      }
+      <span class="text-dark small fw-semibold">
+        {{ authService.currentUser()?.nombre }} {{ authService.currentUser()?.apellido }}
+      </span>
+    </a>
+    <button (click)="cerrarSesion()" class="btn btn-outline-danger btn-sm w-100">Salir</button>
+  </div>
 </aside>
