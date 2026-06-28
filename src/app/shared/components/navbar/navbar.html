@@ -5,18 +5,20 @@
       <button class="btn-sidebar-toggle" (click)="toggleSidebar.emit()" aria-label="Abrir menú lateral">☰</button>
     }
 
-    <a class="navbar-brand fw-bold fs-5 mb-0 mx-auto mx-lg-0" routerLink="/">🌿 NatureHub</a>
+    <a class="navbar-brand fw-bold fs-5 mb-0" [class.mx-auto]="authService.estaLogueado()" [class.mx-lg-0]="authService.estaLogueado()" routerLink="/">🌿 NatureHub</a>
 
     <div class="d-none d-lg-flex align-items-center gap-3 mx-auto">
       <a class="nav-link text-white" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Inicio</a>
       <a class="nav-link text-white" routerLink="/categorias" routerLinkActive="active">Categorías</a>
     </div>
 
-    <div class="d-none d-lg-flex align-items-center gap-2">
-      @if (!authService.estaLogueado()) {
+    @if (!authService.estaLogueado()) {
+      <div class="d-flex align-items-center gap-2">
         <a routerLink="/auth/login" class="btn btn-outline-light btn-sm">Iniciar Sesión</a>
         <a routerLink="/auth/register" class="btn btn-success btn-sm">Registrarse</a>
-      } @else {
+      </div>
+    } @else {
+      <div class="d-none d-lg-flex align-items-center gap-2">
         <a routerLink="/wiki/nuevo" class="btn btn-outline-light btn-sm">+ Crear Artículo</a>
         <a routerLink="/perfil" class="d-flex align-items-center gap-2 text-decoration-none navbar-user-link">
           @if (authService.currentUser()?.fotoUrl) {
@@ -31,8 +33,8 @@
           </span>
         </a>
         <button (click)="cerrarSesion()" class="btn btn-outline-danger btn-sm">Salir</button>
-      }
-    </div>
+      </div>
+    }
 
   </div>
 </nav>

@@ -1,5 +1,6 @@
-<div class="app-shell">
+<app-navbar (toggleSidebar)="toggleSidebar()"></app-navbar>
 
+<div class="app-layout">
   @if (authService.estaLogueado()) {
     <app-sidebar [class.abierto]="sidebarAbierta()" (cerrar)="toggleSidebar()"></app-sidebar>
   }
@@ -8,12 +9,9 @@
     <div class="sidebar-overlay" (click)="toggleSidebar()"></div>
   }
 
-  <div class="main-panel">
-    <app-navbar (toggleSidebar)="toggleSidebar()"></app-navbar>
-    <main class="app-content">
-      <router-outlet></router-outlet>
-    </main>
-    <app-footer></app-footer>
-  </div>
-
+  <main class="app-content">
+    <router-outlet></router-outlet>
+  </main>
 </div>
+
+<app-footer></app-footer>
